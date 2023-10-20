@@ -5,6 +5,7 @@ export const colors = {
   black: '#000000',
   yellow: '#fadb14',
   text: '#0009',
+  icon: '#9E9E9E',
   grey50: '#FAFAFA',
   grey100: '#F5F5F5',
   grey200: '#EEEEEE',

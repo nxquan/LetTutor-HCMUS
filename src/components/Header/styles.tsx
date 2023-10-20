@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '../../constants/colors';
+import { colors } from '@/constants';
 
 const styles = StyleSheet.create({
   nav: {
     height: 70,
-    marginTop: 50,
+    backgroundColor: colors.white,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

@@ -1,13 +1,28 @@
-import { View, Text, TouchableOpacity, TextInput, Dimensions, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Dimensions,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import React, { useState } from 'react';
-import { Feather, FontAwesome, Entypo, AntDesign, Ionicons } from '@expo/vector-icons';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { StatusBar } from 'expo-status-bar';
+import {
+  Feather,
+  FontAwesome,
+  Entypo,
+  AntDesign,
+  Ionicons,
+} from '@expo/vector-icons';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 
 import styles from './styles';
-import Header from '../../components/Header';
-import { colors } from '../../constants/colors';
-import Button from '../../components/Button';
+import Header from '@/components/Header';
+import { colors } from '@/constants';
+import Button from '@/components/Button';
 import TutorItem from './components/TutorItem';
 import PaginationItem from './components/PaginationItem';
 
@@ -28,28 +43,65 @@ const typesOfTutor = [
   'TOEFL',
   'TOEIC',
 ];
+interface SearchState {
+  tutorName: string;
+  tutorNationality: string;
+  date: Date | null;
+  startTime: Date | null;
+  endTime: Date | null;
+}
 
 const Tutor = () => {
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
+  const [isShowTimePicker, setIsShowTimePicker] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState('All');
+  const [timeType, setTimeType] = useState('start');
 
-  const [searchValue, setSearchValue] = useState({
+  const [searchValue, setSearchValue] = useState<SearchState>({
     tutorName: '',
     tutorNationality: '',
-    date: new Date(),
+    date: null,
+    startTime: null,
+    endTime: null,
   });
 
-  const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date) => {
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const { type } = event;
     if (type == 'set') {
-      const currentDate = selectedDate;
-      setSearchValue((prev) => {
+      setIsShowDatePicker(false);
+      setSearchValue((prev: any) => {
+        const currentDate = selectedDate;
         return { ...prev, date: currentDate };
       });
-      setIsShowDatePicker(!isShowDatePicker);
     } else {
-      setIsShowDatePicker(!isShowDatePicker);
+      setIsShowDatePicker(false);
     }
+  };
+
+  const onChangeTime = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    const { type } = event;
+    if (type === 'set') {
+      const currentDate = selectedDate;
+      setIsShowTimePicker(!isShowTimePicker);
+      setSearchValue((prev: any) => {
+        const _time: any = {};
+        if (timeType === 'start') {
+          _time.startTime = currentDate;
+          //showTimePicker('end')
+        } else if (timeType === 'end') {
+          _time.endTime = currentDate;
+        }
+
+        return { ...prev, ..._time };
+      });
+    } else {
+      setIsShowTimePicker(!isShowTimePicker);
+    }
+  };
+
+  const showTimePicker = (type: string) => {
+    setIsShowTimePicker(!isShowTimePicker);
+    setTimeType(type);
   };
 
   const renderTypesOfTutor = () => {
@@ -81,13 +133,18 @@ const Tutor = () => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView stickyHeaderIndices={[0]}>
       <Header />
+      {/* Notification */}
       <View style={styles.notiContainer}>
         <Text style={styles.notiHeading}>Upcoming lesson</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}
+        >
           <View style={{ flex: 1 }}>
-            <Text style={styles.notiDateText}>Fri, 20 Oct 23 00:30 - 00:55</Text>
+            <Text style={styles.notiDateText}>
+              Fri, 20 Oct 23 00:30 - 00:55
+            </Text>
             <Text style={styles.notiRemainTimeText}>(starts in ...)</Text>
           </View>
           <TouchableOpacity
@@ -103,7 +160,9 @@ const Tutor = () => {
             }}
           >
             <Feather name='youtube' size={24} color={colors.primary} />
-            <Text style={{ marginLeft: 6, color: colors.primary, fontSize: 14 }}>
+            <Text
+              style={{ marginLeft: 6, color: colors.primary, fontSize: 14 }}
+            >
               Enter lesson room
             </Text>
           </TouchableOpacity>
@@ -121,19 +180,27 @@ const Tutor = () => {
         </Text>
       </View>
 
+      {/* Tutor Container */}
       <View style={styles.tutorContainer}>
-        <Text style={{ fontSize: 29, fontWeight: '700', marginBottom: 6 }}>Find a tutor</Text>
+        <Text style={{ fontSize: 29, fontWeight: '700', marginBottom: 6 }}>
+          Find a tutor
+        </Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <TextInput
             placeholder='Enter tutor name'
             style={[styles.inputContainer, { flex: 1, marginRight: 12 }]}
           />
-          <TextInput placeholder='Select tutor national' style={styles.inputContainer} />
+          <TextInput
+            placeholder='Select tutor national'
+            style={styles.inputContainer}
+          />
         </View>
+        <Text style={{ fontSize: 18, fontWeight: '500', marginTop: 10 }}>
+          Select available tutoring time:
+        </Text>
+
+        {/*Input date & time */}
         <View>
-          <Text style={{ fontSize: 18, fontWeight: '500', marginTop: 10 }}>
-            Select available tutoring time:
-          </Text>
           <View
             style={[
               styles.inputContainer,
@@ -145,12 +212,34 @@ const Tutor = () => {
               },
             ]}
           >
-            <TextInput editable={false} placeholder='Select a day ' />
-            <FontAwesome name='calendar' size={20} color={colors.text} style={{ marginLeft: 20 }} />
+            <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
+              <TextInput
+                editable={false}
+                placeholder='Select a day'
+                onPressIn={() => setIsShowDatePicker(!isShowDatePicker)}
+                value={searchValue.date ? searchValue.date?.toDateString() : ''}
+                style={{ color: colors.text }}
+              />
+            </Pressable>
+            <FontAwesome
+              onPress={() =>
+                setSearchValue((prev: any) => ({ ...prev, date: null }))
+              }
+              name='calendar'
+              size={18}
+              color={colors.grey500}
+              style={{ marginLeft: 20 }}
+            />
+            {isShowDatePicker && (
+              <DateTimePicker
+                mode='date'
+                display='calendar'
+                value={searchValue.date ? searchValue.date : new Date()}
+                onChange={onChangeDate}
+              />
+            )}
           </View>
-          {isShowDatePicker && (
-            <DateTimePicker mode='date' display='calendar' value={searchValue.date} />
-          )}
+
           <View
             style={[
               styles.inputContainer,
@@ -162,53 +251,128 @@ const Tutor = () => {
               },
             ]}
           >
-            <TextInput editable={false} placeholder='Start time' style={{ flex: 1 }} />
+            <Pressable //Only on android
+              onPress={() => {
+                showTimePicker('start');
+              }}
+              style={{ flex: 1 }}
+            >
+              <TextInput
+                editable={false}
+                onPressIn={() => {
+                  //with editable(false), onPressIn only will work on iOS
+                  showTimePicker('start');
+                }}
+                style={{ flex: 1, color: colors.text }}
+                placeholder='Start time'
+                value={
+                  searchValue.startTime
+                    ? searchValue.startTime.toLocaleTimeString()
+                    : ''
+                }
+              />
+            </Pressable>
             <Entypo
               style={{ marginHorizontal: 12 }}
               name='arrow-long-right'
               size={20}
               color={colors.text}
             />
-            <TextInput editable={false} placeholder='End time' style={{ flex: 1 }} />
+            <Pressable
+              style={{ flex: 1 }}
+              onPress={() => {
+                showTimePicker('end');
+              }}
+            >
+              <TextInput
+                editable={false}
+                placeholder='End time'
+                onPressIn={() => {
+                  showTimePicker('end');
+                }}
+                value={
+                  searchValue.endTime
+                    ? searchValue.endTime.toLocaleTimeString()
+                    : ''
+                }
+                style={{ flex: 1, color: colors.text }}
+              />
+            </Pressable>
             <AntDesign
               style={{ marginLeft: 12 }}
               name='clockcircleo'
               size={20}
               color={colors.text}
+              onPress={() => {
+                setSearchValue((prev: any) => {
+                  return {
+                    ...prev,
+                    startTime: null,
+                    endTime: null,
+                  };
+                });
+              }}
             />
+            {isShowTimePicker && (
+              <DateTimePicker
+                mode='time'
+                display='spinner'
+                value={
+                  searchValue.startTime ? searchValue.startTime : new Date()
+                }
+                onChange={onChangeTime}
+              />
+            )}
           </View>
+        </View>
 
-          <View style={{ marginTop: 12, marginLeft: -12, flexDirection: 'row', flexWrap: 'wrap' }}>
-            {renderTypesOfTutor()}
-          </View>
-          {/* <DateTimePicker mode='time' display='spinner' value={searchValue.date} /> */}
+        <View
+          style={{
+            marginTop: 12,
+            marginLeft: -12,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+          }}
+        >
+          {renderTypesOfTutor()}
+        </View>
 
-          <View>
-            <Text style={{ fontSize: 20, fontWeight: '600', marginTop: 10 }}>
-              Recommended Tutors
-            </Text>
-            <View style={styles.tutorList}>
-              <TutorItem />
-              <TutorItem />
-              <TutorItem />
-              <TutorItem />
-              <TutorItem />
-            </View>
+        <View>
+          <Text style={{ fontSize: 20, fontWeight: '600', marginTop: 10 }}>
+            Recommended Tutors
+          </Text>
+          <View style={styles.tutorList}>
+            <TutorItem />
+            <TutorItem />
+            <TutorItem />
+            <TutorItem />
+            <TutorItem />
           </View>
         </View>
         <View style={styles.pagination}>
           <PaginationItem
-            icon={<Ionicons name='md-chevron-back-outline' size={20} color={colors.grey350} />}
+            icon={
+              <Ionicons
+                name='md-chevron-back-outline'
+                size={20}
+                color={colors.grey350}
+              />
+            }
           />
           <PaginationItem active={true} title={1} />
           <PaginationItem title={2} />
           <PaginationItem title={3} />
           <PaginationItem
-            icon={<Ionicons name='md-chevron-forward-outline' size={20} color={colors.grey350} />}
+            icon={
+              <Ionicons
+                name='md-chevron-forward-outline'
+                size={20}
+                color={colors.grey350}
+              />
+            }
           />
         </View>
       </View>
-      <StatusBar style='dark' />
     </ScrollView>
   );
 };

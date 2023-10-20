@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '../../constants/colors';
+import { colors } from '@/constants';
 const styles = StyleSheet.create({
   notiContainer: {
     backgroundColor: '#0c3ddf',
