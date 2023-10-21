@@ -10,9 +10,15 @@ const PaginationItem = (props: any) => {
   }
 
   return (
-    <Component style={[styles.container, active && styles.activeContainer]}>
+    <Component
+      style={[styles.paginationItem, active && styles.activeContainer]}
+    >
       {icon}
-      {!!title && <Text style={[styles.title, active && styles.activeTitle]}>{title}</Text>}
+      {!!title && (
+        <Text style={[styles.title, active && styles.activeTitle]}>
+          {title}
+        </Text>
+      )}
     </Component>
   );
 };

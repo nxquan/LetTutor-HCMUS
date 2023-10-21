@@ -4,6 +4,7 @@ export const images = {
   googleLogo: require('./google-logo.png'),
   avatar: require('./avatar1.png'),
   scheduleIcon: require('./schedule.png'),
+  calendarCheck: require('./calendar-check.png'),
 };
 
 export const languageImages = {

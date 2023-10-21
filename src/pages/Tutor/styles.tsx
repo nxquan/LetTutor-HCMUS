@@ -43,12 +43,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexWrap: 'wrap',
   },
-  pagination: {
-    flexDirection: 'row',
-    marginVertical: 28,
-    marginLeft: -8,
-    alignSelf: 'flex-end',
-  },
 });
 
 export default styles;

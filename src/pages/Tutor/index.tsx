@@ -24,7 +24,7 @@ import Header from '@/components/Header';
 import { colors } from '@/constants';
 import Button from '@/components/Button';
 import TutorItem from './components/TutorItem';
-import PaginationItem from './components/PaginationItem';
+import Pagination from '@/components/Pagination';
 
 const width = Dimensions.get('window').width; //full width
 const height = Dimensions.get('window').height; //full height
@@ -348,29 +348,7 @@ const Tutor = () => {
             <TutorItem />
             <TutorItem />
           </View>
-        </View>
-        <View style={styles.pagination}>
-          <PaginationItem
-            icon={
-              <Ionicons
-                name='md-chevron-back-outline'
-                size={20}
-                color={colors.grey350}
-              />
-            }
-          />
-          <PaginationItem active={true} title={1} />
-          <PaginationItem title={2} />
-          <PaginationItem title={3} />
-          <PaginationItem
-            icon={
-              <Ionicons
-                name='md-chevron-forward-outline'
-                size={20}
-                color={colors.grey350}
-              />
-            }
-          />
+          <Pagination />
         </View>
       </View>
     </ScrollView>
