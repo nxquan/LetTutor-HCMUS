@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     top: 40,
     left: 0,
     right: 0,
-    zIndex: 1,
+    zIndex: 999,
   },
   dropdownItem: {
     paddingVertical: 10,

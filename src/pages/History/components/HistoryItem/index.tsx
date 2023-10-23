@@ -26,8 +26,8 @@ const reasons = [
 ];
 
 const HistoryItem = () => {
-  const [isOpenRequest, setIsOpenRequest] = useState(false);
-  const [isOpenReview, setIsOpenReview] = useState(false);
+  const [isOpenRequest, setIsOpenRequest] = useState(true);
+  const [isOpenReview, setIsOpenReview] = useState(true);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState<null | string>(null);
 

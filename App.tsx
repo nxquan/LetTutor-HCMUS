@@ -8,12 +8,14 @@ import SignUp from '@/pages/SignUp';
 import History from '@/pages/History';
 
 import { EventProvider } from 'react-native-outside-press';
+import Courses from '@/pages/Courses';
+import CourseDetail from '@/pages/Courses/components/CourseDetail';
 
 export default function App() {
   return (
     <EventProvider>
       <SafeAreaView style={styles.container}>
-        <Schedule />
+        <CourseDetail />
         <StatusBar
           backgroundColor={colors.white}
           barStyle={'dark-content'}

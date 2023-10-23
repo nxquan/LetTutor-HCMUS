@@ -6,6 +6,11 @@ export const images = {
   scheduleIcon: require('./schedule.png'),
   calendarCheck: require('./calendar-check.png'),
   history: require('./history.png'),
+  course: require('./course.png'),
+  courseItem1: require('./course-item-1.png'),
+  courseItem2: require('./course-item-2.png'),
+  courseItem3: require('./course-item-3.png'),
+  courseItem4: require('./course-item-4.png'),
 };
 
 export const languageImages = {

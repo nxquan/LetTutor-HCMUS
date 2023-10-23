@@ -13,6 +13,7 @@ const DropDownMenu = (props: {
   onChangeOpen: any;
   onChangeSelected: any;
   children: any;
+  typeOfMenu?: string;
 }) => {
   const {
     data,
@@ -21,6 +22,7 @@ const DropDownMenu = (props: {
     selectedItem,
     onChangeSelected,
     children,
+    typeOfMenu,
   } = props;
 
   return (
@@ -28,6 +30,7 @@ const DropDownMenu = (props: {
       onOutsidePress={function (): void {
         onChangeOpen(false);
       }}
+      style={{ marginTop: 16 }}
     >
       {children}
       {isOpen && (
@@ -39,8 +42,12 @@ const DropDownMenu = (props: {
                 activeOpacity={0.8}
                 underlayColor='#DDDDDD'
                 onPress={() => {
-                  onChangeSelected(item);
                   onChangeOpen(false);
+                  if (!!typeOfMenu) {
+                    onChangeSelected(item, typeOfMenu);
+                  } else {
+                    onChangeSelected(item);
+                  }
                 }}
               >
                 <Text

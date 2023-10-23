@@ -1,10 +1,11 @@
 import { colors } from '@/constants';
 import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
-  container: {},
   intro: {
     paddingHorizontal: 20,
     marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   text: {
     fontSize: 15,
