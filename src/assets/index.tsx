@@ -5,6 +5,7 @@ export const images = {
   avatar: require('./avatar1.png'),
   scheduleIcon: require('./schedule.png'),
   calendarCheck: require('./calendar-check.png'),
+  history: require('./history.png'),
 };
 
 export const languageImages = {

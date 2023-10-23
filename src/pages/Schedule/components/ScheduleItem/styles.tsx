@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
   infoLesson: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: colors.white,
     padding: 12,
   },
   meetDate: {
@@ -37,11 +36,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   requestContainer: {
-    paddingTop: 12,
-    paddingHorizontal: 12,
-    paddingBottom: 6,
+    paddingBottom: 16,
     backgroundColor: colors.white,
-    marginTop: 16,
   },
   requestHeader: {
     flexDirection: 'row',
@@ -73,6 +69,33 @@ const styles = StyleSheet.create({
   requestText: {
     fontSize: 14,
     color: colors.text,
+  },
+  goMeetingBtn: {
+    alignSelf: 'flex-end',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginTop: 8,
+    borderColor: colors.grey350,
+    borderWidth: 1,
+    borderRadius: 6,
+  },
+  disabledTextBtn: {
+    opacity: 0.4,
+  },
+  modalInfo: {
+    alignItems: 'center',
+  },
+  modalBody: {
+    position: 'relative',
+  },
+  dropdownBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderColor: colors.grey300,
+    borderWidth: 1,
+    borderRadius: 4,
   },
 });
 

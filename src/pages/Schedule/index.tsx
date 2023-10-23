@@ -7,7 +7,7 @@ import { colors } from '@/constants';
 import ScheduleItem from './components/ScheduleItem';
 import Pagination from '@/components/Pagination';
 
-const index = () => {
+const Schedule = () => {
   return (
     <ScrollView style={styles.container}>
       <Header />
@@ -90,4 +90,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Schedule;

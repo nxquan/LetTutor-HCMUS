@@ -4,6 +4,7 @@
         "Pressable"
     ],
     "editor.formatOnSave": true,
+    "editor.hover.enabled": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

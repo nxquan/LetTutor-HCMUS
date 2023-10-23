@@ -1,20 +1,26 @@
 import { SafeAreaView, StyleSheet, Text, View, StatusBar } from 'react-native';
+import { colors } from '@/constants';
+
 import Schedule from '@/pages/Schedule';
 import Tutor from '@/pages/Tutor';
-import { colors } from '@/constants';
 import SignIn from '@/pages/SignIn';
 import SignUp from '@/pages/SignUp';
+import History from '@/pages/History';
+
+import { EventProvider } from 'react-native-outside-press';
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <Schedule />
-      <StatusBar
-        backgroundColor={colors.white}
-        barStyle={'dark-content'}
-        showHideTransition={'fade'}
-      />
-    </SafeAreaView>
+    <EventProvider>
+      <SafeAreaView style={styles.container}>
+        <Schedule />
+        <StatusBar
+          backgroundColor={colors.white}
+          barStyle={'dark-content'}
+          showHideTransition={'fade'}
+        />
+      </SafeAreaView>
+    </EventProvider>
   );
 }
 
