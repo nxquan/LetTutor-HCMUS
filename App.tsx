@@ -9,7 +9,7 @@ import History from '@/pages/History';
 
 import { EventProvider } from 'react-native-outside-press';
 import Courses from '@/pages/Courses';
-import CourseDetail from '@/pages/Courses/components/CourseDetail';
+import CourseDetail from '@/pages/CourseTopic';
 
 export default function App() {
   return (

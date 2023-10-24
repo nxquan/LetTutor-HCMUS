@@ -1,11 +1,11 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import styles from './styles';
-import { images, languageImages } from '@/assets';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import FormGroup from '../components/FormGroup';
-import globalStyles from '../../Global/globalStyles';
-import Header from '../../components/Header';
+import { images } from '@/assets';
+import { FontAwesome } from '@expo/vector-icons';
+import FormGroup from '@/components/FormGroup';
+import globalStyles from '@/global/globalStyles';
+import Header from '@/components/Header';
 
 const SignIn = () => {
   return (

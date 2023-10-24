@@ -1,12 +1,13 @@
 import { View, Text } from 'react-native';
 import React from 'react';
+import styles from './styles';
 
-const CourseLesson = () => {
+const VideoCall = () => {
   return (
     <View>
-      <Text>CourseLesson</Text>
+      <Text>VideoCall</Text>
     </View>
   );
 };
 
-export default CourseLesson;
+export default VideoCall;
