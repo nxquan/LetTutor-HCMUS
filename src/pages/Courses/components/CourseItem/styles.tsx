@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     backgroundColor: colors.white,
     borderRadius: 8,
-    width: width * 0.8,
+    width: width * 0.4,
     marginTop: 16,
     marginBottom: 12,
   },
@@ -23,23 +23,23 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'contain',
-    width: width * 0.8,
-    height: 240,
+    width: width * 0.4,
+    height: width * 0.3,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
   title: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: 8,
   },
   des: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.text,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   addition: {
-    fontSize: 12,
+    fontSize: 14,
   },
 });
 

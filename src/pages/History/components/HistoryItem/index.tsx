@@ -16,7 +16,7 @@ import ModalPopper from '@/components/ModalPopper';
 import { colors } from '@/constants';
 import OutsidePressHandler from 'react-native-outside-press';
 import { images } from '@/assets';
-import DropDownMenu from '@/components/DropdownMenu';
+import DropdownMenu from '@/components/DropdownMenu';
 
 const reasons = [
   'Tutor was late',
@@ -159,7 +159,7 @@ const HistoryItem = () => {
               What was the reason you cancel this booking?
             </Text>
 
-            <DropDownMenu
+            <DropdownMenu
               isOpen={isOpenMenu}
               onChangeOpen={setIsOpenMenu}
               data={reasons}
@@ -197,7 +197,7 @@ const HistoryItem = () => {
                   )}
                 </View>
               </Pressable>
-            </DropDownMenu>
+            </DropdownMenu>
             <TextInput
               multiline={true}
               numberOfLines={8}

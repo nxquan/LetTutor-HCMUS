@@ -1,11 +1,16 @@
 import { colors } from '@/constants';
 import { StyleSheet } from 'react-native';
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f1f1f1',
     marginBottom: 12,
     padding: 10,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+    elevation: 4,
+    shadowColor: 'rgba(0,0,0,0.2)',
   },
   infoLesson: {
     flexDirection: 'row',

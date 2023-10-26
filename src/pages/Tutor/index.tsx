@@ -133,7 +133,7 @@ const Tutor = () => {
   };
 
   return (
-    <ScrollView stickyHeaderIndices={[0]}>
+    <ScrollView stickyHeaderIndices={[0]} showsVerticalScrollIndicator={false}>
       <Header />
       {/* Notification */}
       <View style={styles.notiContainer}>

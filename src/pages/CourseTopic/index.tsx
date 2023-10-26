@@ -5,12 +5,17 @@ import styles from './styles';
 import { images } from '@/assets';
 import { colors } from '@/constants';
 import TopicItem from '@/components/TopicItem';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const CourseTopic = () => {
   const [topics, setTopics] = useState([1, 2, 3, 4, 5]);
 
   return (
-    <View>
+    <ScrollView
+      style={styles.container}
+      stickyHeaderIndices={[0]}
+      showsVerticalScrollIndicator={false}
+    >
       <Header />
       <View style={styles.inner}>
         <View style={styles.infoContainer}>
@@ -30,7 +35,7 @@ const CourseTopic = () => {
         </View>
         <View style={styles.showPdfContainer}></View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

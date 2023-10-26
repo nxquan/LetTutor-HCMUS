@@ -6,7 +6,7 @@ import { images } from '@/assets';
 const CourseItem = (props: any) => {
   const { src } = props;
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} activeOpacity={0.8}>
       <Image source={src} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>Life in the Internet Age</Text>

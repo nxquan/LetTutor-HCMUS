@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import { images } from '@/assets';
@@ -6,10 +13,19 @@ import { FontAwesome } from '@expo/vector-icons';
 import FormGroup from '@/components/FormGroup';
 import globalStyles from '@/global/globalStyles';
 import Header from '@/components/Header';
+import { useNavigation } from '@react-navigation/native';
+import Props from '@/global/type';
+import { colors } from '@/constants';
 
 const SignIn = () => {
+  const navigation = useNavigation<Props>();
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+      stickyHeaderIndices={[0]}
+    >
       <Header />
       <View style={styles.inner}>
         <Image source={images.banner} style={styles.banner} />
@@ -23,7 +39,12 @@ const SignIn = () => {
           <FormGroup title='PASSWORD' type='password' />
 
           <Text style={styles.forgetPassword}>Quên mật khẩu?</Text>
-          <TouchableOpacity style={styles.loginBtn}>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() =>
+              navigation.navigate('HomeDrawerRouter', { screen: 'Tutor' })
+            }
+          >
             <Text style={styles.loginBtnText}>Đăng nhập</Text>
           </TouchableOpacity>
           <Text style={styles.moreText}>Hoặc tiếp tục với</Text>
@@ -42,10 +63,17 @@ const SignIn = () => {
             </View>
           </View>
           <Text style={styles.signupText}>
-            Chưa có tài khoản? <Text style={styles.signupLink}>Đăng ký</Text>
+            Chưa có tài khoản?{' '}
+            <Text
+              style={styles.signupLink}
+              onPress={() => navigation.navigate('SignUp')}
+            >
+              Đăng ký
+            </Text>
           </Text>
         </View>
       </View>
+      <StatusBar barStyle={'dark-content'} backgroundColor={colors.white} />
     </ScrollView>
   );
 };

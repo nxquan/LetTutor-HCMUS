@@ -10,7 +10,11 @@ import HistoryItem from './components/HistoryItem';
 
 const History = () => {
   return (
-    <ScrollView>
+    <ScrollView
+      style={styles.container}
+      stickyHeaderIndices={[0]}
+      showsVerticalScrollIndicator={false}
+    >
       <Header />
       <View style={styles.intro}>
         <Image source={images.history} style={{ width: 120, height: 120 }} />

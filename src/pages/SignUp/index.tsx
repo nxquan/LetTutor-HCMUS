@@ -4,12 +4,17 @@ import styles from './styles';
 import { images } from '@/assets';
 import FormGroup from '@/components/FormGroup';
 import Header from '@/components/Header';
+import { useNavigation } from '@react-navigation/native';
+import StackProps from '@/global/type';
 
 const SignUp = () => {
+  const navigation = useNavigation<StackProps>();
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
+      stickyHeaderIndices={[0]}
     >
       <Header />
       <View style={styles.inner}>
@@ -27,7 +32,13 @@ const SignUp = () => {
             <Text style={styles.loginBtnText}>Đăng ký</Text>
           </TouchableOpacity>
           <Text style={styles.signupText}>
-            Đã có tài khoản? <Text style={styles.signupLink}>Đăng nhập</Text>
+            Đã có tài khoản?{' '}
+            <Text
+              style={styles.signupLink}
+              onPress={() => navigation.navigate('SignIn')}
+            >
+              Đăng nhập
+            </Text>
           </Text>
         </View>
       </View>

@@ -1,8 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '@/constants';
+
+const width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   nav: {
+    width: width,
     height: 70,
     backgroundColor: colors.white,
     flexDirection: 'row',
@@ -28,6 +31,16 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  openSideMenu: {
+    padding: 8,
+    borderRadius: 8,
+    marginLeft: 12,
   },
 });
 

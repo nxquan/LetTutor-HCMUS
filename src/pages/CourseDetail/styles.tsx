@@ -1,7 +1,10 @@
 import { colors } from '@/constants';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.white,
+  },
   inner: {
     paddingHorizontal: 24,
   },

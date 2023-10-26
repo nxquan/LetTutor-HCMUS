@@ -3,19 +3,21 @@ import {
   Text,
   Image,
   TextInput,
-  TouchableOpacity,
   Pressable,
   ScrollView,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, { useState } from 'react';
-import { EvilIcons, Entypo } from '@expo/vector-icons';
+import { EvilIcons, Entypo, AntDesign } from '@expo/vector-icons';
 
 import Header from '@/components/Header';
 import styles from './styles';
 import { images } from '@/assets';
 import { colors } from '@/constants';
-import DropDownMenu from '@/components/DropdownMenu';
+import DropdownMenu from '@/components/DropdownMenu';
 import CourseItem from './components/CourseItem';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const levels = [
   'Any Level',
@@ -45,18 +47,19 @@ const categories = [
   'TOEIC',
   'IELTS',
 ];
-interface SearchState {
+type SearchState = {
   levels: [];
   categories: [];
   sortByLevel: string;
   courseName: string;
-}
+};
 
 const sorts = ['Level descending', 'Level ascending'];
 const Courses = () => {
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
-  const [isOpenCategoryMenu, setIsOpenCategoryMenu] = useState(false);
+  const [isOpenCategoriesMenu, setIsOpenCategoriesMenu] = useState(false);
   const [isOpenSortMenu, setIsOpenSortMenu] = useState(false);
+  const [tab, setTab] = useState('');
 
   const [searchValue, setSearchValue] = useState<SearchState>({
     levels: [],
@@ -87,8 +90,57 @@ const Courses = () => {
     });
   };
 
+  const renderSearchItems = (type: string) => {
+    let items: [] = [];
+    if (type === 'categories') {
+      items = searchValue.categories;
+    } else if (type === 'levels') {
+      items = searchValue.levels;
+    }
+
+    return items.map((item, index) => {
+      return (
+        <View
+          key={index}
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.1)',
+            borderRadius: 4,
+            flexDirection: 'row',
+            padding: 2,
+            marginLeft: 4,
+            marginTop: 4,
+          }}
+        >
+          <Text style={{ fontSize: 14, color: colors.text }}>{item}</Text>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setIsOpenCategoriesMenu(false);
+              setSearchValue((prev: any) => {
+                return {
+                  ...prev,
+                  [type]: prev[type].filter((e: string) => e !== item),
+                };
+              });
+            }}
+          >
+            <AntDesign
+              name='close'
+              size={20}
+              color='rgba(0,0,0,0.8)'
+              style={{ marginLeft: 4 }}
+            />
+          </TouchableWithoutFeedback>
+        </View>
+      );
+    });
+  };
+
   return (
-    <ScrollView>
+    <ScrollView
+      style={styles.container}
+      stickyHeaderIndices={[0]}
+      showsVerticalScrollIndicator={false}
+    >
       <Header />
       <View style={styles.intro}>
         <Image source={images.course} style={{ width: 100, height: 100 }} />
@@ -96,28 +148,13 @@ const Courses = () => {
           <Text style={{ fontSize: 25, fontWeight: '500', marginBottom: 8 }}>
             Discover Courses
           </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: colors.grey300,
-              paddingLeft: 12,
-              marginBottom: 12,
-            }}
-          >
-            <TextInput
-              placeholder='Search course'
-              style={{ paddingVertical: 4, flex: 1 }}
-            />
-            <TouchableOpacity
-              style={{
-                borderColor: colors.grey300,
-                borderWidth: 1,
-                height: '100%',
-                paddingHorizontal: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
+          <View style={styles.courseSearch}>
+            <TextInput placeholder='Search course' style={styles.courseInput} />
+            <TouchableHighlight
+              style={styles.searchBtn}
+              onPress={() => {}}
+              underlayColor='rgba(0,0,0,0.1)'
+              activeOpacity={0.8}
             >
               <EvilIcons
                 name='search'
@@ -125,7 +162,7 @@ const Courses = () => {
                 color={colors.text}
                 style={{ marginTop: -5 }}
               />
-            </TouchableOpacity>
+            </TouchableHighlight>
           </View>
         </View>
         <Text style={styles.text}>
@@ -136,97 +173,94 @@ const Courses = () => {
       </View>
 
       <View style={styles.search}>
-        <DropDownMenu
+        <DropdownMenu
           isOpen={isOpenLevelMenu}
           data={levels}
           onChangeOpen={setIsOpenLevelMenu}
           onChangeSelected={onChangeSearchValue}
           selectedItem={searchValue.levels}
           typeOfMenu='levels'
+          style={{ zIndex: 3 }}
         >
           <Pressable
             onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderWidth: 1,
-              borderColor: colors.grey300,
-              borderRadius: 6,
-              paddingLeft: 12,
-              paddingRight: 6,
-              paddingVertical: 4,
-            }}
+            style={styles.dropdownMenuBtn}
           >
-            <Text style={{ fontSize: 14, color: colors.text }}>
-              {searchValue.levels.length > 0
-                ? searchValue.levels.join(' - ')
-                : 'Select levels'}
-            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                marginLeft: -4,
+                marginTop: -4,
+              }}
+            >
+              {searchValue.levels.length > 0 ? (
+                renderSearchItems('levels')
+              ) : (
+                <Text style={{ fontSize: 14, color: colors.text }}>
+                  Select levels
+                </Text>
+              )}
+            </View>
             {isOpenLevelMenu ? (
               <Entypo name='chevron-small-down' size={24} color='black' />
             ) : (
               <Entypo name='chevron-small-right' size={24} color='black' />
             )}
           </Pressable>
-        </DropDownMenu>
+        </DropdownMenu>
 
-        <DropDownMenu
-          isOpen={isOpenCategoryMenu}
+        <DropdownMenu
+          isOpen={isOpenCategoriesMenu}
           data={categories}
-          onChangeOpen={setIsOpenCategoryMenu}
+          onChangeOpen={setIsOpenCategoriesMenu}
           onChangeSelected={onChangeSearchValue}
           selectedItem={null}
           typeOfMenu='categories'
+          style={{ zIndex: 2 }}
         >
           <Pressable
-            onPress={() => setIsOpenCategoryMenu(!isOpenCategoryMenu)}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderWidth: 1,
-              borderColor: colors.grey300,
-              borderRadius: 6,
-              paddingLeft: 12,
-              paddingRight: 6,
-              paddingVertical: 4,
+            onPress={() => {
+              setIsOpenCategoriesMenu(!isOpenCategoriesMenu);
             }}
+            style={styles.dropdownMenuBtn}
           >
-            <Text style={{ fontSize: 14, color: colors.text }}>
-              {searchValue.categories.length > 0
-                ? searchValue.categories.join(' - ')
-                : 'Select categories'}
-            </Text>
-            {isOpenCategoryMenu ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                marginLeft: -4,
+                marginTop: -4,
+              }}
+            >
+              {searchValue.categories.length > 0 ? (
+                renderSearchItems('categories')
+              ) : (
+                <Text style={{ fontSize: 14, color: colors.text }}>
+                  Select categories
+                </Text>
+              )}
+            </View>
+            {isOpenCategoriesMenu ? (
               <Entypo name='chevron-small-down' size={24} color='black' />
             ) : (
               <Entypo name='chevron-small-right' size={24} color='black' />
             )}
           </Pressable>
-        </DropDownMenu>
+        </DropdownMenu>
 
-        <DropDownMenu
+        <DropdownMenu
           isOpen={isOpenSortMenu}
           data={sorts}
           onChangeOpen={setIsOpenSortMenu}
           onChangeSelected={onChangeSearchValue}
           selectedItem={searchValue.sortByLevel}
           typeOfMenu='sortByLevel'
+          style={{ zIndex: 1 }}
         >
           <Pressable
             onPress={() => setIsOpenSortMenu(!isOpenSortMenu)}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderWidth: 1,
-              borderColor: colors.grey300,
-              borderRadius: 6,
-              paddingLeft: 12,
-              paddingRight: 6,
-              paddingVertical: 4,
-            }}
+            style={styles.dropdownMenuBtn}
           >
             <Text style={{ fontSize: 14, color: colors.text }}>
               {searchValue.sortByLevel.length > 0
@@ -239,50 +273,88 @@ const Courses = () => {
               <Entypo name='chevron-small-right' size={24} color='black' />
             )}
           </Pressable>
-        </DropDownMenu>
+        </DropdownMenu>
       </View>
 
-      <View style={styles.courseTabs}></View>
-      <View style={styles.courseSection}>
-        <Text style={styles.courseHeading}>English For Traveling</Text>
-        <View style={styles.courseList}>
-          <CourseItem src={images.courseItem1} />
-          <CourseItem src={images.courseItem1} />
-          <CourseItem src={images.courseItem1} />
-          <CourseItem src={images.courseItem1} />
-          <CourseItem src={images.courseItem1} />
-        </View>
+      <View style={styles.courseTabs}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => setTab('course')}>
+          <Text
+            style={[
+              styles.courseTabText,
+              tab === 'course' && { color: colors.primary },
+            ]}
+          >
+            Course
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => setTab('e-book')}>
+          <Text
+            style={[
+              styles.courseTabText,
+              tab === 'e-book' && { color: colors.primary },
+            ]}
+          >
+            E-book
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setTab('interactive e-book')}
+        >
+          <Text
+            style={[
+              styles.courseTabText,
+              tab === 'interactive e-book' && { color: colors.primary },
+            ]}
+          >
+            Interactive E-book
+          </Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.courseSection}>
-        <Text style={styles.courseHeading}>English For Beginners</Text>
-        <View style={styles.courseList}>
-          <CourseItem src={images.courseItem2} />
-          <CourseItem src={images.courseItem2} />
-          <CourseItem src={images.courseItem2} />
-          <CourseItem src={images.courseItem2} />
-          <CourseItem src={images.courseItem2} />
+      {tab === 'course' && (
+        <View>
+          <View style={styles.courseSection}>
+            <Text style={styles.courseHeading}>English For Traveling</Text>
+            <View style={styles.courseList}>
+              <CourseItem src={images.courseItem1} />
+              <CourseItem src={images.courseItem1} />
+              <CourseItem src={images.courseItem1} />
+              <CourseItem src={images.courseItem1} />
+              <CourseItem src={images.courseItem1} />
+            </View>
+          </View>
+          <View style={styles.courseSection}>
+            <Text style={styles.courseHeading}>English For Beginners</Text>
+            <View style={styles.courseList}>
+              <CourseItem src={images.courseItem2} />
+              <CourseItem src={images.courseItem2} />
+              <CourseItem src={images.courseItem2} />
+              <CourseItem src={images.courseItem2} />
+              <CourseItem src={images.courseItem2} />
+            </View>
+          </View>
+          <View style={styles.courseSection}>
+            <Text style={styles.courseHeading}>Business English</Text>
+            <View style={styles.courseList}>
+              <CourseItem src={images.courseItem3} />
+              <CourseItem src={images.courseItem3} />
+              <CourseItem src={images.courseItem3} />
+              <CourseItem src={images.courseItem3} />
+              <CourseItem src={images.courseItem3} />
+            </View>
+          </View>
+          <View style={styles.courseSection}>
+            <Text style={styles.courseHeading}>English For Kid</Text>
+            <View style={styles.courseList}>
+              <CourseItem src={images.courseItem4} />
+              <CourseItem src={images.courseItem4} />
+              <CourseItem src={images.courseItem4} />
+              <CourseItem src={images.courseItem4} />
+              <CourseItem src={images.courseItem4} />
+            </View>
+          </View>
         </View>
-      </View>
-      <View style={styles.courseSection}>
-        <Text style={styles.courseHeading}>Business English</Text>
-        <View style={styles.courseList}>
-          <CourseItem src={images.courseItem3} />
-          <CourseItem src={images.courseItem3} />
-          <CourseItem src={images.courseItem3} />
-          <CourseItem src={images.courseItem3} />
-          <CourseItem src={images.courseItem3} />
-        </View>
-      </View>
-      <View style={styles.courseSection}>
-        <Text style={styles.courseHeading}>English For Kid</Text>
-        <View style={styles.courseList}>
-          <CourseItem src={images.courseItem4} />
-          <CourseItem src={images.courseItem4} />
-          <CourseItem src={images.courseItem4} />
-          <CourseItem src={images.courseItem4} />
-          <CourseItem src={images.courseItem4} />
-        </View>
-      </View>
+      )}
     </ScrollView>
   );
 };

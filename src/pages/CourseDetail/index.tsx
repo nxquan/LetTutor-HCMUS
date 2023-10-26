@@ -4,7 +4,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 import styles from './styles';
 import Header from '@/components/Header';
-import CourseItem from '../CourseItem';
 import { images } from '@/assets';
 import { colors } from '@/constants';
 
@@ -12,7 +11,11 @@ const CourseDetail = (props: any) => {
   const {} = props;
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      stickyHeaderIndices={[0]}
+      style={styles.container}
+    >
       <Header />
       <View style={styles.inner}>
         <View style={styles.intro}>

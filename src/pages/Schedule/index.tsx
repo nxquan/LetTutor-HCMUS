@@ -9,7 +9,11 @@ import Pagination from '@/components/Pagination';
 
 const Schedule = () => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      stickyHeaderIndices={[0]}
+      showsVerticalScrollIndicator={false}
+    >
       <Header />
       <View style={styles.intro}>
         <Image

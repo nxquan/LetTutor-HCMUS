@@ -16,7 +16,7 @@ import { images, languageImages } from '@/assets';
 import { colors } from '@/constants';
 import ModalPopper from '@/components/ModalPopper';
 import Lesson from '@/components/Lesson';
-import DropDownMenu from '@/components/DropdownMenu';
+import DropdownMenu from '@/components/DropdownMenu';
 
 const reasons = [
   'Reschedule at another time',
@@ -147,7 +147,7 @@ const index = () => {
             What was the reason you cancel this booking?
           </Text>
 
-          <DropDownMenu
+          <DropdownMenu
             isOpen={isOpenMenu}
             onChangeOpen={setIsOpenMenu}
             onChangeSelected={onChangeSelectedItem}
@@ -185,7 +185,7 @@ const index = () => {
                 )}
               </View>
             </Pressable>
-          </DropDownMenu>
+          </DropdownMenu>
 
           <TextInput
             multiline={true}
