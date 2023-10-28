@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import React, { useState } from 'react';
-import Pdf from 'react-native-pdf';
+// import Pdf from 'react-native-pdf';
 import { Feather, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
 import Header from '@/components/Header';
@@ -152,7 +152,7 @@ const CourseTopic = () => {
             {/* <ScrollView nestedScrollEnabled={true}> */}
 
             {/* </ScrollView> */}
-            <Pdf
+            {/* <Pdf
               source={source}
               trustAllCerts={true}
               onLoadComplete={(number, filePath) => {}}
@@ -166,7 +166,7 @@ const CourseTopic = () => {
                 console.log(`Link pressed: ${uri}`);
               }}
               style={styles.pdf}
-            />
+            /> */}
           </View>
         </View>
       </View>

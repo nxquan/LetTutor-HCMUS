@@ -7,8 +7,9 @@ import {
   Button,
   TouchableHighlight,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import {
   Table,
@@ -16,9 +17,8 @@ import {
   Row,
   Rows,
   Col,
-  Cols,
-  Cell,
 } from 'react-native-table-component';
+import { Video, ResizeMode } from 'expo-av';
 
 import styles from './styles';
 import Header from '@/components/Header';
@@ -28,6 +28,7 @@ import InfoPart from './components/InfoPart';
 import ButtonItem from '@/components/Button';
 import ReviewItem from './components/ReviewItem';
 import Pagination from '@/components/Pagination';
+import BookButton from './components/BookBtn';
 
 const types = [
   'All',
@@ -86,8 +87,45 @@ const tableTitle = [
   '15:00 - 15:25',
   '15:30 - 15:55',
   '16:00 - 16:25',
+  '16:30 - 16:55',
+  '17:00 - 17:25',
+  '17:30 - 17:55',
+  '18:00 - 18:25',
+  '18:30 - 18:55',
+  '19:00 - 19:25',
+  '19:30 - 19:55',
+  '20:00 - 20:25',
+  '20:30 - 20:55',
+  '21:00 - 21:25',
+  '21:30 - 21:55',
+  '22:00 - 22:25',
+  '22:30 - 22:55',
+  '23:00 - 23:25',
+  '23:30 - 23:55',
 ];
+
+const rowData = tableTitle.map((row) => [
+  <BookButton disabled onPress={() => {}} />,
+  <BookButton onPress={() => {}} />,
+  <Text
+    style={{
+      fontSize: 13,
+      fontWeight: '500',
+      color: 'rgb(48 191 109)',
+      textAlign: 'center',
+    }}
+  >
+    Book
+  </Text>,
+  '',
+  '',
+  '',
+  '',
+]);
+
 const TutorDetail = () => {
+  const [isLike, setIsLike] = useState(false);
+
   const renderItem = (items: any[]) => {
     return items.map((item, index) => {
       return (
@@ -122,26 +160,8 @@ const TutorDetail = () => {
     });
   };
 
-  const BookBtn = (data: any, index?: number) => (
-    <TouchableOpacity onPress={() => {}}>
-      <View style={styles.btn}>
-        <Text style={styles.btnText}>button</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const rowData = tableTitle.map((row) => [
-    BookBtn('1'),
-    BookBtn('1'),
-    BookBtn('1'),
-    BookBtn('1'),
-    BookBtn('1'),
-    BookBtn('1'),
-    BookBtn('1'),
-  ]);
-
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Header />
       <View style={styles.inner}>
         <View style={styles.info}>
@@ -186,16 +206,29 @@ const TutorDetail = () => {
             on Youtube. My most memorable life experience would be living in and
             traveling around Southeast Asia.
           </Text>
-          <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <AntDesign name='hearto' size={24} color={colors.primary} />
-              <Text style={{ marginTop: 4, color: colors.primary }}>
-                Favorite
-              </Text>
-            </View>
-            <View style={{ alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Pressable
+              onPress={() => {
+                setIsLike(!isLike);
+              }}
+            >
+              <View style={{ alignItems: 'center' }}>
+                {isLike ? (
+                  <AntDesign name='heart' size={24} color={colors.error} />
+                ) : (
+                  <AntDesign name='hearto' size={24} color={colors.primary} />
+                )}
+                <Text
+                  style={{
+                    marginTop: 4,
+                    color: isLike ? colors.error : colors.primary,
+                  }}
+                >
+                  Favorite
+                </Text>
+              </View>
+            </Pressable>
+            <View style={{ alignItems: 'center', marginLeft: 54 }}>
               <AntDesign
                 name='exclamationcircleo'
                 size={24}
@@ -206,11 +239,21 @@ const TutorDetail = () => {
               </Text>
             </View>
           </View>
-          <View
-            style={{ height: 300, backgroundColor: 'red', marginVertical: 25 }}
-          ></View>
+          <Video
+            style={styles.video}
+            source={{
+              uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+            }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
+            onPlaybackStatusUpdate={(status) => {}}
+          />
+
           <InfoPart title='Education'>
-            <Text>BA</Text>
+            <Text style={{ fontSize: 14, color: colors.text, marginLeft: 12 }}>
+              BA
+            </Text>
           </InfoPart>
           <InfoPart title='Languages'>
             <View style={{ flexDirection: 'row' }}>
@@ -289,7 +332,7 @@ const TutorDetail = () => {
               <Row
                 data={tableHead}
                 style={styles.head}
-                textStyle={styles.text}
+                textStyle={{ textAlign: 'center' }}
                 widthArr={[100, 80, 80, 80, 80, 80, 80, 80]}
               />
               <TableWrapper style={styles.wrapper}>
@@ -297,14 +340,13 @@ const TutorDetail = () => {
                   data={tableTitle}
                   heightArr={tableTitle.map((value) => 40)}
                   width={100}
-                  textStyle={styles.text}
+                  textStyle={{ textAlign: 'center' }}
                 />
 
                 <Rows
                   data={rowData}
                   style={styles.row}
-                  textStyle={styles.text}
-                  widthArr={[80, 80, 80, 80, 80, 80, 80, 80]}
+                  widthArr={[80, 80, 80, 80, 80, 80, 80]}
                 />
               </TableWrapper>
             </Table>

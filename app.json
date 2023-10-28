@@ -24,6 +24,7 @@
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "hermesEngine": "jsc",
       "package": "com.nxquan.lettutor"
     },
     "web": {

@@ -1,6 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { colors } from '@/constants';
+import { Dimensions, StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: colors.white,
+  },
   inner: {
     paddingHorizontal: 10,
     paddingTop: 20,
@@ -15,6 +18,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 20,
   },
+  video: {
+    height: 300,
+    marginHorizontal: -12,
+    borderRadius: 10,
+    marginVertical: 25,
+  },
   actionBtn: {
     padding: 4,
     borderRadius: 4,
@@ -22,10 +31,9 @@ const styles = StyleSheet.create({
   head: { height: 40, backgroundColor: '#f1f8ff' },
   wrapper: { flexDirection: 'row' },
   title: { flex: 1, backgroundColor: '#f6f8fa' },
-  row: { height: 40 },
-  text: { textAlign: 'center' },
-  btn: { width: 58, height: 18, backgroundColor: '#78B7BB', borderRadius: 2 },
-  btnText: { textAlign: 'center', color: '#fff' },
+  row: {
+    height: 40,
+  },
 });
 
 export default styles;
