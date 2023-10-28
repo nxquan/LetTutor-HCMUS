@@ -6,31 +6,26 @@ const width = Dimensions.get('window').width;
 const styles = StyleSheet.create({
   nav: {
     width: width,
-    height: 70,
+    height: 60,
     backgroundColor: colors.white,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomColor: colors.grey300,
     borderBottomWidth: 1,
-    paddingLeft: 18,
-    paddingRight: 10,
+    paddingHorizontal: 6,
   },
   logo: {
-    width: '50%',
+    width: '40%',
   },
   languageBtn: {
-    backgroundColor: colors.grey350,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   languageIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 30,
+    height: 30,
+    borderRadius: 999,
   },
   actions: {
     flexDirection: 'row',
@@ -40,7 +35,11 @@ const styles = StyleSheet.create({
   openSideMenu: {
     padding: 8,
     borderRadius: 8,
-    marginLeft: 12,
+    marginLeft: 8,
+  },
+  backBtn: {
+    padding: 8,
+    borderRadius: 999,
   },
 });
 

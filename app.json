@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "LetTutor",
-    "slug": "LetTutor",
+    "slug": "lettutor",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
@@ -12,6 +12,10 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      "@config-plugins/react-native-blob-util",
+      "@config-plugins/react-native-pdf"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -19,10 +23,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.nxquan.lettutor"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "265e7233-6eba-4b7e-aece-01d9da58d155"
+      }
+    },
+    "owner": "nxquan"
   }
 }

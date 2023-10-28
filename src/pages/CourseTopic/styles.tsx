@@ -1,6 +1,7 @@
 import { colors } from '@/constants';
 import { StyleSheet, Dimensions } from 'react-native';
 const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -9,13 +10,13 @@ const styles = StyleSheet.create({
   inner: {
     alignItems: 'center',
   },
-  infoContainer: {
+  courseInfo: {
     elevation: 6,
     shadowColor: 'rgba(0,0,0,0.5)',
     shadowRadius: 8,
     backgroundColor: colors.white,
     borderRadius: 8,
-    width: width * 0.9,
+    width: width * 0.95,
     marginTop: 16,
     marginBottom: 12,
   },
@@ -49,7 +50,42 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
   },
-  showPdfContainer: {},
+  pdfContainer: {
+    flex: 1,
+    marginTop: 12,
+    width: width * 0.95,
+    marginBottom: 32,
+  },
+  pdfHeader: {
+    paddingHorizontal: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#eee',
+    paddingVertical: 6,
+    borderColor: 'rgba(0,0,0,0.1)',
+    borderWidth: 1,
+  },
+  pdfActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pdfBtn: {
+    padding: 4,
+    borderRadius: 4,
+  },
+  pdfBody: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#eee',
+  },
+  pdfSidebar: {
+    borderColor: 'rgba(0,0,0,0.1)',
+    borderWidth: 1,
+  },
+  pdf: {
+    width: width * 0.95,
+    height: height * 3,
+  },
 });
 
 export default styles;
