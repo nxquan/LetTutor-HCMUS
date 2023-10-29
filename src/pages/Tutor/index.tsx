@@ -25,6 +25,7 @@ import { colors } from '@/constants';
 import Button from '@/components/Button';
 import TutorItem from './components/TutorItem';
 import Pagination from '@/components/Pagination';
+import DropdownMenu from '@/components/DropdownMenu';
 
 const width = Dimensions.get('window').width; //full width
 const height = Dimensions.get('window').height; //full height
@@ -43,6 +44,13 @@ const typesOfTutor = [
   'TOEFL',
   'TOEIC',
 ];
+
+const nationalities = [
+  'Foreign tutor',
+  'Vietnamese tutor',
+  'Native English tutor',
+];
+
 interface SearchState {
   tutorName: string;
   tutorNationality: string;
@@ -54,6 +62,8 @@ interface SearchState {
 const Tutor = () => {
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isShowTimePicker, setIsShowTimePicker] = useState(false);
+  const [isOpenNationality, setIsOpenNationality] = useState(false);
+
   const [selectedTypes, setSelectedTypes] = useState('All');
   const [timeType, setTimeType] = useState('start');
 
@@ -104,11 +114,20 @@ const Tutor = () => {
     setTimeType(type);
   };
 
+  const onChangeNationality = (item: string) => {
+    setSearchValue((prev: any) => {
+      return {
+        ...prev,
+        tutorNationality: item,
+      };
+    });
+  };
+
   const renderTypesOfTutor = () => {
     return typesOfTutor.map((type, index) => {
-      let active = {};
+      let _styles = {};
       if (selectedTypes == type) {
-        active = {
+        _styles = {
           color: colors.primary,
           backgroundColor: colors.backgroundActive,
         };
@@ -125,7 +144,9 @@ const Tutor = () => {
             marginLeft: 10,
             marginBottom: 8,
             borderRadius: 6,
-            ...active,
+            elevation: 1,
+            shadowColor: 'rgba(0, 0, 0,0.2)',
+            ..._styles,
           }}
         />
       );
@@ -189,16 +210,53 @@ const Tutor = () => {
         <Text style={{ fontSize: 29, fontWeight: '700', marginBottom: 6 }}>
           Find a tutor
         </Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
           <TextInput
             placeholder='Enter tutor name'
             style={[styles.inputContainer, { flex: 1, marginRight: 12 }]}
           />
-          <TextInput
-            placeholder='Select tutor national'
-            style={styles.inputContainer}
-          />
+          <DropdownMenu
+            data={nationalities}
+            onChangeOpen={setIsOpenNationality}
+            selectedItem={searchValue.tutorNationality}
+            onChangeSelected={onChangeNationality}
+            isOpen={isOpenNationality}
+            style={{ zIndex: 3, flex: 1 }}
+          >
+            <Pressable
+              onPress={() => {
+                setIsOpenNationality(!isOpenNationality);
+              }}
+            >
+              <View
+                style={[
+                  styles.inputContainer,
+                  { flexDirection: 'row', alignItems: 'center' },
+                ]}
+              >
+                <TextInput
+                  placeholder={
+                    searchValue.tutorNationality || 'Select nationality'
+                  }
+                  editable={false}
+                  style={{ flex: 1 }}
+                />
+                {isOpenNationality ? (
+                  <Entypo name='chevron-small-down' size={24} color='black' />
+                ) : (
+                  <Entypo name='chevron-small-right' size={24} color='black' />
+                )}
+              </View>
+            </Pressable>
+          </DropdownMenu>
         </View>
+
         <Text style={{ fontSize: 18, fontWeight: '500', marginTop: 10 }}>
           Select available tutoring time:
         </Text>

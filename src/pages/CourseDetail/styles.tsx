@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: 'contain',
     width: '100%',
-    height: 240,
+    height: 260,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
   detailContent: {
-    marginTop: 12,
+    marginTop: 16,
   },
   detailHeading: {
     flexDirection: 'row',
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
   },
   topicItem: {
     flexDirection: 'row',
-    elevation: 6,
-    shadowColor: 'rgba(0,0,0,0.5)',
+    elevation: 2,
+    shadowColor: 'rgba(0,0,0,0.4)',
     shadowRadius: 4,
     borderRadius: 4,
     backgroundColor: colors.white,

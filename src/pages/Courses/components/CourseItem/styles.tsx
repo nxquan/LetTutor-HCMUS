@@ -6,25 +6,24 @@ const height = Dimensions.get('window').height; //full height
 
 const styles = StyleSheet.create({
   container: {
-    elevation: 12,
-    shadowColor: 'black',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
     shadowRadius: 8,
     backgroundColor: colors.white,
     borderRadius: 8,
-    width: width * 0.4,
+    width: width * 0.5,
     marginTop: 16,
-    marginBottom: 12,
+    marginLeft: 12,
   },
   info: {
     paddingHorizontal: 24,
     paddingTop: 12,
-    elevation: 10,
     paddingBottom: 10,
   },
   image: {
     resizeMode: 'contain',
-    width: width * 0.4,
-    height: width * 0.3,
+    width: width * 0.5,
+    height: width * 0.35,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },

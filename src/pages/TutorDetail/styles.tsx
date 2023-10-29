@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     height: 300,
     marginHorizontal: -12,
     borderRadius: 10,
-    marginVertical: 25,
   },
   actionBtn: {
     padding: 4,

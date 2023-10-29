@@ -6,8 +6,11 @@ import styles from './styles';
 import Header from '@/components/Header';
 import { images } from '@/assets';
 import { colors } from '@/constants';
+import { useNavigation } from '@react-navigation/native';
+import StackProps from '@/global/type';
 
 const CourseDetail = (props: any) => {
+  const navigation = useNavigation<StackProps>();
   const {} = props;
 
   return (
@@ -113,19 +116,31 @@ const CourseDetail = (props: any) => {
               <View style={styles.line}></View>
             </View>
             <View style={[styles.detailItem]}>
-              <TouchableOpacity style={styles.topicItem} activeOpacity={0.7}>
+              <TouchableOpacity
+                style={styles.topicItem}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('CourseTopic')}
+              >
                 <Text style={[styles.detailItemHeading, styles.topic]}>
                   1. Internet
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.topicItem} activeOpacity={0.7}>
+              <TouchableOpacity
+                style={styles.topicItem}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('CourseTopic')}
+              >
                 <Text style={[styles.detailItemHeading, styles.topic]}>
-                  2. Internet
+                  2. Artificial Intelligence (AI)
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.topicItem} activeOpacity={0.7}>
+              <TouchableOpacity
+                style={styles.topicItem}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('CourseTopic')}
+              >
                 <Text style={[styles.detailItemHeading, styles.topic]}>
-                  3. Internet
+                  3. Social Media
                 </Text>
               </TouchableOpacity>
             </View>
@@ -139,19 +154,21 @@ const CourseDetail = (props: any) => {
             <View style={styles.detailItem}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <AntDesign name='link' size={18} color={colors.primary} />
-                <Text style={[styles.detailItemHeading]}>
-                  Keegan
+                <Text style={[styles.detailItemHeading]}>Keegan</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('TutorDetail')}
+                >
                   <Text
                     style={{
-                      marginLeft: 10,
                       color: colors.primary,
+                      fontSize: 14,
                       fontWeight: '400',
+                      marginLeft: 6,
                     }}
                   >
-                    {' '}
                     More info
                   </Text>
-                </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

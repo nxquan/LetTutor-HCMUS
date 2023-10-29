@@ -161,7 +161,11 @@ const TutorDetail = () => {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      stickyHeaderIndices={[0]}
+    >
       <Header />
       <View style={styles.inner}>
         <View style={styles.info}>
@@ -193,7 +197,7 @@ const TutorDetail = () => {
           <Text
             style={{
               paddingTop: 15,
-              marginBottom: 15,
+              marginBottom: 12,
               textAlign: 'justify',
               fontSize: 15,
               color: colors.text,
@@ -207,10 +211,12 @@ const TutorDetail = () => {
             traveling around Southeast Asia.
           </Text>
           <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 setIsLike(!isLike);
               }}
+              style={{ padding: 8 }}
+              activeOpacity={0.8}
             >
               <View style={{ alignItems: 'center' }}>
                 {isLike ? (
@@ -227,17 +233,25 @@ const TutorDetail = () => {
                   Favorite
                 </Text>
               </View>
-            </Pressable>
-            <View style={{ alignItems: 'center', marginLeft: 54 }}>
-              <AntDesign
-                name='exclamationcircleo'
-                size={24}
-                color={colors.primary}
-              />
-              <Text style={{ marginTop: 4, color: colors.primary }}>
-                Report
-              </Text>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setIsLike(!isLike);
+              }}
+              style={{ padding: 8 }}
+              activeOpacity={0.7}
+            >
+              <View style={{ alignItems: 'center', marginLeft: 54 }}>
+                <AntDesign
+                  name='exclamationcircleo'
+                  size={24}
+                  color={colors.primary}
+                />
+                <Text style={{ marginTop: 4, color: colors.primary }}>
+                  Report
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
           <Video
             style={styles.video}

@@ -31,7 +31,7 @@ const DropdownMenu = (props: {
       onOutsidePress={function (): void {
         onChangeOpen(false);
       }}
-      style={[{ marginTop: 16 }, style]}
+      style={style}
     >
       {children}
       {isOpen && (

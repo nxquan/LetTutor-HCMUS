@@ -59,7 +59,7 @@ const Courses = () => {
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
   const [isOpenCategoriesMenu, setIsOpenCategoriesMenu] = useState(false);
   const [isOpenSortMenu, setIsOpenSortMenu] = useState(false);
-  const [tab, setTab] = useState('');
+  const [tab, setTab] = useState('course');
 
   const [searchValue, setSearchValue] = useState<SearchState>({
     levels: [],
@@ -180,7 +180,7 @@ const Courses = () => {
           onChangeSelected={onChangeSearchValue}
           selectedItem={searchValue.levels}
           typeOfMenu='levels'
-          style={{ zIndex: 3 }}
+          style={{ zIndex: 3, marginTop: 16 }}
         >
           <Pressable
             onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
@@ -217,7 +217,7 @@ const Courses = () => {
           onChangeSelected={onChangeSearchValue}
           selectedItem={null}
           typeOfMenu='categories'
-          style={{ zIndex: 2 }}
+          style={{ zIndex: 2, marginTop: 16 }}
         >
           <Pressable
             onPress={() => {
@@ -256,7 +256,7 @@ const Courses = () => {
           onChangeSelected={onChangeSearchValue}
           selectedItem={searchValue.sortByLevel}
           typeOfMenu='sortByLevel'
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1, marginTop: 16 }}
         >
           <Pressable
             onPress={() => setIsOpenSortMenu(!isOpenSortMenu)}
@@ -312,46 +312,54 @@ const Courses = () => {
         </TouchableOpacity>
       </View>
       {tab === 'course' && (
-        <View>
+        <View style={{ marginBottom: 32 }}>
           <View style={styles.courseSection}>
             <Text style={styles.courseHeading}>English For Traveling</Text>
-            <View style={styles.courseList}>
-              <CourseItem src={images.courseItem1} />
-              <CourseItem src={images.courseItem1} />
-              <CourseItem src={images.courseItem1} />
-              <CourseItem src={images.courseItem1} />
-              <CourseItem src={images.courseItem1} />
-            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.courseList}>
+                <CourseItem src={images.courseItem1} />
+                <CourseItem src={images.courseItem1} />
+                <CourseItem src={images.courseItem1} />
+                <CourseItem src={images.courseItem1} />
+                <CourseItem src={images.courseItem1} />
+              </View>
+            </ScrollView>
           </View>
           <View style={styles.courseSection}>
             <Text style={styles.courseHeading}>English For Beginners</Text>
-            <View style={styles.courseList}>
-              <CourseItem src={images.courseItem2} />
-              <CourseItem src={images.courseItem2} />
-              <CourseItem src={images.courseItem2} />
-              <CourseItem src={images.courseItem2} />
-              <CourseItem src={images.courseItem2} />
-            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.courseList}>
+                <CourseItem src={images.courseItem2} />
+                <CourseItem src={images.courseItem2} />
+                <CourseItem src={images.courseItem2} />
+                <CourseItem src={images.courseItem2} />
+                <CourseItem src={images.courseItem2} />
+              </View>
+            </ScrollView>
           </View>
           <View style={styles.courseSection}>
             <Text style={styles.courseHeading}>Business English</Text>
-            <View style={styles.courseList}>
-              <CourseItem src={images.courseItem3} />
-              <CourseItem src={images.courseItem3} />
-              <CourseItem src={images.courseItem3} />
-              <CourseItem src={images.courseItem3} />
-              <CourseItem src={images.courseItem3} />
-            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.courseList}>
+                <CourseItem src={images.courseItem3} />
+                <CourseItem src={images.courseItem3} />
+                <CourseItem src={images.courseItem3} />
+                <CourseItem src={images.courseItem3} />
+                <CourseItem src={images.courseItem3} />
+              </View>
+            </ScrollView>
           </View>
           <View style={styles.courseSection}>
             <Text style={styles.courseHeading}>English For Kid</Text>
-            <View style={styles.courseList}>
-              <CourseItem src={images.courseItem4} />
-              <CourseItem src={images.courseItem4} />
-              <CourseItem src={images.courseItem4} />
-              <CourseItem src={images.courseItem4} />
-              <CourseItem src={images.courseItem4} />
-            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.courseList}>
+                <CourseItem src={images.courseItem4} />
+                <CourseItem src={images.courseItem4} />
+                <CourseItem src={images.courseItem4} />
+                <CourseItem src={images.courseItem4} />
+                <CourseItem src={images.courseItem4} />
+              </View>
+            </ScrollView>
           </View>
         </View>
       )}

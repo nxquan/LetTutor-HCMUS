@@ -1,12 +1,19 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import styles from './styles';
-import { images } from '@/assets';
+import StackProps from '@/global/type';
+import { useNavigation } from '@react-navigation/native';
 
 const CourseItem = (props: any) => {
+  const navigation = useNavigation<StackProps>();
+
   const { src } = props;
   return (
-    <TouchableOpacity style={styles.container} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('CourseDetail')}
+    >
       <Image source={src} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>Life in the Internet Age</Text>

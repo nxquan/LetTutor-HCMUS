@@ -26,13 +26,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tutorContainer: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 16,
     marginTop: 33,
     marginBottom: 30,
   },
   inputContainer: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: 14,
     borderWidth: 1,
     borderColor: colors.grey300,
     borderRadius: 6,

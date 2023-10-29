@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.grey300,
     borderBottomWidth: 1,
     paddingHorizontal: 6,
+    zIndex: 999,
   },
   logo: {
     width: '40%',

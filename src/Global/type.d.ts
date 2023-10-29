@@ -34,8 +34,5 @@ export type DrawerProps = DrawerNavigationProp<
 	'Schedule',
 	'History',
 	'Courses',
-	'CourseDetail',
-	'CourseTopic',
-	'TutorDetail'
 >;
 export default StackProps;

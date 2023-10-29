@@ -9,13 +9,13 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 16,
   },
-  infoContainer: {
-    flexDirection: 'row',
-  },
   info: {
     flex: 1,
+    flexDirection: 'row',
   },
-  infoDes: {},
+  infoDes: {
+    marginLeft: 12,
+  },
   bookBtn: {
     flexDirection: 'row',
     alignItems: 'center',
