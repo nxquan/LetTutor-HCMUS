@@ -1,0 +1,143 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.lettutor"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="33" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\debug\AndroidManifest.xml:5:5-77
+11-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\debug\AndroidManifest.xml:5:22-75
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:3:5-67
+12-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:3:22-64
+13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+13-->[com.facebook.flipper:flipper:0.182.0] C:\Users\nxquan\.gradle\caches\transforms-3\e13f88164840fe641a466d05cd8edac7\transformed\jetified-flipper-0.182.0\AndroidManifest.xml:16:5-76
+13-->[com.facebook.flipper:flipper:0.182.0] C:\Users\nxquan\.gradle\caches\transforms-3\e13f88164840fe641a466d05cd8edac7\transformed\jetified-flipper-0.182.0\AndroidManifest.xml:16:22-73
+14    <!--
+15         Required to keep CPU alive while downloading files
+16        (NOT to keep screen awake)
+17    -->
+18    <uses-permission android:name="android.permission.WAKE_LOCK" />
+18-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:14:5-68
+18-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:14:22-65
+19    <!--
+20         Required to poll the state of the network connection
+21        and respond to changes
+22    -->
+23    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Required to read and write the expansion files on shared storage -->
+23-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:20:5-79
+23-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:20:22-76
+24    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Required to read and write the expansion files on shared storage for Android 11 -->
+24-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:26:5-81
+24-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:26:22-78
+25    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Required to to download files without a notification -->
+25-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:29:5-80
+25-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:29:22-77
+26    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+26-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:32:5-88
+26-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:32:22-85
+27
+28    <application
+28-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:5:5-24:19
+29        android:name="com.lettutor.MainApplication"
+29-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:6:7-38
+30        android:allowBackup="false"
+30-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:10:7-34
+31        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+31-->[androidx.core:core:1.8.0] C:\Users\nxquan\.gradle\caches\transforms-3\9623e378e4dfc57c47793d0ffd25ee05\transformed\core-1.8.0\AndroidManifest.xml:24:18-86
+32        android:debuggable="true"
+33        android:icon="@mipmap/ic_launcher"
+33-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:8:7-41
+34        android:label="@string/app_name"
+34-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:7:7-39
+35        android:roundIcon="@mipmap/ic_launcher_round"
+35-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:9:7-52
+36        android:theme="@style/AppTheme"
+36-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:11:7-38
+37        android:usesCleartextTraffic="true" >
+37-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\debug\AndroidManifest.xml:8:9-44
+38        <activity
+38-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\debug\AndroidManifest.xml:11:9-111
+39            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+39-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\debug\AndroidManifest.xml:11:19-83
+40            android:exported="false" />
+40-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\debug\AndroidManifest.xml:11:84-108
+41        <activity
+41-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:12:7-23:18
+42            android:name="com.lettutor.MainActivity"
+42-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:13:9-37
+43            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+43-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:15:9-118
+44            android:exported="true"
+44-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:18:9-32
+45            android:label="@string/app_name"
+45-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:14:9-41
+46            android:launchMode="singleTask"
+46-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:16:9-40
+47            android:windowSoftInputMode="adjustResize" >
+47-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:17:9-51
+48            <intent-filter>
+48-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:19:9-22:25
+49                <action android:name="android.intent.action.MAIN" />
+49-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:20:13-65
+49-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:20:21-62
+50
+51                <category android:name="android.intent.category.LAUNCHER" />
+51-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:21:13-73
+51-->D:\Workspace\mobile\react-native\LetTutor\android\app\src\main\AndroidManifest.xml:21:23-70
+52            </intent-filter>
+53        </activity>
+54
+55        <provider
+55-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:35:9-43:20
+56            android:name="com.ReactNativeBlobUtil.Utils.FileProvider"
+56-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:36:13-70
+57            android:authorities="com.lettutor.provider"
+57-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:37:13-60
+58            android:exported="false"
+58-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:38:13-37
+59            android:grantUriPermissions="true" >
+59-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:39:13-47
+60            <meta-data
+60-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:40:13-42:58
+61                android:name="android.support.FILE_PROVIDER_PATHS"
+61-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:41:17-67
+62                android:resource="@xml/provider_paths" />
+62-->[:react-native-blob-util] D:\Workspace\mobile\react-native\LetTutor\node_modules\react-native-blob-util\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:42:17-55
+63        </provider>
+64
+65        <meta-data
+65-->[com.facebook.soloader:soloader:0.10.5] C:\Users\nxquan\.gradle\caches\transforms-3\ec3312a013bd7d8a70466a1977a1dba4\transformed\jetified-soloader-0.10.5\AndroidManifest.xml:12:9-14:37
+66            android:name="com.facebook.soloader.enabled"
+66-->[com.facebook.soloader:soloader:0.10.5] C:\Users\nxquan\.gradle\caches\transforms-3\ec3312a013bd7d8a70466a1977a1dba4\transformed\jetified-soloader-0.10.5\AndroidManifest.xml:13:13-57
+67            android:value="false" />
+67-->[com.facebook.soloader:soloader:0.10.5] C:\Users\nxquan\.gradle\caches\transforms-3\ec3312a013bd7d8a70466a1977a1dba4\transformed\jetified-soloader-0.10.5\AndroidManifest.xml:14:13-34
+68
+69        <provider
+69-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+70            android:name="androidx.startup.InitializationProvider"
+70-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:25:13-67
+71            android:authorities="com.lettutor.androidx-startup"
+71-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:26:13-68
+72            android:exported="false" >
+72-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:27:13-37
+73            <meta-data
+73-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+74                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+74-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:30:17-75
+75                android:value="androidx.startup" />
+75-->[androidx.emoji2:emoji2:1.2.0] C:\Users\nxquan\.gradle\caches\transforms-3\259206a491dfa4b8b6052b2b1c41d979\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:31:17-49
+76            <meta-data
+76-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\nxquan\.gradle\caches\transforms-3\b1c537e6049df5a2dcb1a9b20b1a8868\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+77                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+77-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\nxquan\.gradle\caches\transforms-3\b1c537e6049df5a2dcb1a9b20b1a8868\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+78                android:value="androidx.startup" />
+78-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\nxquan\.gradle\caches\transforms-3\b1c537e6049df5a2dcb1a9b20b1a8868\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+79        </provider>
+80    </application>
+81
+82</manifest>
