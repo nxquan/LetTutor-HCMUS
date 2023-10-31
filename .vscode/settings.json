@@ -1,0 +1,10 @@
+{
+  "cSpell.words": ["Ionicons", "Pressable"],
+  "editor.formatOnSave": true,
+  "editor.hover.enabled": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.endOfLine": "lf",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
