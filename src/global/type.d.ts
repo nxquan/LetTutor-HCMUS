@@ -28,8 +28,6 @@ type StackProps = NativeStackNavigationProp<
 >;
 export type DrawerProps = DrawerNavigationProp<
   RootParamList,
-  'SignIn',
-  'SignUp',
   'Tutor',
   'Schedule',
   'History',

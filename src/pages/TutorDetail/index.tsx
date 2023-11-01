@@ -18,7 +18,7 @@ import {
   Rows,
   Col,
 } from 'react-native-table-component';
-// import { Video, ResizeMode } from 'expo-av';
+import Video from 'react-native-video';
 
 import styles from './styles';
 import Header from '@/components/Header';
@@ -248,16 +248,16 @@ const TutorDetail = () => {
               </View>
             </TouchableOpacity>
           </View>
-          {/* <Video
-            style={styles.video}
-            source={{
-              uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-            }}
-            useNativeControls
-            resizeMode={ResizeMode.CONTAIN}
-            isLooping
-            onPlaybackStatusUpdate={status => {}}
-          /> */}
+
+          <View style={{marginVertical: 12}}>
+            <Video
+              source={{
+                uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+              }} // Can be a URL or a local file.
+              style={styles.video}
+              resizeMode="cover"
+            />
+          </View>
 
           <InfoPart title="Education">
             <Text style={{fontSize: 14, color: colors.text, marginLeft: 12}}>

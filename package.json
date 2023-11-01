@@ -28,7 +28,8 @@
     "react-native-screens": "^3.27.0",
     "react-native-svg": "^13.14.0",
     "react-native-table-component": "github:sturmenta/react-native-table-component#e1582aaba92b7e070c31c98b116eea9c23e17f6d",
-    "react-native-vector-icons": "^10.0.1"
+    "react-native-vector-icons": "^10.0.1",
+    "react-native-video": "^5.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -39,6 +40,7 @@
     "@tsconfig/react-native": "^3.0.0",
     "@types/react": "^18.0.24",
     "@types/react-native-vector-icons": "^6.4.16",
+    "@types/react-native-video": "^5.0.17",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.2.1",
     "eslint": "^8.19.0",

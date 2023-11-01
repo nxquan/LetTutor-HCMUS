@@ -1,13 +1,22 @@
-import { View, Text, Modal } from 'react-native';
+import {View, Text, Modal} from 'react-native';
 import React from 'react';
 import styles from './styles';
 
-const ModalPopper = (props: any) => {
-  const { visible, transparent, children, onChangeShowModal } = props;
+type Props = {
+  visible: boolean;
+  onChangeShowModal: any;
+  children?: React.JSX.Element;
+  transparent?: boolean;
+  modalInnerStyle?: any;
+};
+
+const ModalPopper = (props: Props) => {
+  const {visible, transparent, children, onChangeShowModal, modalInnerStyle} =
+    props;
   return (
     <Modal visible={visible} transparent={transparent}>
       <View style={styles.modalContainer}>
-        <View style={styles.modalInner}>{children}</View>
+        <View style={[styles.modalInner, modalInnerStyle]}>{children}</View>
       </View>
     </Modal>
   );

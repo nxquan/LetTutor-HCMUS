@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   dropdownItem: {
+    color: colors.text,
     paddingVertical: 10,
     paddingHorizontal: 12,
     fontSize: 14,

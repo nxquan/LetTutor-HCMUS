@@ -53,10 +53,7 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   pdfContainer: {
-    flex: 1,
     marginTop: 12,
-    width: width * 0.95,
-    marginBottom: 32,
   },
   pdfHeader: {
     paddingHorizontal: 4,
@@ -66,17 +63,19 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderColor: 'rgba(0,0,0,0.1)',
     borderWidth: 1,
+
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
   pdfActions: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   pdfBtn: {
-    padding: 4,
+    padding: 6,
     borderRadius: 4,
   },
   pdfBody: {
-    flex: 1,
     flexDirection: 'row',
     backgroundColor: '#eee',
   },
@@ -85,8 +84,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   pdf: {
-    width: width * 0.95,
-    height: height * 3,
+    width: '100%',
+    height: height,
   },
 });
 

@@ -7,11 +7,11 @@ import React from 'react';
 
 import styles from './styles';
 import {images, languageImages} from '@/assets';
-import {DrawerProps} from '@/global/type';
+import StackProps, {DrawerProps} from '@/global/type';
 
 const Header = (props: any) => {
   const {} = props;
-  const navigation = useNavigation<DrawerProps>();
+  const navigation = useNavigation<DrawerProps | StackProps>();
 
   return (
     <View style={styles.nav}>

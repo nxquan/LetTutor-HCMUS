@@ -1,5 +1,5 @@
-import { colors } from '@/constants';
-import { Dimensions, StyleSheet } from 'react-native';
+import {colors} from '@/constants';
+import {Dimensions, StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   video: {
-    height: 300,
+    height: 240,
     marginHorizontal: -12,
     borderRadius: 10,
   },
@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 4,
   },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  wrapper: { flexDirection: 'row' },
-  title: { flex: 1, backgroundColor: '#f6f8fa' },
+  head: {height: 40, backgroundColor: '#f1f8ff'},
+  wrapper: {flexDirection: 'row'},
+  title: {flex: 1, backgroundColor: '#f6f8fa'},
   row: {
     height: 40,
   },

@@ -3,14 +3,15 @@ import React from 'react';
 import styles from './styles';
 interface TopicProps {
   isActive: boolean;
+  onSelect?: () => void;
 }
 const TopicItem = (props: TopicProps) => {
-  const {isActive} = props;
+  const {isActive, onSelect} = props;
   return (
     <TouchableHighlight
       activeOpacity={0.6}
       underlayColor="rgba(0, 0, 0, 0.08)"
-      onPress={() => {}}
+      onPress={onSelect}
       style={[styles.touchContainer, isActive && styles.active]}>
       <View style={styles.topicItem}>
         <Text style={styles.topicNo}>1.</Text>

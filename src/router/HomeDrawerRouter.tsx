@@ -7,7 +7,7 @@ import {
   View,
   TouchableHighlight,
 } from 'react-native';
-import Props from '@/global/type';
+import {DrawerProps} from '@/global/type';
 import Tutor from '@/pages/Tutor';
 import Schedule from '@/pages/Schedule';
 import History from '@/pages/History';
@@ -27,7 +27,7 @@ import {
 
 import {images} from '@/assets';
 import SignIn from '@/pages/SignIn';
-const Drawer = createDrawerNavigator<Props>();
+const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
   return (

@@ -6,35 +6,42 @@ import {
   ScrollView,
   TextInput,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
-// import Pdf from 'react-native-pdf';
+import Pdf from 'react-native-pdf';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import Header from '@/components/Header';
 import styles from './styles';
 import {images} from '@/assets';
 import {colors} from '@/constants';
 import TopicItem from '@/components/TopicItem';
+import ModalPopper from '@/components/ModalPopper';
 
-// const source = {
-//   uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
-//   cache: true,
-// };
+const source = {
+  uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
+  cache: true,
+};
 
 const CourseTopic = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [topics, setTopics] = useState([1, 2, 3, 4, 5]);
+  const [topics, setTopics] = useState(['1', '2', '3', '4', '5']);
+  const [selectedTopic, setSelectedTopic] = useState('');
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const onChangeShowModal = () => {
+    setIsOpenModal(!isOpenModal);
+  };
 
   return (
     <ScrollView
       style={styles.container}
       stickyHeaderIndices={[0]}
-      showsVerticalScrollIndicator={false}
-      //nestedScrollEnabled={true}
-    >
+      showsVerticalScrollIndicator={false}>
       <Header />
       <View style={styles.inner}>
         <View style={styles.courseInfo}>
@@ -48,35 +55,80 @@ const CourseTopic = () => {
           <View style={styles.topicList}>
             <Text style={styles.topicHeading}>List Topic</Text>
             {topics.map((topic, index) => {
-              return <TopicItem isActive={index === 0} key={index} />;
+              return (
+                <TopicItem
+                  isActive={index === 0}
+                  key={index}
+                  onSelect={() => {
+                    setSelectedTopic(topic);
+                    setIsOpenModal(true);
+                  }}
+                />
+              );
             })}
           </View>
         </View>
+      </View>
+
+      <ModalPopper
+        visible={isOpenModal && selectedTopic.length > 0}
+        onChangeShowModal={() => {}}
+        modalInnerStyle={{height: '100%', width: '100%', padding: 8}}>
         <View style={styles.pdfContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 12,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsOpenModal(false);
+              }}
+              activeOpacity={0.6}>
+              <Entypo
+                name="chevron-with-circle-left"
+                size={30}
+                color={colors.black}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: 18,
+                fontWeight: '500',
+                textAlign: 'center',
+                marginLeft: 16,
+              }}>
+              Topic: {selectedTopic}
+            </Text>
+          </View>
           <View style={styles.pdfHeader}>
             <View style={styles.pdfActions}>
               <TouchableHighlight
-                style={styles.pdfBtn}
+                style={[styles.pdfBtn, {marginRight: 6}]}
                 activeOpacity={0.7}
                 underlayColor="rgba(0,0,0,0.3)"
                 onPress={() => {}}>
                 <Feather name="chevron-up" size={20} color={colors.text} />
               </TouchableHighlight>
               <TextInput
+                placeholderTextColor={colors.black}
                 style={{
                   borderRadius: 4,
                   borderWidth: 1,
                   borderColor: 'rgba(0,0,0,0.1)',
                   backgroundColor: colors.white,
+                  color: colors.black,
                   fontSize: 14,
                   width: 32,
                   marginRight: 2,
                   textAlign: 'center',
                 }}
               />
-              <Text style={{fontSize: 14}}>/17</Text>
+              <Text style={{fontSize: 14, color: colors.black}}>/17</Text>
               <TouchableHighlight
-                style={[styles.pdfBtn, {marginLeft: 4}]}
+                style={[styles.pdfBtn, {marginLeft: 6}]}
                 activeOpacity={0.7}
                 underlayColor="rgba(0,0,0,0.3)"
                 onPress={() => {}}>
@@ -92,7 +144,7 @@ const CourseTopic = () => {
                 <Feather name="zoom-in" size={20} color={colors.text} />
               </TouchableHighlight>
               <View style={[styles.pdfActions, {marginHorizontal: 4}]}>
-                <Text>100%</Text>
+                <Text style={{color: colors.black}}>100%</Text>
                 <Feather
                   name="chevron-down"
                   size={20}
@@ -141,49 +193,28 @@ const CourseTopic = () => {
                 </TouchableHighlight>
               </View>
             </View>
-            {/* <ReadPdf /> */}
-            {/* <ScrollView nestedScrollEnabled={true}> */}
-
-            {/* </ScrollView> */}
-            {/* <Pdf
-              source={source}
-              trustAllCerts={true}
-              onLoadComplete={(number, filePath) => {}}
-              onPageChanged={(page, numberOfPages) => {
-                console.log(`Current page: ${page}`);
-              }}
-              onError={(error) => {
-                console.log(error);
-              }}
-              onPressLink={(uri) => {
-                console.log(`Link pressed: ${uri}`);
-              }}
-              style={styles.pdf}
-            /> */}
+            <View style={{flex: 1}}>
+              <Pdf
+                source={source}
+                trustAllCerts={false}
+                onLoadComplete={(number, filePath) => {}}
+                onPageChanged={(page, numberOfPages) => {
+                  console.log(`Current page: ${page}`);
+                }}
+                onError={error => {
+                  console.log(error);
+                }}
+                onPressLink={uri => {
+                  console.log(`Link pressed: ${uri}`);
+                }}
+                style={styles.pdf}
+              />
+            </View>
           </View>
         </View>
-      </View>
-
+      </ModalPopper>
       <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
     </ScrollView>
-
-    // <View style={{ flex: 1 }}>
-    //   <Pdf
-    //     source={source}
-    //     trustAllCerts={true}
-    //     onLoadComplete={(number, filePath) => {}}
-    //     onPageChanged={(page, numberOfPages) => {
-    //       console.log(`Current page: ${page}`);
-    //     }}
-    //     onError={(error) => {
-    //       console.log(error);
-    //     }}
-    //     onPressLink={(uri) => {
-    //       console.log(`Link pressed: ${uri}`);
-    //     }}
-    //     style={styles.pdf}
-    //   />
-    // </View>
   );
 };
 
