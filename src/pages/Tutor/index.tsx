@@ -25,6 +25,8 @@ import Button from '@/components/Button';
 import TutorItem from './components/TutorItem';
 import Pagination from '@/components/Pagination';
 import DropdownMenu from '@/components/DropdownMenu';
+import StackProps from '@/global/type';
+import {useNavigation} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -58,6 +60,7 @@ type SearchState = {
 };
 
 const Tutor = () => {
+  const navigation = useNavigation<StackProps>();
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isShowTimePicker, setIsShowTimePicker] = useState(false);
   const [isOpenNationality, setIsOpenNationality] = useState(false);
@@ -174,6 +177,8 @@ const Tutor = () => {
               <Text style={styles.notiRemainTimeText}>(starts in ...)</Text>
             </View>
             <TouchableOpacity
+              onPress={() => navigation.navigate('VideoCall')}
+              activeOpacity={0.8}
               style={{
                 backgroundColor: colors.white,
                 flex: 1,

@@ -7,6 +7,7 @@ import SignUp from '@/pages/SignUp';
 import HomeDrawerRouter from './HomeDrawerRouter';
 import CourseDetail from '@/pages/CourseDetail';
 import CourseTopic from '@/pages/CourseTopic';
+import VideoCall from '@/pages/VideoCall';
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
@@ -19,6 +20,7 @@ const MainStackRouter = () => {
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="CourseDetail" component={CourseDetail} />
       <Stack.Screen name="CourseTopic" component={CourseTopic} />
+      <Stack.Screen name="VideoCall" component={VideoCall} />
       <Stack.Screen name="HomeDrawerRouter" component={HomeDrawerRouter} />
     </Stack.Navigator>
   );

@@ -12,6 +12,7 @@ export type RootParamList = {
   CourseTopic: undefined;
   TutorDetail: undefined;
   HomeDrawerRouter: undefined;
+  VideoCall: undefined;
 };
 
 type StackProps = NativeStackNavigationProp<

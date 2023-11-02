@@ -7,10 +7,10 @@ import {colors} from '@/constants';
 import {images, languageImages} from '@/assets';
 import Button from '@/components/Button';
 import {useNavigation} from '@react-navigation/native';
-import {DrawerProps} from '@/global/type';
+import StackProps from '@/global/type';
 
 const TutorItem = () => {
-  const navigation = useNavigation<DrawerProps>();
+  const navigation = useNavigation<StackProps>();
   const [isLikeHeart, setIsLikeHeart] = useState(false);
 
   return (
