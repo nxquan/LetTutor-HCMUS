@@ -4,7 +4,7 @@ import styles from './styles';
 
 type Props = {
   visible: boolean;
-  onChangeShowModal: any;
+  onChangeShowModal?: any;
   children?: React.JSX.Element;
   transparent?: boolean;
   modalInnerStyle?: any;
