@@ -7,6 +7,7 @@ import {images} from '@/assets';
 import {colors} from '@/constants';
 import Pagination from '@/components/Pagination';
 import HistoryItem from './components/HistoryItem';
+import DrawerButton from '@/components/DrawerButton';
 
 const History = () => {
   return (
@@ -14,7 +15,7 @@ const History = () => {
       style={styles.container}
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} />
       <View style={styles.intro}>
         <Image source={images.history} style={{width: 120, height: 120}} />
         <View>

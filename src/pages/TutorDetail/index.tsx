@@ -7,8 +7,10 @@ import {
   Button,
   TouchableHighlight,
   TouchableOpacity,
+  Dimensions,
+  Pressable,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState, useLayoutEffect} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {
@@ -19,6 +21,9 @@ import {
   Col,
 } from 'react-native-table-component';
 import Video from 'react-native-video';
+import Slider from '@react-native-community/slider';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Orientation from 'react-native-orientation-locker';
 
 import styles from './styles';
 import Header from '@/components/Header';
@@ -29,7 +34,11 @@ import ButtonItem from '@/components/Button';
 import ReviewItem from './components/ReviewItem';
 import Pagination from '@/components/Pagination';
 import BookButton from './components/BookBtn';
+import DrawerButton from '@/components/DrawerButton';
+import BackButton from '@/components/BackButton';
+import formatTime from '@/utils/formatTime';
 
+const height = Dimensions.get('window').height;
 const types = [
   'All',
   'English for kids',
@@ -124,6 +133,22 @@ const rowData = tableTitle.map(() => [
 
 const TutorDetail = () => {
   const [isLike, setIsLike] = useState(false);
+  const [isClickedVideo, setIsClickedVideo] = useState(false);
+  const [isPaused, setIsPausedVideo] = useState(false);
+  const [videoProgress, setVideoProgress] = useState<any>();
+  const videoRef = useRef<any>();
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useLayoutEffect(() => {
+    const timerId = setTimeout(() => {
+      setIsClickedVideo(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [isClickedVideo]);
 
   const renderItem = (items: any[]) => {
     return items.map((item, index) => {
@@ -163,11 +188,11 @@ const TutorDetail = () => {
     <ScrollView
       style={styles.container}
       showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={[0]}>
-      <Header />
+      stickyHeaderIndices={isFullscreen ? [] : [0]}>
+      <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
       <View style={styles.inner}>
         <View style={styles.info}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', paddingHorizontal: 10}}>
             <Image source={images.avatar} style={styles.avatar} />
             <View>
               <Text
@@ -200,6 +225,7 @@ const TutorDetail = () => {
               textAlign: 'justify',
               fontSize: 15,
               color: colors.text,
+              paddingHorizontal: 10,
             }}>
             I am passionate about running and fitness, I often compete in
             trail/mountain running events and I love pushing myself. I am
@@ -208,7 +234,12 @@ const TutorDetail = () => {
             on Youtube. My most memorable life experience would be living in and
             traveling around Southeast Asia.
           </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              paddingHorizontal: 10,
+            }}>
             <TouchableOpacity
               onPress={() => {
                 setIsLike(!isLike);
@@ -249,15 +280,137 @@ const TutorDetail = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginVertical: 12}}>
+          <Pressable
+            onPress={() => setIsClickedVideo(true)}
+            style={{
+              marginVertical: 12,
+              width: '100%',
+              height: isFullscreen ? height : 240,
+            }}>
             <Video
+              ref={videoRef}
+              paused={isPaused}
+              onProgress={x => {
+                setVideoProgress(x);
+              }}
+              onEnd={() => {
+                setIsPausedVideo(true);
+                videoRef.current.seek(0);
+              }}
               source={{
                 uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
               }} // Can be a URL or a local file.
-              style={styles.video}
+              style={[styles.video, {height: isFullscreen ? height : 240}]}
               resizeMode="cover"
             />
-          </View>
+            {isClickedVideo && (
+              <TouchableOpacity
+                style={{
+                  width: '100%',
+                  height: isFullscreen ? height : 240,
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  position: 'absolute',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <View style={styles.videoControls}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      setIsPausedVideo(false);
+                      videoRef.current &&
+                        videoRef.current.seek(
+                          parseInt(videoProgress.currentTime) - 10,
+                        );
+                    }}>
+                    <MaterialCommunityIcons
+                      name="rewind"
+                      size={42}
+                      color={colors.white}
+                    />
+                  </TouchableOpacity>
+                  {isPaused ? (
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      style={{marginLeft: 40}}
+                      onPress={() => setIsPausedVideo(!isPaused)}>
+                      <MaterialCommunityIcons
+                        name="play-circle"
+                        size={42}
+                        color={colors.white}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      style={{marginLeft: 40}}
+                      onPress={() => setIsPausedVideo(!isPaused)}>
+                      <MaterialCommunityIcons
+                        name="pause-circle"
+                        size={42}
+                        color={colors.white}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={{marginLeft: 40}}
+                    onPress={() => {
+                      setIsPausedVideo(false);
+                      videoRef.current &&
+                        videoRef.current.seek(
+                          parseInt(videoProgress.currentTime) + 10,
+                        );
+                    }}>
+                    <MaterialCommunityIcons
+                      name="fast-forward"
+                      size={42}
+                      color={colors.white}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.videoSlider}>
+                  <Text style={styles.videoTime}>
+                    {formatTime(videoProgress.currentTime)}
+                  </Text>
+                  <Slider
+                    value={videoProgress.currentTime}
+                    onValueChange={pos => {
+                      setIsPausedVideo(false);
+                      videoRef.current &&
+                        videoRef.current.seek(Math.floor(pos));
+                    }}
+                    style={{height: 40, flex: 1}}
+                    minimumValue={0}
+                    maximumValue={videoProgress.seekableDuration}
+                    minimumTrackTintColor="#FFFFFF"
+                    maximumTrackTintColor="#000000"
+                  />
+                  <Text style={styles.videoTime}>
+                    {formatTime(videoProgress.seekableDuration)}
+                  </Text>
+
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={{marginLeft: 16}}
+                    onPress={() => {
+                      if (isFullscreen) {
+                        Orientation.lockToPortrait();
+                      } else {
+                        Orientation.lockToLandscape();
+                      }
+                      setIsFullscreen(!isFullscreen);
+                    }}>
+                    <MaterialCommunityIcons
+                      name="fullscreen"
+                      size={36}
+                      color={colors.white}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            )}
+          </Pressable>
 
           <InfoPart title="Education">
             <Text style={{fontSize: 14, color: colors.text, marginLeft: 12}}>
@@ -301,7 +454,7 @@ const TutorDetail = () => {
           </InfoPart>
         </View>
 
-        <View>
+        <View style={{paddingHorizontal: 10}}>
           <View
             style={{
               flexDirection: 'row',
@@ -358,7 +511,11 @@ const TutorDetail = () => {
         </View>
       </View>
 
-      <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
+      <StatusBar
+        backgroundColor={colors.white}
+        barStyle={'dark-content'}
+        hidden={isFullscreen}
+      />
     </ScrollView>
   );
 };

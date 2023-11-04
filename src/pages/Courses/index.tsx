@@ -20,6 +20,7 @@ import {images} from '@/assets';
 import {colors} from '@/constants';
 import DropdownMenu from '@/components/DropdownMenu';
 import CourseItem from './components/CourseItem';
+import DrawerButton from '@/components/DrawerButton';
 
 const levels = [
   'Any Level',
@@ -140,7 +141,7 @@ const Courses = () => {
       style={styles.container}
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} />
       <View style={styles.intro}>
         <Image source={images.course} style={{width: 100, height: 100}} />
         <View>

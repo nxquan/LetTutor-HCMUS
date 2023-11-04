@@ -27,6 +27,7 @@ import Pagination from '@/components/Pagination';
 import DropdownMenu from '@/components/DropdownMenu';
 import StackProps from '@/global/type';
 import {useNavigation} from '@react-navigation/native';
+import DrawerButton from '@/components/DrawerButton';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -159,7 +160,7 @@ const Tutor = () => {
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}
       style={{backgroundColor: colors.white}}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} />
       {/* Notification */}
       <LinearGradient
         start={{x: 0.1, y: 0}}

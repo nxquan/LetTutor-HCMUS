@@ -27,6 +27,7 @@ import {
 
 import {images} from '@/assets';
 import SignIn from '@/pages/SignIn';
+import CourseDetail from '@/pages/CourseDetail';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
@@ -72,6 +73,7 @@ const HomeDrawerRouter = () => {
           </SafeAreaView>
         );
       }}
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
         drawerStyle: {
@@ -147,6 +149,14 @@ const HomeDrawerRouter = () => {
           drawerIcon: () => (
             <MyCourseIcon style={{width: 24, height: 24, marginRight: -16}} />
           ),
+        }}
+      />
+      <Drawer.Screen
+        name="CourseDetail"
+        component={CourseDetail}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
         }}
       />
       <Drawer.Screen

@@ -21,6 +21,8 @@ import {images} from '@/assets';
 import {colors} from '@/constants';
 import TopicItem from '@/components/TopicItem';
 import ModalPopper from '@/components/ModalPopper';
+import DrawerButton from '@/components/DrawerButton';
+import BackButton from '@/components/BackButton';
 
 const source = {
   uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
@@ -42,7 +44,7 @@ const CourseTopic = () => {
       style={styles.container}
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
       <View style={styles.inner}>
         <View style={styles.courseInfo}>
           <Image source={images.courseItem1} style={styles.image} />
@@ -80,6 +82,7 @@ const CourseTopic = () => {
               flexDirection: 'row',
               alignItems: 'center',
               marginBottom: 12,
+              marginLeft: 12,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -194,21 +197,7 @@ const CourseTopic = () => {
               </View>
             </View>
             <View style={{flex: 1}}>
-              <Pdf
-                source={source}
-                trustAllCerts={false}
-                onLoadComplete={(number, filePath) => {}}
-                onPageChanged={(page, numberOfPages) => {
-                  console.log(`Current page: ${page}`);
-                }}
-                onError={error => {
-                  console.log(error);
-                }}
-                onPressLink={uri => {
-                  console.log(`Link pressed: ${uri}`);
-                }}
-                style={styles.pdf}
-              />
+              <Pdf source={source} trustAllCerts={false} style={styles.pdf} />
             </View>
           </View>
         </View>

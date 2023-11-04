@@ -6,6 +6,7 @@ import {images} from '@/assets';
 import {colors} from '@/constants';
 import ScheduleItem from './components/ScheduleItem';
 import Pagination from '@/components/Pagination';
+import DrawerButton from '@/components/DrawerButton';
 
 const Schedule = () => {
   return (
@@ -13,7 +14,7 @@ const Schedule = () => {
       style={styles.container}
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} />
       <View style={styles.intro}>
         <Image
           source={images.calendarCheck}

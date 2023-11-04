@@ -5,7 +5,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   inner: {
-    paddingHorizontal: 10,
     paddingTop: 20,
     paddingBottom: 35,
   },
@@ -19,9 +18,28 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   video: {
-    height: 240,
-    marginHorizontal: -12,
     borderRadius: 10,
+  },
+  videoControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  videoSlider: {
+    width: '100%',
+    paddingLeft: 16,
+    paddingRight: 8,
+    marginTop: 30,
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  videoTime: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.white,
   },
   actionBtn: {
     padding: 4,

@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   pdfContainer: {
-    marginTop: 12,
+    marginTop: 4,
   },
   pdfHeader: {
     paddingHorizontal: 4,

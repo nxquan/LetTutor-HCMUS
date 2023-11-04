@@ -1,4 +1,11 @@
-import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Button,
+} from 'react-native';
 import React from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -6,19 +13,20 @@ import styles from './styles';
 import Header from '@/components/Header';
 import {images} from '@/assets';
 import {colors} from '@/constants';
-import {useNavigation} from '@react-navigation/native';
-import StackProps from '@/global/type';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
+import StackProps, {DrawerProps} from '@/global/type';
+import DrawerButton from '@/components/DrawerButton';
+import BackButton from '@/components/BackButton';
 
 const CourseDetail = (props: any) => {
-  const navigation = useNavigation<StackProps>();
+  const navigation = useNavigation<DrawerProps>();
   const {} = props;
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={[0]}
       style={styles.container}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
       <View style={styles.inner}>
         <View style={styles.intro}>
           <Image source={images.courseItem1} style={styles.image} />

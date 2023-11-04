@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/datetimepicker": "^7.6.1",
+    "@react-native-community/slider": "^4.4.3",
     "@react-navigation/drawer": "^6.6.6",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
@@ -21,6 +22,7 @@
     "react-native-blob-util": "^0.19.2",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-linear-gradient": "^2.8.3",
+    "react-native-orientation-locker": "^1.5.0",
     "react-native-outside-press": "^1.2.1",
     "react-native-pdf": "^6.7.1",
     "react-native-reanimated": "^3.4.2",
