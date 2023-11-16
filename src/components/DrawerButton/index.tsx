@@ -3,7 +3,7 @@ import React from 'react';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import Octicons from 'react-native-vector-icons/Octicons';
 
-import {DrawerProps} from '@/global/type';
+import {DrawerProps} from '@/types/type';
 import styles from './styles';
 
 const DrawerButton = () => {

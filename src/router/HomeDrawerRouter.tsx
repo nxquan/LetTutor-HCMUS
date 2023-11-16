@@ -7,7 +7,7 @@ import {
   View,
   TouchableHighlight,
 } from 'react-native';
-import {DrawerProps} from '@/global/type';
+import {DrawerProps} from '@/types/type';
 import Tutor from '@/pages/Tutor';
 import Schedule from '@/pages/Schedule';
 import History from '@/pages/History';
@@ -26,14 +26,22 @@ import {
 } from '@/assets/icons';
 
 import {images} from '@/assets';
-import SignIn from '@/pages/SignIn';
 import CourseDetail from '@/pages/CourseDetail';
+import {colors} from '@/constants';
+import {useGlobalContext} from '@/hooks';
+import {logout} from '@/store';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
+  const [state, dispatch] = useGlobalContext();
+  const handleLogout = (navigation: any) => {
+    dispatch(logout());
+    navigation.navigate('SignIn');
+  };
   return (
     <Drawer.Navigator
       drawerContent={(props: any) => {
+        const {navigation} = props;
         return (
           <SafeAreaView>
             <TouchableHighlight
@@ -70,6 +78,27 @@ const HomeDrawerRouter = () => {
               </View>
             </TouchableHighlight>
             <DrawerItemList {...props} />
+            <TouchableHighlight
+              onPress={() => handleLogout(navigation)}
+              underlayColor="rgba(0,0,0,0.2)"
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 12,
+                marginLeft: 6,
+                borderRadius: 4,
+              }}>
+              <View style={{flexDirection: 'row'}}>
+                <LogoutIcon style={{width: 24, height: 24, marginRight: -16}} />
+                <Text
+                  style={{
+                    marginLeft: 34,
+                    fontWeight: '500',
+                    color: colors.error,
+                  }}>
+                  Logout
+                </Text>
+              </View>
+            </TouchableHighlight>
           </SafeAreaView>
         );
       }}
@@ -169,17 +198,6 @@ const HomeDrawerRouter = () => {
             <BecomeTutorIcon
               style={{width: 24, height: 24, marginRight: -16}}
             />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="SignIn"
-        component={SignIn}
-        options={{
-          drawerLabel: 'Logout',
-          title: 'Logout',
-          drawerIcon: () => (
-            <LogoutIcon style={{width: 24, height: 24, marginRight: -16}} />
           ),
         }}
       />

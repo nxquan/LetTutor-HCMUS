@@ -1,28 +1,93 @@
 import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
 import React, {useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import styles from './styles';
 import {colors} from '@/constants';
 import {images, languageImages} from '@/assets';
 import Button from '@/components/Button';
 import {useNavigation} from '@react-navigation/native';
-import StackProps from '@/global/type';
+import StackProps from '@/types/type';
+import {getCountryNameFromCode} from '@/utils';
+import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
+import {useGlobalContext} from '@/hooks';
+import {toggleFavoriteTutor} from '@/store';
+import RenderRating from '@/components/RenderRating';
 
-const TutorItem = () => {
+type Props = {
+  data: any;
+};
+
+const TutorItem = (props: Props) => {
+  const {data} = props;
   const navigation = useNavigation<StackProps>();
-  const [isLikeHeart, setIsLikeHeart] = useState(false);
+  const [state, dispatch] = useGlobalContext();
 
+  const renderSpecialties = () => {
+    const _specialties = String(data?.specialties).split(',');
+    const specialties: any = [];
+    _specialties.forEach(key => {
+      //Check in LEARN_TOPICS
+      const topic = LEARN_TOPICS.find((_topic: any) => _topic.key === key);
+      if (topic) {
+        specialties.push(
+          <Button
+            key={topic.key}
+            title={topic.name}
+            style={{
+              color: colors.primary,
+              backgroundColor: colors.backgroundActive,
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              marginBottom: 8,
+              borderRadius: 999,
+              marginLeft: 12,
+            }}
+          />,
+        );
+      } else {
+        //Check in TEST_PREPARATIONS
+        const testItem = TEST_PREPARATIONS.find(
+          (_topic: any) => _topic.key === key,
+        );
+        if (testItem) {
+          specialties.push(
+            <Button
+              key={testItem.key}
+              title={testItem.name}
+              style={{
+                color: colors.primary,
+                backgroundColor: colors.backgroundActive,
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+                marginBottom: 8,
+                borderRadius: 999,
+                marginLeft: 12,
+              }}
+            />,
+          );
+        }
+      }
+    });
+
+    return specialties;
+  };
   return (
     <View style={styles.wrapper}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
         <Pressable
           onPress={() => {
             navigation.navigate('TutorDetail');
           }}>
           <View style={styles.info}>
             <Image
-              source={images.avatar}
+              source={images.defaultAvatar}
+              src={data?.avatar}
               style={{
                 width: 80,
                 height: 80,
@@ -32,8 +97,9 @@ const TutorItem = () => {
                 borderWidth: 1,
               }}
             />
+
             <View style={styles.infoDes}>
-              <Text style={styles.name}>Abby</Text>
+              <Text style={styles.name}>{data?.name}</Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -42,49 +108,33 @@ const TutorItem = () => {
                 }}>
                 <Image
                   source={languageImages.vietNam}
+                  src={`https://flagsapi.com/${data?.country}/flat/64.png`}
                   style={{width: 24, height: 16}}
                 />
-                <Text style={styles.nationality}>Vietnam</Text>
+                <Text style={styles.nationality}>
+                  {getCountryNameFromCode(data?.country)}
+                </Text>
               </View>
-              <View style={{flexDirection: 'row'}}>
-                <AntDesign name="star" size={14} color={colors.yellow} />
-                <AntDesign
-                  name="star"
-                  size={14}
-                  color={colors.yellow}
-                  style={{marginLeft: 6}}
-                />
-                <AntDesign
-                  name="star"
-                  size={14}
-                  color={colors.yellow}
-                  style={{marginLeft: 6}}
-                />
-                <AntDesign
-                  name="star"
-                  size={14}
-                  color={colors.yellow}
-                  style={{marginLeft: 6}}
-                />
-                <AntDesign
-                  name="staro"
-                  size={14}
-                  color={colors.yellow}
-                  style={{marginLeft: 6}}
-                />
-              </View>
+              <RenderRating rating={data?.rating} size={14} />
             </View>
           </View>
         </Pressable>
 
-        <TouchableOpacity onPress={() => setIsLikeHeart(!isLikeHeart)}>
-          {isLikeHeart ? (
+        <TouchableOpacity
+          onPress={() => {
+            const payload: any = {
+              tutorId: data?.id,
+            };
+            dispatch(toggleFavoriteTutor(payload));
+          }}>
+          {data?.isFavoriteTutor ? (
             <AntDesign name="heart" size={24} color={colors.heart} />
           ) : (
             <AntDesign name="hearto" size={24} color={colors.primary} />
           )}
         </TouchableOpacity>
       </View>
+
       <View
         style={{
           flexDirection: 'row',
@@ -92,42 +142,7 @@ const TutorItem = () => {
           marginLeft: -12,
           marginTop: 20,
         }}>
-        <Button
-          title="English for kids"
-          style={{
-            color: colors.primary,
-            backgroundColor: colors.backgroundActive,
-            paddingVertical: 8,
-            paddingHorizontal: 12,
-            marginBottom: 8,
-            borderRadius: 999,
-            marginLeft: 12,
-          }}
-        />
-        <Button
-          title="English for kids"
-          style={{
-            color: colors.primary,
-            backgroundColor: colors.backgroundActive,
-            paddingVertical: 8,
-            paddingHorizontal: 12,
-            marginBottom: 8,
-            borderRadius: 999,
-            marginLeft: 12,
-          }}
-        />
-        <Button
-          title="English for kids"
-          style={{
-            color: colors.primary,
-            backgroundColor: colors.backgroundActive,
-            paddingVertical: 8,
-            paddingHorizontal: 12,
-            marginBottom: 8,
-            borderRadius: 999,
-            marginLeft: 12,
-          }}
-        />
+        {renderSpecialties()}
       </View>
 
       <Text
@@ -136,13 +151,13 @@ const TutorItem = () => {
           fontSize: 14,
           lineHeight: 20,
           color: colors.text,
+          textAlign: 'justify',
         }}>
-        I was teaching English for almost 3 years. I am a Licensed Professional
-        Teacher and a TESOL certified, I teach kids, adult and professionals. I
-        make sure my class is students-centered. I will help you with your
-        English goal.
+        {data?.bio}
       </Text>
-      <TouchableOpacity style={styles.bookBtn}>
+      <TouchableOpacity
+        style={styles.bookBtn}
+        onPress={() => navigation.navigate('TutorDetail')}>
         <Image source={images.scheduleIcon} />
         <Text
           style={{

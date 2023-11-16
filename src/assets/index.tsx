@@ -2,7 +2,7 @@ export const images = {
   logo: require('./logo.png'),
   banner: require('./banner.png'),
   googleLogo: require('./google-logo.png'),
-  avatar: require('./avatar1.png'),
+  defaultAvatar: require('./default-user.png'),
   scheduleIcon: require('./schedule.png'),
   calendarCheck: require('./calendar-check.png'),
   history: require('./history.png'),

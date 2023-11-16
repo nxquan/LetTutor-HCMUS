@@ -7,6 +7,7 @@ export const colors = {
   text: '#0009',
   icon: '#9E9E9E',
   error: '#ff4d4f',
+  success: '#4BB543',
   heart: 'rgb(240, 72, 72)',
   grey50: '#FAFAFA',
   grey100: '#F5F5F5',

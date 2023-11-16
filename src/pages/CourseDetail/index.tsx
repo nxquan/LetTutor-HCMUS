@@ -14,7 +14,7 @@ import Header from '@/components/Header';
 import {images} from '@/assets';
 import {colors} from '@/constants';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
-import StackProps, {DrawerProps} from '@/global/type';
+import StackProps, {DrawerProps} from '@/types/type';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
 

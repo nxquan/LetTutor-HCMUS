@@ -1,7 +1,7 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import styles from './styles';
-import StackProps from '@/global/type';
+import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
 
 const CourseItem = (props: any) => {

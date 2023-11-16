@@ -1,6 +1,6 @@
-import {View, Text, TouchableHighlight} from 'react-native';
+import {TouchableHighlight} from 'react-native';
 import React from 'react';
-import StackProps from '@/global/type';
+import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
 

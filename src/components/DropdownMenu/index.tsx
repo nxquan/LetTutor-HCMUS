@@ -35,10 +35,10 @@ const DropdownMenu = (props: {
       {children}
       {isOpen && (
         <ScrollView style={styles.dropdownMenu}>
-          {data.map((item: string) => {
+          {data.map((item: any) => {
             return (
               <TouchableHighlight
-                key={item}
+                key={item?.id}
                 activeOpacity={0.8}
                 underlayColor="rgba(0,0,0,0.1)"
                 onPress={() => {
@@ -52,12 +52,12 @@ const DropdownMenu = (props: {
                 <Text
                   style={[
                     styles.dropdownItem,
-                    selectedItem === item && {
+                    selectedItem.key === item.key && {
                       fontWeight: '500',
                       backgroundColor: colors.backgroundActive,
                     },
                   ]}>
-                  {item}
+                  {item.title}
                 </Text>
               </TouchableHighlight>
             );

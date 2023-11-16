@@ -37,4 +37,9 @@ export type DrawerProps = DrawerNavigationProp<
   'CourseTopic',
   'TutorDetail'
 >;
+export type User = {
+  email: string;
+  password: string;
+};
+
 export default StackProps;

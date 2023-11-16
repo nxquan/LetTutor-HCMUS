@@ -43,6 +43,27 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexWrap: 'wrap',
   },
+  resetBtn: {
+    color: '#1890ff',
+    borderWidth: 1,
+    borderColor: '#1890ff',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    flexGrow: 0,
+    borderRadius: 12,
+    width: 120,
+  },
+  dropdownMenuBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.grey300,
+    borderRadius: 6,
+    paddingLeft: 12,
+    paddingRight: 6,
+    paddingVertical: 4,
+  },
 });
 
 export default styles;

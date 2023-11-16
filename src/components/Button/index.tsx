@@ -6,13 +6,18 @@ const Button = (props: {onPress?: any; title: string; style?: any}) => {
   const {title, style, onPress} = props;
   const _styles = [styles.wrapper, style];
   let Component: any = View;
+  const _props: any = {
+    activeOpacity: 0.7,
+    style: [_styles],
+  };
 
   if (onPress) {
     Component = TouchableOpacity;
+    _props.onPress = onPress;
   }
 
   return (
-    <Component style={[_styles]} onPress={onPress} activeOpacity={0.7}>
+    <Component {..._props}>
       <Text style={[styles.title, {color: style?.color}]}>{title}</Text>
     </Component>
   );

@@ -10,12 +10,18 @@ import {EventProvider} from 'react-native-outside-press';
 import MainStackRouter from '@/router/MainStackRouter';
 import React from 'react';
 import {LogBox} from 'react-native';
+import {GlobalProvider} from '@/store';
+import Tutor from '@/pages/Tutor';
+
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <EventProvider>
-        <MainStackRouter />
-      </EventProvider>
+      <GlobalProvider>
+        <EventProvider>
+          {/* <MainStackRouter /> */}
+          <Tutor />
+        </EventProvider>
+      </GlobalProvider>
     </NavigationContainer>
   );
 }

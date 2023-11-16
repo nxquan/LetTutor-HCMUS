@@ -44,6 +44,9 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  disable: {
+    opacity: 0.7,
+  },
   loginBtnText: {
     color: colors.white,
     fontWeight: '500',
@@ -81,5 +84,18 @@ export default StyleSheet.create({
     color: colors.primary,
     fontSize: 14,
     fontWeight: '500',
+  },
+  notification: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 8,
+    marginTop: -4,
+    textAlign: 'center',
+  },
+  error: {
+    color: colors.error,
+  },
+  success: {
+    color: colors.success,
   },
 });

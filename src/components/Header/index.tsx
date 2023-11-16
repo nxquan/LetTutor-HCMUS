@@ -1,22 +1,17 @@
-import {View, Image, TouchableHighlight} from 'react-native';
-import Octicons from 'react-native-vector-icons/Octicons';
-import Entypo from 'react-native-vector-icons/Entypo';
+import {View, Image} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import React, {Fragment} from 'react';
+import React from 'react';
 
 import styles from './styles';
 import {images, languageImages} from '@/assets';
-import StackProps, {DrawerProps} from '@/global/type';
+import StackProps, {DrawerProps} from '@/types/type';
 
 type Props = {
-  children?: React.JSX.Element;
   backIcon?: React.JSX.Element;
   drawerBtn?: React.JSX.Element;
 };
 const Header = (props: Props) => {
-  const {children, backIcon, drawerBtn} = props;
-  const navigation = useNavigation<DrawerProps | StackProps>();
+  const {backIcon, drawerBtn} = props;
 
   return (
     <View style={styles.nav}>
@@ -38,4 +33,4 @@ const Header = (props: Props) => {
   );
 };
 
-export default Header;
+export default React.memo(Header);
