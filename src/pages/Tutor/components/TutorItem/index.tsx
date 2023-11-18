@@ -82,7 +82,7 @@ const TutorItem = (props: Props) => {
         }}>
         <Pressable
           onPress={() => {
-            navigation.navigate('TutorDetail');
+            navigation.navigate('TutorDetail', {tutorId: data.id});
           }}>
           <View style={styles.info}>
             <Image

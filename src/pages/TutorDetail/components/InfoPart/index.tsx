@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import {View, Text} from 'react-native';
 import React from 'react';
 import styles from './styles';
 
@@ -8,7 +8,7 @@ type Props = {
 };
 
 const InfoPart = (props: Props) => {
-  const { title, children } = props;
+  const {title, children} = props;
   return (
     <View style={styles.infoPart}>
       <Text style={styles.infoTitle}>{title}</Text>
@@ -17,4 +17,4 @@ const InfoPart = (props: Props) => {
   );
 };
 
-export default InfoPart;
+export default React.memo(InfoPart);

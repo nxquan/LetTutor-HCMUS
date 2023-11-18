@@ -1,17 +1,21 @@
 import {User} from '@/types';
 import {ACTION_TYPE} from '.';
-import {tutors} from './mock-data';
+import {feedbacks, tutorDetails, tutors} from './mock-data';
 
 export type initStateType = {
   users: User[];
   currentUser: User | null;
   tutors: any[];
+  tutorDetails: any[];
+  feedbacks: any[];
 };
 
 export const initState: initStateType = {
   users: [],
   currentUser: null,
   tutors: tutors.rows,
+  tutorDetails: tutorDetails,
+  feedbacks: feedbacks,
 };
 
 const reducer = (
@@ -43,6 +47,7 @@ const reducer = (
       };
     }
     case ACTION_TYPE.TOGGLE_FAVORITE_TUTOR: {
+      console.log('TOGGLE_FAVORITE_TUTOR');
       const tutors = state.tutors;
       const index = tutors.findIndex(
         (item: any) => item.id === action.payload.tutorId,

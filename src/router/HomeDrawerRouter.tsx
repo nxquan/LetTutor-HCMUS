@@ -62,7 +62,7 @@ const HomeDrawerRouter = () => {
                   paddingHorizontal: 12,
                 }}>
                 <Image
-                  source={images.avatar}
+                  source={images.defaultAvatar}
                   style={{
                     width: 54,
                     height: 54,

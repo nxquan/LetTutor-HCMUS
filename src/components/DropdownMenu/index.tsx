@@ -5,7 +5,7 @@ import styles from './styles';
 import OutsidePressHandler from 'react-native-outside-press';
 import {colors} from '@/constants';
 
-const DropdownMenu = (props: {
+function DropdownMenu(props: {
   data: Array<any>;
   selectedItem: any;
   isOpen: boolean;
@@ -14,7 +14,7 @@ const DropdownMenu = (props: {
   children: any;
   typeOfMenu?: string;
   style?: any;
-}) => {
+}) {
   const {
     data,
     isOpen,
@@ -26,10 +26,11 @@ const DropdownMenu = (props: {
     style,
   } = props;
 
+  console.log('re-render DropdownMenu');
   return (
     <OutsidePressHandler
       onOutsidePress={function (): void {
-        onChangeOpen(false);
+        // onChangeOpen(false);
       }}
       style={style}>
       {children}
@@ -66,6 +67,6 @@ const DropdownMenu = (props: {
       )}
     </OutsidePressHandler>
   );
-};
+}
 
-export default DropdownMenu;
+export default React.memo(DropdownMenu);

@@ -1,38 +1,35 @@
 import {View, Text, Image} from 'react-native';
 import React from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from './styles';
 import {images} from '@/assets';
-import {colors} from '@/constants';
+import RenderRating from '@/components/RenderRating';
 
 type Props = {
-  name: string;
-  time: string;
-  stars: number;
-  description: string;
+  data: any;
 };
 
 const ReviewItem = (props: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {name, time, stars, description} = props;
+  const {data} = props;
 
   return (
     <View style={styles.container}>
-      <Image source={images.avatar} style={styles.avatar} />
+      <Image
+        source={images.defaultAvatar}
+        src={data?.firstInfo?.avatar}
+        style={styles.avatar}
+      />
       <View style={styles.info}>
         <Text style={styles.name}>
-          {name}
+          {data?.firstInfo?.name}
           {'   '}
-          <Text style={{color: '#ccc', fontSize: 13}}>{time}</Text>
+        </Text>
+        <Text style={{color: '#ccc', fontSize: 13}}>
+          {new Date(data?.updatedAt).getMonth() + 1} months ago
         </Text>
         <View style={styles.stars}>
-          <AntDesign name="star" size={16} color={colors.yellow} />
-          <AntDesign name="star" size={16} color={colors.yellow} />
-          <AntDesign name="star" size={16} color={colors.yellow} />
-          <AntDesign name="star" size={16} color={colors.yellow} />
-          <AntDesign name="staro" size={16} color={colors.yellow} />
+          <RenderRating rating={data?.rating} size={16} />
         </View>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description}>{data?.content}</Text>
       </View>
     </View>
   );

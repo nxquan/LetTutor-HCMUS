@@ -12,6 +12,7 @@ import React from 'react';
 import {LogBox} from 'react-native';
 import {GlobalProvider} from '@/store';
 import Tutor from '@/pages/Tutor';
+import TutorDetail from '@/pages/TutorDetail';
 
 function App(): React.JSX.Element {
   return (
@@ -19,7 +20,7 @@ function App(): React.JSX.Element {
       <GlobalProvider>
         <EventProvider>
           {/* <MainStackRouter /> */}
-          <Tutor />
+          <TutorDetail />
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>

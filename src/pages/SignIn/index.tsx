@@ -83,38 +83,41 @@ const SignIn = () => {
       isSamePassword = password === confirmPassword;
     }
 
-    return !!isEmail && !!isMatch && isSamePassword;
+    return true;
+    // return !!isEmail && !!isMatch && isSamePassword;
   };
 
   const handleSubmit = () => {
-    const isExisting = state.users.find((item: any) => {
-      return String(item.email) === user.email.trim().toLowerCase();
-    });
-    if (isExisting) {
-      if (isExisting.password === user.password) {
-        setUser({
-          email: '',
-          password: '',
-        });
-        const payload = {
-          email: user.email,
-          password: user.password,
-        };
+    navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
 
-        dispatch(login(payload));
-        navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
-      } else {
-        setNotification({
-          type: 'error',
-          message: 'Mật khẩu không đúng. Hãy thử lại!',
-        });
-      }
-    } else {
-      setNotification({
-        type: 'error',
-        message: 'Email không tồn tại. Vui lòng đăng ký!',
-      });
-    }
+    // const isExisting = state.users.find((item: any) => {
+    //   return String(item.email) === user.email.trim().toLowerCase();
+    // });
+    // if (isExisting) {
+    //   if (isExisting.password === user.password) {
+    //     setUser({
+    //       email: '',
+    //       password: '',
+    //     });
+    //     const payload = {
+    //       email: user.email,
+    //       password: user.password,
+    //     };
+
+    //     dispatch(login(payload));
+    //     navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+    //   } else {
+    //     setNotification({
+    //       type: 'error',
+    //       message: 'Mật khẩu không đúng. Hãy thử lại!',
+    //     });
+    //   }
+    // } else {
+    //   setNotification({
+    //     type: 'error',
+    //     message: 'Email không tồn tại. Vui lòng đăng ký!',
+    //   });
+    // }
   };
   const handleResetPassword = () => {
     const isExisting = state.users.find((item: any) => {

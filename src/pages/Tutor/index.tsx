@@ -8,7 +8,7 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -128,7 +128,7 @@ const Tutor = () => {
     setTimeType(type);
   };
 
-  const onChangeNationality = (item: any) => {
+  const onChangeNationality = useCallback((item: any) => {
     if (!filters.nationalities.includes(item)) {
       setFilters((prev: any) => {
         return {
@@ -137,7 +137,11 @@ const Tutor = () => {
         };
       });
     }
-  };
+  }, []);
+
+  const onChangeOpenNationalityMenu = useCallback((value: boolean) => {
+    setIsOpenNationality(value);
+  }, []);
 
   const renderSpecialties = () => {
     return typesOfTutor.map((item, index) => {
@@ -224,6 +228,19 @@ const Tutor = () => {
   useEffect(() => {
     const handleSearch = () => {
       let _rawData: any[] = state.tutors;
+      //Sorting by favorite & rating
+      const favoriteTutors: any[] = _rawData.filter(
+        (item: any) => item.isFavoriteTutor,
+      );
+      favoriteTutors.sort((a, b) => a.rating - b.rating);
+
+      const unfavoriteTutors = _rawData.filter(
+        (item: any) => !item.isFavoriteTutor,
+      );
+      unfavoriteTutors.sort((a, b) => a.rating - b.rating);
+      _rawData = [...favoriteTutors, ...unfavoriteTutors];
+
+      //Find by filters
       const conditions: {
         name?: string;
         specialtyKey?: string;
@@ -362,7 +379,7 @@ const Tutor = () => {
         <DropdownMenu
           isOpen={isOpenNationality}
           data={nationalities}
-          onChangeOpen={setIsOpenNationality}
+          onChangeOpen={onChangeOpenNationalityMenu}
           onChangeSelected={onChangeNationality}
           selectedItem={filters.nationalities}
           style={{zIndex: 3}}>

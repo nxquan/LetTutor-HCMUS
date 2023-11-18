@@ -18,7 +18,13 @@ const Button = (props: {onPress?: any; title: string; style?: any}) => {
 
   return (
     <Component {..._props}>
-      <Text style={[styles.title, {color: style?.color}]}>{title}</Text>
+      <Text
+        style={[
+          styles.title,
+          {color: style?.color, fontWeight: style?.fontWeight},
+        ]}>
+        {title}
+      </Text>
     </Component>
   );
 };

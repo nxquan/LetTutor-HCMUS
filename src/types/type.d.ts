@@ -10,7 +10,7 @@ export type RootParamList = {
   Courses: undefined;
   CourseDetail: undefined;
   CourseTopic: undefined;
-  TutorDetail: undefined;
+  TutorDetail: {tutorId: string};
   HomeDrawerRouter: undefined;
   VideoCall: undefined;
 };

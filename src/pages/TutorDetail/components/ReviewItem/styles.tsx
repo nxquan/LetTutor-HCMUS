@@ -1,9 +1,8 @@
-import { colors } from '@/constants';
-import { StyleSheet } from 'react-native';
+import {colors} from '@/constants';
+import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    marginBottom: 16,
   },
   info: {
     marginLeft: 12,
@@ -23,6 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 4,
+    marginLeft: -6,
   },
   description: {
     fontSize: 14,
