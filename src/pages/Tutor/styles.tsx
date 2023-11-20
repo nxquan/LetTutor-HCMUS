@@ -45,13 +45,10 @@ const styles = StyleSheet.create({
   },
   resetBtn: {
     color: '#1890ff',
-    borderWidth: 1,
     borderColor: '#1890ff',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
     flexGrow: 0,
-    borderRadius: 12,
-    width: 120,
+    width: 110,
+    paddingHorizontal: 8,
   },
   dropdownMenuBtn: {
     flexDirection: 'row',

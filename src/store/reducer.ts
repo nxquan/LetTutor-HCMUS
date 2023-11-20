@@ -7,6 +7,7 @@ import {
   TUTOR_COURSES,
   TUTOR_DETAILS,
   TUTORS,
+  COURSE_CATEGORIES,
 } from './mock-data';
 
 export type initStateType = {
@@ -17,17 +18,23 @@ export type initStateType = {
   feedbacks: any[];
   tutorCourses: any[];
   courses: any[];
+  courseCategories: any[];
   schedules: any[];
+  theme: '';
+  language: '';
 };
 
 export const initState: initStateType = {
   users: [],
   currentUser: null,
+  theme: '',
+  language: '',
   tutors: TUTORS,
   tutorDetails: TUTOR_DETAILS,
   feedbacks: FEEDBACKS,
   tutorCourses: TUTOR_COURSES,
   courses: COURSES,
+  courseCategories: COURSE_CATEGORIES,
   schedules: SCHEDULES,
 };
 

@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
   },
   search: {
     paddingHorizontal: 20,
-    zIndex: 100,
   },
   dropdownMenuBtn: {
     flexDirection: 'row',

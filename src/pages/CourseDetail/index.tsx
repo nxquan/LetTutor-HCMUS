@@ -6,21 +6,93 @@ import {
   ScrollView,
   Button,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import styles from './styles';
 import Header from '@/components/Header';
 import {images} from '@/assets';
 import {colors} from '@/constants';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {DrawerActions, useNavigation, useRoute} from '@react-navigation/native';
 import StackProps, {DrawerProps} from '@/types/type';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
+import {useGlobalContext} from '@/hooks';
+
+const levels = [
+  {
+    id: 0,
+    title: 'Any Level',
+    key: '',
+  },
+  {
+    id: 1,
+    title: 'Beginner',
+    key: '',
+  },
+  {
+    id: 2,
+    title: 'Upper-Beginner',
+    key: '',
+  },
+  {
+    id: 3,
+    title: 'Pre-Intermediate',
+    key: '',
+  },
+  {
+    id: 4,
+    title: 'Intermediate',
+    key: '',
+  },
+  {
+    id: 5,
+    title: 'Upper-Intermediate',
+    key: '',
+  },
+  {
+    id: 6,
+    title: 'Pre-advanced',
+    key: '',
+  },
+  {
+    id: 7,
+    title: 'Advanced',
+    key: '',
+  },
+  {
+    id: 8,
+    title: 'Very Advanced',
+    key: '',
+  },
+];
 
 const CourseDetail = (props: any) => {
-  const navigation = useNavigation<DrawerProps>();
   const {} = props;
+
+  const [state, dispatch] = useGlobalContext();
+  const navigation = useNavigation<DrawerProps>();
+  const route: any = useRoute();
+  const [course, setCourse] = useState<any>({});
+
+  useEffect(() => {
+    const _course = state.courses.find(
+      (item: any) => item.id === route.params?.courseId,
+    );
+    const topics = _course?.topics.sort(
+      (a: any, b: any) => a.orderCourse - b.orderCourse,
+    );
+
+    setCourse({
+      ..._course,
+      topics,
+    });
+  }, [route.params?.courseId]);
+
+  const getLevelName = (level: number) => {
+    return levels.find((item: any) => item.id === Number(level))?.title;
+  };
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -31,10 +103,8 @@ const CourseDetail = (props: any) => {
         <View style={styles.intro}>
           <Image source={images.courseItem1} style={styles.image} />
           <View style={styles.info}>
-            <Text style={styles.title}>Life in the Internet Age</Text>
-            <Text style={styles.des}>
-              Let's discuss how technology is changing the way we live
-            </Text>
+            <Text style={styles.title}>{course?.name}</Text>
+            <Text style={styles.des}>{course?.description}</Text>
             <TouchableOpacity style={styles.discoverBtn} activeOpacity={0.7}>
               <Text style={{fontSize: 16, color: colors.white}}>Discover</Text>
             </TouchableOpacity>
@@ -46,45 +116,31 @@ const CourseDetail = (props: any) => {
               <Text style={styles.heading}>Overview</Text>
               <View style={styles.line} />
             </View>
-            <View>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <AntDesign
-                    name="questioncircleo"
-                    size={18}
-                    color={colors.error}
-                  />
-                  <Text style={styles.detailItemHeading}>
-                    Why take this course
-                  </Text>
-                </View>
-                <Text style={styles.detailItemText}>
-                  Our world is rapidly changing thanks to new technology, and
-                  the vocabulary needed to discuss modern life is evolving
-                  almost daily. In this course you will learn the most
-                  up-to-date terminology from expertly crafted lessons as well
-                  from your native-speaking tutor.
+            <View style={styles.detailItem}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <AntDesign
+                  name="questioncircleo"
+                  size={18}
+                  color={colors.error}
+                />
+                <Text style={styles.detailItemHeading}>
+                  Why take this course
                 </Text>
               </View>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <AntDesign
-                    name="questioncircleo"
-                    size={18}
-                    color={colors.error}
-                  />
-                  <Text style={styles.detailItemHeading}>
-                    What will you be able to do
-                  </Text>
-                </View>
-                <Text style={styles.detailItemText}>
-                  You will learn vocabulary related to timely topics like remote
-                  work, artificial intelligence, online privacy, and more. In
-                  addition to discussion questions, you will practice
-                  intermediate level speaking tasks such as using data to
-                  describe trends.
+              <Text style={styles.detailItemText}>{course?.reason}</Text>
+            </View>
+            <View style={styles.detailItem}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <AntDesign
+                  name="questioncircleo"
+                  size={18}
+                  color={colors.error}
+                />
+                <Text style={styles.detailItemHeading}>
+                  What will you be able to do
                 </Text>
               </View>
+              <Text style={styles.detailItemText}>{course?.purpose}</Text>
             </View>
           </View>
           <View style={styles.detailContent}>
@@ -99,7 +155,9 @@ const CourseDetail = (props: any) => {
                   size={20}
                   color={colors.primary}
                 />
-                <Text style={styles.detailItemHeading}>Intermediate</Text>
+                <Text style={styles.detailItemHeading}>
+                  {getLevelName(course?.level)}
+                </Text>
               </View>
             </View>
           </View>
@@ -111,7 +169,9 @@ const CourseDetail = (props: any) => {
             <View style={styles.detailItem}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <AntDesign name="book" size={18} color={colors.primary} />
-                <Text style={styles.detailItemHeading}>9 topics</Text>
+                <Text style={styles.detailItemHeading}>
+                  {course?.topics?.length} topics
+                </Text>
               </View>
             </View>
           </View>
@@ -121,30 +181,24 @@ const CourseDetail = (props: any) => {
               <View style={styles.line}></View>
             </View>
             <View style={[styles.detailItem]}>
-              <TouchableOpacity
-                style={styles.topicItem}
-                activeOpacity={0.7}
-                onPress={() => navigation.navigate('CourseTopic')}>
-                <Text style={[styles.detailItemHeading, styles.topic]}>
-                  1. Internet
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.topicItem}
-                activeOpacity={0.7}
-                onPress={() => navigation.navigate('CourseTopic')}>
-                <Text style={[styles.detailItemHeading, styles.topic]}>
-                  2. Artificial Intelligence (AI)
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.topicItem}
-                activeOpacity={0.7}
-                onPress={() => navigation.navigate('CourseTopic')}>
-                <Text style={[styles.detailItemHeading, styles.topic]}>
-                  3. Social Media
-                </Text>
-              </TouchableOpacity>
+              {course?.topics?.map((topic: any) => {
+                return (
+                  <TouchableOpacity
+                    key={topic.id}
+                    style={styles.topicItem}
+                    activeOpacity={0.7}
+                    onPress={() =>
+                      navigation.navigate('CourseTopic', {
+                        topic: course?.topics,
+                        selectedTopic: topic,
+                      })
+                    }>
+                    <Text style={[styles.detailItemHeading, styles.topic]}>
+                      {topic?.orderCourse + 1}. {topic?.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
 

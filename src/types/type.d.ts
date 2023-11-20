@@ -8,7 +8,7 @@ export type RootParamList = {
   Schedule: undefined;
   History: undefined;
   Courses: undefined;
-  CourseDetail: undefined;
+  CourseDetail: {courseId: string};
   CourseTopic: undefined;
   TutorDetail: {tutorId: string};
   HomeDrawerRouter: undefined;

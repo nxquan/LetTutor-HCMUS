@@ -72,7 +72,12 @@ const HomeDrawerRouter = () => {
                     marginRight: 12,
                   }}
                 />
-                <Text style={{fontSize: 16, fontWeight: '600'}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: colors.black,
+                  }}>
                   Anna Phuong
                 </Text>
               </View>

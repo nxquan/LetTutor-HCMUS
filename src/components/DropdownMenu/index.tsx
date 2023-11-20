@@ -1,9 +1,8 @@
-import {Text, TouchableHighlight, ScrollView} from 'react-native';
+import {Text, TouchableHighlight, ScrollView, View} from 'react-native';
 import React from 'react';
 
 import styles from './styles';
 import OutsidePressHandler from 'react-native-outside-press';
-import {colors} from '@/constants';
 
 function DropdownMenu(props: {
   data: Array<any>;
@@ -14,6 +13,7 @@ function DropdownMenu(props: {
   children: any;
   typeOfMenu?: string;
   style?: any;
+  styleMenu?: any;
 }) {
   const {
     data,
@@ -24,19 +24,22 @@ function DropdownMenu(props: {
     children,
     typeOfMenu,
     style,
+    styleMenu,
   } = props;
 
-  console.log('re-render DropdownMenu');
   return (
     <OutsidePressHandler
       onOutsidePress={function (): void {
-        // onChangeOpen(false);
+        onChangeOpen(false);
       }}
       style={style}>
       {children}
       {isOpen && (
-        <ScrollView style={styles.dropdownMenu}>
-          {data.map((item: any) => {
+        <ScrollView
+          style={[styles.dropdownMenu, styleMenu]}
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={true}>
+          {data.map((item: any, index: number) => {
             return (
               <TouchableHighlight
                 key={item?.id}
@@ -50,16 +53,19 @@ function DropdownMenu(props: {
                     onChangeSelected(item);
                   }
                 }}>
-                <Text
+                <View
                   style={[
-                    styles.dropdownItem,
-                    selectedItem.key === item.key && {
-                      fontWeight: '500',
-                      backgroundColor: colors.backgroundActive,
+                    styles.menuItem,
+                    item?.icon && {
+                      paddingHorizontal: 6,
                     },
+                    selectedItem?.key === item?.key && styles.active,
+                    index === 0 && styles.borderLeftToRightTop,
+                    index === data.length - 1 && styles.borderLeftToRightBottom,
                   ]}>
-                  {item.title}
-                </Text>
+                  {item?.icon}
+                  <Text style={[styles.dropdownItem]}>{item.title}</Text>
+                </View>
               </TouchableHighlight>
             );
           })}

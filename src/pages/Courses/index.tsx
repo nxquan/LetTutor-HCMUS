@@ -21,44 +21,151 @@ import {colors} from '@/constants';
 import DropdownMenu from '@/components/DropdownMenu';
 import CourseItem from './components/CourseItem';
 import DrawerButton from '@/components/DrawerButton';
+import {useGlobalContext} from '@/hooks';
 
 const levels = [
-  'Any Level',
-  'Beginner',
-  'Upper-Beginner',
-  'Pre-Intermediate',
-  'Intermediate',
-  'Upper-Intermediate',
-  'Pre-advanced',
-  'Advanced',
-  'Very advanced',
+  {
+    id: 0,
+    title: 'Any Level',
+    key: '',
+  },
+  {
+    id: 1,
+    title: 'Beginner',
+    key: '',
+  },
+  {
+    id: 2,
+    title: 'Upper-Beginner',
+    key: '',
+  },
+  {
+    id: 3,
+    title: 'Pre-Intermediate',
+    key: '',
+  },
+  {
+    id: 4,
+    title: 'Intermediate',
+    key: '',
+  },
+  {
+    id: 5,
+    title: 'Upper-Intermediate',
+    key: '',
+  },
+  {
+    id: 6,
+    title: 'Pre-advanced',
+    key: '',
+  },
+  {
+    id: 7,
+    title: 'Advanced',
+    key: '',
+  },
+  {
+    id: 8,
+    title: 'Very Advanced',
+    key: '',
+  },
 ];
 
 const categories = [
-  'For studying abroad',
-  'English for Traveling',
-  'Conversational English',
-  'English for Beginners',
-  'Business English',
-  'STARTERS',
-  'English for kids',
-  'PET',
-  'KET',
-  'MOVERS',
-  'FLYERS',
-  'TOEFL',
-  'TOEIC',
-  'IELTS',
+  {
+    id: 1,
+    title: 'For studying abroad',
+    key: '',
+  },
+  {
+    id: 2,
+    title: 'English for Traveling',
+    key: '',
+  },
+  {
+    id: 3,
+    title: 'Conversational English',
+    key: '',
+  },
+  {
+    id: 4,
+    title: 'English for Beginners',
+    key: '',
+  },
+  {
+    id: 5,
+    title: 'Business English',
+    key: '',
+  },
+  {
+    id: 6,
+    title: 'STARTERS',
+    key: '',
+  },
+  {
+    id: 7,
+    title: 'English for kids',
+    key: '',
+  },
+  {
+    id: 8,
+    title: 'PET',
+    key: '',
+  },
+  {
+    id: 9,
+    title: 'KET',
+    key: '',
+  },
+  {
+    id: 10,
+    title: 'MOVERS',
+    key: '',
+  },
+  {
+    id: 11,
+    title: 'FLYERS',
+    key: '',
+  },
+  {
+    id: 12,
+    title: 'TOEFL',
+    key: '',
+  },
+  {
+    id: 13,
+    title: 'TOEIC',
+    key: '',
+  },
+  {
+    id: 14,
+    title: 'IELTS',
+    key: '',
+  },
 ];
+
 type SearchState = {
   levels: [];
   categories: [];
-  sortByLevel: string;
+  sortByLevel: any;
   courseName: string;
 };
 
-const sorts = ['Level descending', 'Level ascending'];
+const sorts = [
+  {
+    id: 1,
+    title: 'Level descending',
+    key: 'DESC',
+  },
+  {
+    id: 2,
+    title: 'Level ascending',
+    key: 'ASC',
+  },
+];
+
 const Courses = () => {
+  const [state, dispatch] = useGlobalContext();
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
   const [isOpenCategoriesMenu, setIsOpenCategoriesMenu] = useState(false);
   const [isOpenSortMenu, setIsOpenSortMenu] = useState(false);
@@ -67,7 +174,7 @@ const Courses = () => {
   const [searchValue, setSearchValue] = useState<SearchState>({
     levels: [],
     categories: [],
-    sortByLevel: '',
+    sortByLevel: {},
     courseName: '',
   });
 
@@ -101,7 +208,7 @@ const Courses = () => {
       items = searchValue.levels;
     }
 
-    return items.map((item, index) => {
+    return items.map((item: any, index) => {
       return (
         <View
           key={index}
@@ -113,14 +220,14 @@ const Courses = () => {
             marginLeft: 4,
             marginTop: 4,
           }}>
-          <Text style={{fontSize: 14, color: colors.text}}>{item}</Text>
+          <Text style={{fontSize: 14, color: colors.text}}>{item.title}</Text>
           <TouchableWithoutFeedback
             onPress={() => {
               setIsOpenCategoriesMenu(false);
               setSearchValue((prev: any) => {
                 return {
                   ...prev,
-                  [type]: prev[type].filter((e: string) => e !== item),
+                  [type]: prev[type].filter((e: any) => e.title !== item.title),
                 };
               });
             }}>
@@ -136,12 +243,42 @@ const Courses = () => {
     });
   };
 
+  const renderCourses = () => {
+    const categories = state.courseCategories;
+    const result: any[] = [];
+    categories.forEach((category: any) => {
+      const courses = state.courses.filter((course: any) => {
+        const isMatch = course?.categories.find(
+          (item: any) => item?.key === category.key,
+        );
+        return !!isMatch;
+      });
+
+      if (courses.length > 0) {
+        result.push(
+          <View style={styles.courseSection} key={category.id}>
+            <Text style={styles.courseHeading}>{category.title}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.courseList}>
+                {courses.map((item: any) => (
+                  <CourseItem key={item.id} data={item} />
+                ))}
+              </View>
+            </ScrollView>
+          </View>,
+        );
+      }
+    });
+
+    return result;
+  };
+
   return (
     <ScrollView
       style={styles.container}
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}>
-      <Header drawerBtn={<DrawerButton />} />
+      <Header style={{zIndex: 10}} drawerBtn={<DrawerButton />} />
       <View style={styles.intro}>
         <Image source={images.course} style={{width: 100, height: 100}} />
         <View>
@@ -256,8 +393,8 @@ const Courses = () => {
             onPress={() => setIsOpenSortMenu(!isOpenSortMenu)}
             style={styles.dropdownMenuBtn}>
             <Text style={{fontSize: 14, color: colors.text}}>
-              {searchValue.sortByLevel.length > 0
-                ? searchValue.sortByLevel
+              {searchValue.sortByLevel?.title?.length > 0
+                ? searchValue.sortByLevel?.title
                 : 'Sort by level'}
             </Text>
             {isOpenSortMenu ? (
@@ -302,7 +439,7 @@ const Courses = () => {
       </View>
       {tab === 'course' && (
         <View style={{marginBottom: 32}}>
-          <View style={styles.courseSection}>
+          {/* <View style={styles.courseSection}>
             <Text style={styles.courseHeading}>English For Traveling</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.courseList}>
@@ -349,7 +486,8 @@ const Courses = () => {
                 <CourseItem src={images.courseItem4} />
               </View>
             </ScrollView>
-          </View>
+          </View> */}
+          {renderCourses()}
         </View>
       )}
     </ScrollView>

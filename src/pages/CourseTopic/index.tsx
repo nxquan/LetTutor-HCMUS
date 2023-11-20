@@ -8,7 +8,7 @@ import {
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Pdf from 'react-native-pdf';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -23,21 +23,28 @@ import TopicItem from '@/components/TopicItem';
 import ModalPopper from '@/components/ModalPopper';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
+import {useRoute} from '@react-navigation/native';
 
-const source = {
+const defaultSource = {
   uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
   cache: true,
 };
 
 const CourseTopic = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [topics, setTopics] = useState(['1', '2', '3', '4', '5']);
-  const [selectedTopic, setSelectedTopic] = useState('');
+  const route: any = useRoute();
+  const [topics, setTopics] = useState<any>([]);
+  const [selectedTopic, setSelectedTopic] = useState<any>({});
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const onChangeShowModal = () => {
     setIsOpenModal(!isOpenModal);
   };
+
+  useEffect(() => {
+    setTopics(route.params?.topic);
+    setSelectedTopic(route.params?.selectedTopic);
+    setIsOpenModal(true);
+  }, [route.params]);
 
   return (
     <ScrollView
@@ -56,11 +63,12 @@ const CourseTopic = () => {
           </View>
           <View style={styles.topicList}>
             <Text style={styles.topicHeading}>List Topic</Text>
-            {topics.map((topic, index) => {
+            {topics?.map((topic: any) => {
               return (
                 <TopicItem
-                  isActive={index === 0}
-                  key={index}
+                  data={topic}
+                  isActive={topic.orderCourse === selectedTopic?.orderCourse}
+                  key={topic.id}
                   onSelect={() => {
                     setSelectedTopic(topic);
                     setIsOpenModal(true);
@@ -73,7 +81,7 @@ const CourseTopic = () => {
       </View>
 
       <ModalPopper
-        visible={isOpenModal && selectedTopic.length > 0}
+        visible={isOpenModal && selectedTopic !== undefined}
         onChangeShowModal={() => {}}
         modalInnerStyle={{height: '100%', width: '100%', padding: 8}}>
         <View style={styles.pdfContainer}>
@@ -103,7 +111,7 @@ const CourseTopic = () => {
                 textAlign: 'center',
                 marginLeft: 16,
               }}>
-              Topic: {selectedTopic}
+              {selectedTopic?.orderCourse}. {selectedTopic?.name}
             </Text>
           </View>
           <View style={styles.pdfHeader}>
@@ -197,7 +205,14 @@ const CourseTopic = () => {
               </View>
             </View>
             <View style={{flex: 1}}>
-              <Pdf source={source} trustAllCerts={false} style={styles.pdf} />
+              <Pdf
+                source={{
+                  uri: selectedTopic?.nameFile || defaultSource.uri,
+                  cache: true,
+                }}
+                trustAllCerts={false}
+                style={styles.pdf}
+              />
             </View>
           </View>
         </View>

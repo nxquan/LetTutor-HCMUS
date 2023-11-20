@@ -14,7 +14,7 @@ const Stack = createNativeStackNavigator<RootParamList>();
 const MainStackRouter = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Tutor"
+      initialRouteName="SignIn"
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />

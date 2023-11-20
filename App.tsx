@@ -13,14 +13,14 @@ import {LogBox} from 'react-native';
 import {GlobalProvider} from '@/store';
 import Tutor from '@/pages/Tutor';
 import TutorDetail from '@/pages/TutorDetail';
+import Courses from '@/pages/Courses';
 
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <GlobalProvider>
         <EventProvider>
-          {/* <MainStackRouter /> */}
-          <TutorDetail />
+          <MainStackRouter />
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>

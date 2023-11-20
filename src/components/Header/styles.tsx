@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.grey300,
     borderBottomWidth: 1,
     paddingHorizontal: 12,
-    zIndex: 999,
   },
   logoContainer: {
     flexDirection: 'row',

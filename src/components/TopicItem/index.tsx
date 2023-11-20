@@ -1,12 +1,14 @@
 import {View, Text, TouchableHighlight} from 'react-native';
 import React from 'react';
 import styles from './styles';
-interface TopicProps {
+type Props = {
   isActive: boolean;
   onSelect?: () => void;
-}
-const TopicItem = (props: TopicProps) => {
-  const {isActive, onSelect} = props;
+  data: any;
+};
+
+function TopicItem(props: Props) {
+  const {data, isActive, onSelect} = props;
   return (
     <TouchableHighlight
       activeOpacity={0.6}
@@ -14,11 +16,11 @@ const TopicItem = (props: TopicProps) => {
       onPress={onSelect}
       style={[styles.touchContainer, isActive && styles.active]}>
       <View style={styles.topicItem}>
-        <Text style={styles.topicNo}>1.</Text>
-        <Text style={styles.topicName}>The Internet</Text>
+        <Text style={styles.topicNo}>{data?.orderCourse + 1}</Text>
+        <Text style={styles.topicName}>{data?.name}</Text>
       </View>
     </TouchableHighlight>
   );
-};
+}
 
 export default TopicItem;
