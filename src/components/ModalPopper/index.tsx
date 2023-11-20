@@ -22,4 +22,4 @@ const ModalPopper = (props: Props) => {
   );
 };
 
-export default ModalPopper;
+export default React.memo(ModalPopper);

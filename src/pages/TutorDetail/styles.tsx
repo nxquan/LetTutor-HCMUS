@@ -39,6 +39,11 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 4,
   },
+  modalBody: {
+    position: 'relative',
+    width: '100%',
+    paddingTop: 12,
+  },
 });
 
 export default styles;

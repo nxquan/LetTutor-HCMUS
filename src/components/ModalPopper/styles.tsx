@@ -1,5 +1,5 @@
-import { colors } from '@/constants';
-import { StyleSheet } from 'react-native';
+import {colors} from '@/constants';
+import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
@@ -9,8 +9,9 @@ const styles = StyleSheet.create({
   },
   modalInner: {
     backgroundColor: colors.white,
-    width: '80%',
+    width: '90%',
     padding: 16,
+    borderRadius: 8,
   },
 });
 

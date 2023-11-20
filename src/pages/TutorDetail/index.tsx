@@ -6,32 +6,44 @@ import {
   StatusBar,
   TouchableHighlight,
   TouchableOpacity,
-  Dimensions,
   FlatList,
+  TextInput,
+  Pressable,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
+import CheckBox from '@react-native-community/checkbox';
+import {useRoute} from '@react-navigation/native';
 
 import styles from './styles';
 import Header from '@/components/Header';
-import {images, languageImages} from '@/assets';
+import {images} from '@/assets';
 import {colors} from '@/constants';
 import InfoPart from './components/InfoPart';
 import ButtonItem from '@/components/Button';
 import BookButton from './components/BookBtn';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
-import {useRoute} from '@react-navigation/native';
-import {useGlobalContext} from '@/hooks';
+import Button from '@/components/Button';
 import RenderRating from '@/components/RenderRating';
-import {getCountryNameFromCode, getEnglishNameOfMonth} from '@/utils';
+import CustomVideo from '@/components/CustomVideo';
+import ModalPopper from '@/components/ModalPopper';
+
+import {useGlobalContext} from '@/hooks';
 import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
 import {toggleFavoriteTutor} from '@/store';
-import Button from '@/components/Button';
-import {getDayInEnglish, getCurrentWeek, formatTime} from '@/utils';
-import CustomVideo from '@/components/CustomVideo';
+
+import {
+  getCountryNameFromCode,
+  getEnglishNameOfMonth,
+  getDayInEnglish,
+  getCurrentWeek,
+} from '@/utils';
+
 import ReviewList from './components/ReviewList';
+import index from '../Schedule/components/ScheduleItem';
 
 const timers = [
   '10:00 - 10:25',
@@ -64,6 +76,12 @@ const timers = [
   '23:30 - 23:55',
 ];
 
+const REPORTS = [
+  'This tutor is annoying me',
+  'This profile is pretending be someone or is fake',
+  'Inappropriate profile photo',
+];
+
 const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
 type DetailTutor = {
   experience: string;
@@ -72,7 +90,6 @@ type DetailTutor = {
   languages: any;
   education: string;
   interests: string;
-  isFavorite: any;
   totalFeedback: number;
   rating: number;
   specialties: string;
@@ -88,7 +105,6 @@ const TutorDetail = () => {
     education: '',
     experience: '',
     interests: '',
-    isFavorite: false,
     totalFeedback: 0,
     specialties: '',
     video: '',
@@ -96,8 +112,11 @@ const TutorDetail = () => {
     User: {},
   });
 
+  const [isOpenReport, setIsOpenReport] = useState(false);
+  const [isOpenBookingModal, setIsOpenBookingModal] = useState(false);
+  const [reports, setReports] = useState<number[]>([]);
+
   const [feedbacks, setFeedbacks] = useState([]);
-  const [isLike, setIsLike] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [schedules, setSchedules] = useState<{distance: number; data: Date[]}>(
     () => {
@@ -107,17 +126,50 @@ const TutorDetail = () => {
       };
     },
   );
+  const [bookings, setBookings]: any = useState();
+
+  const extractBookings = (tutorId: string) => {
+    const result = [];
+    for (let i = 0; i < schedules.data.length; i++) {
+      let bookingsInDate: any[] = [];
+
+      timers.forEach(time => {
+        const times = time.split(' - ');
+        const schedule = new Date(schedules.data[i]);
+
+        let _booking = state.schedules.find((item: any) => {
+          const startDate = new Date(item?.startTimestamp);
+          return (
+            item?.tutorId === tutorId &&
+            item?.startTime === times[0] &&
+            item?.endTime === times[1] &&
+            startDate.getDate() === schedule.getDate() &&
+            startDate.getMonth() === schedule.getMonth()
+          );
+        });
+
+        bookingsInDate.push(_booking);
+      });
+      result.push(bookingsInDate);
+    }
+    return result;
+  };
 
   useEffect(() => {
     const tutorId = 'f23c4d9f-6043-4cb8-a038-9538a609f5ca'; //route.params?.tutorId ;
-    const _detailItem = state.tutorDetails.find(
-      (item: any) => item?.User?.id === tutorId,
+    const detailItem = state.tutorDetails.find(
+      (item: any) => item?.userId === tutorId,
     );
+
+    const tutor = state.tutors.find((item: any) => item?.id === tutorId);
+    detailItem.User = tutor;
 
     const _feedbacks = state.feedbacks.filter(
       (item: any) => item.secondId === tutorId,
     );
-    setTutorDetail(_detailItem);
+    const bookings = extractBookings(tutorId);
+    setBookings(bookings);
+    setTutorDetail(detailItem);
     setFeedbacks(_feedbacks);
   }, [state]);
 
@@ -152,35 +204,50 @@ const TutorDetail = () => {
   const renderTimerItem = (data: any) => {
     return (
       <View style={[[styles.cell, styles.firstCell]]}>
-        <Text style={{fontWeight: '600'}}>{data.item}</Text>
+        <Text style={{fontWeight: '600', color: colors.black}}>
+          {data.item}
+        </Text>
       </View>
     );
   };
 
-  const renderBookItem = (data: any) => {
-    let currentStatus = 'EMPTY';
-    let ResultComponent: JSX.Element = (
-      <Button
-        style={{
-          backgroundColor: '#009dff',
-          color: colors.white,
-          paddingVertical: 2,
-          paddingHorizontal: 12,
-          borderRadius: 99,
-        }}
-        title="Book"
-        onPress={() => {}}
-      />
-    );
+  const renderBookItem = ({item, index}: any) => {
+    let ResultComponent: JSX.Element;
+    if (item === undefined) {
+      ResultComponent = <Text></Text>;
+    } else if (item?.isBooked) {
+      const isSelfBooking = item?.scheduleDetails?.bookingInfo?.find(
+        (item: any) => item?.userId === '123',
+      );
 
-    if (currentStatus === 'MY_BOOK') {
-      ResultComponent = <Text style={{color: colors.success}}>Booked</Text>;
-    } else if (currentStatus === 'RESERVED') {
-      ResultComponent = <Text style={{color: colors.grey600}}>Reserved</Text>;
+      //MY BOOK
+      if (!!isSelfBooking) {
+        ResultComponent = <Text style={{color: colors.success}}>Booked</Text>;
+      } else {
+        //OTHER BOOKINGS
+        ResultComponent = <Text style={{color: colors.grey600}}>Reserved</Text>;
+      }
+    } else {
+      //AVAILABLE
+      ResultComponent = (
+        <Button
+          style={{
+            backgroundColor: '#009dff',
+            color: colors.white,
+            paddingVertical: 2,
+            paddingHorizontal: 12,
+            borderRadius: 99,
+          }}
+          title="Book"
+          onPress={() => {
+            setIsOpenBookingModal(true);
+          }}
+        />
+      );
     }
 
     return (
-      <View key={data.key} style={[[styles.cell]]}>
+      <View key={index} style={[[styles.cell]]}>
         {ResultComponent}
       </View>
     );
@@ -261,7 +328,7 @@ const TutorDetail = () => {
               style={{padding: 8}}
               activeOpacity={0.7}>
               <View style={{alignItems: 'center'}}>
-                {!!tutorDetail?.isFavorite ? (
+                {!!tutorDetail?.User?.isFavoriteTutor ? (
                   <AntDesign name="heart" size={24} color={colors.error} />
                 ) : (
                   <AntDesign name="hearto" size={24} color={colors.primary} />
@@ -269,7 +336,7 @@ const TutorDetail = () => {
                 <Text
                   style={{
                     marginTop: 4,
-                    color: !!tutorDetail?.isFavorite
+                    color: !!tutorDetail?.User?.isFavoriteTutor
                       ? colors.error
                       : colors.primary,
                   }}>
@@ -279,7 +346,7 @@ const TutorDetail = () => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setIsLike(!isLike);
+                setIsOpenReport(!isOpenReport);
               }}
               style={{padding: 8}}
               activeOpacity={0.7}>
@@ -436,30 +503,361 @@ const TutorDetail = () => {
                 })}
               </View>
               <View style={{flexDirection: 'row'}}>
-                {['', ...schedules.data].map((_item, index) => {
-                  if (index == 0) {
-                    return (
-                      <FlatList
-                        key={index}
-                        data={timers}
-                        renderItem={renderTimerItem}
-                      />
-                    );
-                  } else {
-                    return (
-                      <FlatList
-                        key={index}
-                        data={timers}
-                        renderItem={renderBookItem}
-                      />
-                    );
-                  }
+                <FlatList data={timers} renderItem={renderTimerItem} />
+                {/* <FlatList data={bookings?.[0]} renderItem={renderBookItem} /> */}
+
+                {schedules.data.map((_item, index) => {
+                  return (
+                    <FlatList
+                      key={index}
+                      data={bookings?.[index]}
+                      renderItem={renderBookItem}
+                    />
+                  );
                 })}
               </View>
             </View>
           </ScrollView>
         </View>
       </View>
+
+      <ModalPopper visible={isOpenReport} transparent={true}>
+        <View style={{width: '100%'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignContent: 'center',
+            }}>
+            <Text
+              style={{color: colors.black, fontSize: 16, fontWeight: '500'}}>
+              Report {tutorDetail?.User?.name}
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setReports([]);
+                setIsOpenReport(false);
+              }}>
+              <AntDesign name="close" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginVertical: 16,
+              height: 1,
+              backgroundColor: colors.grey300,
+            }}
+          />
+          <View style={styles.modalBody}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <AntDesign
+                name="exclamationcircle"
+                size={20}
+                color={colors.primary}
+              />
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: 14,
+                  fontWeight: '500',
+                  marginLeft: 6,
+                }}>
+                Help us understand what's happening
+              </Text>
+            </View>
+            <View style={{paddingHorizontal: 8, width: '100%'}}>
+              {REPORTS.map((item: any, index: number) => {
+                return (
+                  <Pressable
+                    key={index}
+                    onPress={() => {
+                      setReports((prev: any) => {
+                        if (prev.includes(index)) {
+                          return reports.filter(i => i !== index);
+                        } else {
+                          return [...prev, index];
+                        }
+                      });
+                    }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <CheckBox
+                        value={reports.includes(index)}
+                        onValueChange={() => {
+                          setReports((prev: any) => {
+                            if (prev.includes(index)) {
+                              return reports.filter(i => i !== index);
+                            } else {
+                              return [...prev, index];
+                            }
+                          });
+                        }}
+                        tintColors={{
+                          true: colors.primary,
+                          false: 'rgba(0,0,0,0.5)',
+                        }}
+                      />
+                      <Text
+                        style={{
+                          color: 'rgba(0,0,0,0.85)',
+                          fontSize: 14,
+                          flex: 1,
+                          flexWrap: 'wrap',
+                        }}>
+                        {item}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            <TextInput
+              multiline={true}
+              numberOfLines={12}
+              textAlignVertical="top"
+              placeholder="Please let us know details about your problem"
+              placeholderTextColor={colors.grey500}
+              style={{
+                color: colors.black,
+                textAlign: 'left',
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+                borderColor: colors.grey350,
+                borderWidth: 1,
+                borderRadius: 6,
+                marginTop: 16,
+                zIndex: -1,
+                fontSize: 14,
+              }}>
+              {reports
+                .sort((a, b) => a - b)
+                .map((item, index) => {
+                  return REPORTS[item] + '\n';
+                })}
+            </TextInput>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'flex-end',
+                marginTop: 16,
+              }}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setReports([]);
+                  setIsOpenReport(false);
+                }}
+                style={{
+                  borderColor: colors.primary,
+                  color: colors.primary,
+                }}
+              />
+
+              <Button
+                title="Submit"
+                onPress={() => setIsOpenReport(false)}
+                leftIcon={
+                  <Feather
+                    name="chevrons-right"
+                    size={20}
+                    color={colors.white}
+                  />
+                }
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.white,
+                  marginLeft: 16,
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </ModalPopper>
+
+      <ModalPopper visible={isOpenBookingModal} transparent={true}>
+        <View style={{width: '100%'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignContent: 'center',
+            }}>
+            <Text
+              style={{color: colors.black, fontSize: 16, fontWeight: '600'}}>
+              Booking Details
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setIsOpenBookingModal(false);
+              }}>
+              <AntDesign name="close" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginVertical: 16,
+              height: 1,
+              backgroundColor: colors.grey300,
+            }}
+          />
+          <View style={styles.modalBody}>
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: colors.grey200,
+                borderRadius: 6,
+              }}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '500',
+                  color: colors.black,
+                  backgroundColor: colors.grey200,
+                  padding: 8,
+                }}>
+                Booking Time
+              </Text>
+              <Text
+                style={{
+                  margin: 8,
+                  backgroundColor: 'rgb(238, 234, 255)',
+                  color: 'rgb(119, 102, 199)',
+                  padding: 8,
+                  fontSize: 14,
+                  fontWeight: '500',
+                  borderRadius: 6,
+                  textAlign: 'center',
+                }}>
+                20:30 - 20:55 Saturday, 25 November 2023
+              </Text>
+            </View>
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: colors.grey200,
+                borderRadius: 6,
+                marginTop: 8,
+                backgroundColor: colors.grey100,
+                padding: 8,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 8,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '500',
+                    color: colors.black,
+                  }}>
+                  Balance
+                </Text>
+                <Text
+                  style={{
+                    color: 'rgb(119, 102, 199)',
+                    fontSize: 14,
+                  }}>
+                  You have 0 class left
+                </Text>
+              </View>
+              <View
+                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '500',
+                    color: colors.black,
+                  }}>
+                  Price
+                </Text>
+                <Text
+                  style={{
+                    color: 'rgb(119, 102, 199)',
+                    fontSize: 14,
+                  }}>
+                  1 class
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: 16,
+                borderWidth: 1,
+                borderRadius: 6,
+                borderColor: colors.grey300,
+              }}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '500',
+                  color: colors.black,
+                  backgroundColor: colors.grey200,
+                  padding: 8,
+                }}>
+                Notes
+              </Text>
+              <TextInput
+                multiline={true}
+                numberOfLines={8}
+                textAlignVertical="top"
+                placeholder="Please let us know details about your problem"
+                placeholderTextColor={colors.grey500}
+                style={{
+                  color: colors.black,
+                  textAlign: 'left',
+                  paddingHorizontal: 8,
+                  paddingVertical: 4,
+                  borderRadius: 6,
+                  marginTop: 8,
+                  fontSize: 14,
+                }}>
+                {reports
+                  .sort((a, b) => a - b)
+                  .map((item, index) => {
+                    return REPORTS[item] + '\n';
+                  })}
+              </TextInput>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'flex-end',
+                marginTop: 16,
+              }}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setIsOpenBookingModal(false);
+                }}
+                style={{
+                  borderColor: colors.primary,
+                  color: colors.primary,
+                }}
+              />
+              <Button
+                title="Book"
+                onPress={() => setIsOpenBookingModal(false)}
+                leftIcon={
+                  <Feather
+                    name="chevrons-right"
+                    size={20}
+                    color={colors.white}
+                  />
+                }
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.white,
+                  marginLeft: 16,
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </ModalPopper>
 
       <StatusBar
         backgroundColor={colors.white}

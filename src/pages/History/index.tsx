@@ -39,7 +39,7 @@ const History = () => {
         <HistoryItem />
         <HistoryItem />
       </View>
-      <Pagination style={{paddingHorizontal: 20}} />
+      {/* <Pagination style={{paddingHorizontal: 20}} /> */}
     </ScrollView>
   );
 };

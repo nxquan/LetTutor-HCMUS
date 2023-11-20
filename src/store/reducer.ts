@@ -1,6 +1,13 @@
 import {User} from '@/types';
 import {ACTION_TYPE} from '.';
-import {feedbacks, tutorDetails, tutors} from './mock-data';
+import {
+  COURSES,
+  FEEDBACKS,
+  SCHEDULES,
+  TUTOR_COURSES,
+  TUTOR_DETAILS,
+  TUTORS,
+} from './mock-data';
 
 export type initStateType = {
   users: User[];
@@ -8,14 +15,20 @@ export type initStateType = {
   tutors: any[];
   tutorDetails: any[];
   feedbacks: any[];
+  tutorCourses: any[];
+  courses: any[];
+  schedules: any[];
 };
 
 export const initState: initStateType = {
   users: [],
   currentUser: null,
-  tutors: tutors.rows,
-  tutorDetails: tutorDetails,
-  feedbacks: feedbacks,
+  tutors: TUTORS,
+  tutorDetails: TUTOR_DETAILS,
+  feedbacks: FEEDBACKS,
+  tutorCourses: TUTOR_COURSES,
+  courses: COURSES,
+  schedules: SCHEDULES,
 };
 
 const reducer = (
@@ -47,11 +60,11 @@ const reducer = (
       };
     }
     case ACTION_TYPE.TOGGLE_FAVORITE_TUTOR: {
-      console.log('TOGGLE_FAVORITE_TUTOR');
       const tutors = state.tutors;
       const index = tutors.findIndex(
         (item: any) => item.id === action.payload.tutorId,
       );
+
       if (index !== -1) {
         if (tutors[index].isFavoriteTutor === null) {
           tutors[index].isFavoriteTutor = true;
@@ -59,7 +72,6 @@ const reducer = (
           tutors[index].isFavoriteTutor = null;
         }
       }
-
       return {
         ...state,
         tutors,
