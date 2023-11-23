@@ -20,6 +20,8 @@ const Button = (props: {
   if (onPress) {
     Component = TouchableOpacity;
     _props.onPress = onPress;
+  } else {
+    _props.style = [..._props.style, styles.disabled];
   }
 
   return (

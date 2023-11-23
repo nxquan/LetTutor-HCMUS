@@ -19,17 +19,16 @@ const ReviewItem = (props: Props) => {
         style={styles.avatar}
       />
       <View style={styles.info}>
-        <Text style={styles.name}>
-          {data?.firstInfo?.name}
-          {'   '}
-        </Text>
-        <Text style={{color: '#ccc', fontSize: 13}}>
-          {new Date(data?.updatedAt).getMonth() + 1} months ago
-        </Text>
+        <Text style={styles.name}>{data?.firstInfo?.name}</Text>
         <View style={styles.stars}>
           <RenderRating rating={data?.rating} size={16} />
+          <Text style={{color: '#ccc', fontSize: 13, marginLeft: 12}}>
+            {new Date(data?.updatedAt).getMonth() + 1} months ago
+          </Text>
         </View>
-        <Text style={styles.description}>{data?.content}</Text>
+        {data?.content && (
+          <Text style={styles.description}>{data?.content}</Text>
+        )}
       </View>
     </View>
   );

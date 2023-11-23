@@ -9,7 +9,6 @@ export default StyleSheet.create({
     textTransform: 'capitalize',
     fontSize: 16,
     fontWeight: '400',
-    color: colors.grey700,
   },
   textControl: {
     marginTop: 6,

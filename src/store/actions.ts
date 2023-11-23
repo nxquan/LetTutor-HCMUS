@@ -1,6 +1,8 @@
 import {
   ADD_COURSE,
   ADD_USER,
+  CHANGE_PASSWORD,
+  CHANGE_PROFILE,
   LOGIN,
   LOG_OUT,
   RESET_PASSWORD,
@@ -24,6 +26,18 @@ export const resetPassword = (payload: {email: string; password: string}) => {
   return {
     payload,
     type: RESET_PASSWORD,
+  };
+};
+export const changePassword = (payload: any) => {
+  return {
+    payload,
+    type: CHANGE_PASSWORD,
+  };
+};
+export const changeProfile = (payload: any) => {
+  return {
+    payload,
+    type: CHANGE_PROFILE,
   };
 };
 

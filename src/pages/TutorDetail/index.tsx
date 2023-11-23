@@ -42,7 +42,7 @@ import {
   getCurrentWeek,
 } from '@/utils';
 
-import ReviewList from './components/ReviewList';
+import ReviewList from '@/components/ReviewList';
 import index from '../Schedule/components/ScheduleItem';
 
 const timers = [

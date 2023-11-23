@@ -37,6 +37,7 @@ function DropdownMenu(props: {
       {isOpen && (
         <ScrollView
           style={[styles.dropdownMenu, styleMenu]}
+          scrollEnabled={true}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={true}>
           {data.map((item: any, index: number) => {
@@ -48,7 +49,7 @@ function DropdownMenu(props: {
                 onPress={() => {
                   onChangeOpen(false);
                   if (!!typeOfMenu) {
-                    onChangeSelected(item, typeOfMenu);
+                    onChangeSelected(typeOfMenu, item);
                   } else {
                     onChangeSelected(item);
                   }
@@ -64,7 +65,9 @@ function DropdownMenu(props: {
                     index === data.length - 1 && styles.borderLeftToRightBottom,
                   ]}>
                   {item?.icon}
-                  <Text style={[styles.dropdownItem]}>{item.title}</Text>
+                  <Text style={[styles.dropdownItem]}>
+                    {item?.title || item?.name}
+                  </Text>
                 </View>
               </TouchableHighlight>
             );

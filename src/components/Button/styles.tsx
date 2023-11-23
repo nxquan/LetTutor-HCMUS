@@ -11,6 +11,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
   },
+  disabled: {
+    opacity: 0.7,
+  },
   title: {
     color: colors.black,
     textAlign: 'center',

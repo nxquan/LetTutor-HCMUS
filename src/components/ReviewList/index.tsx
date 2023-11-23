@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import ReviewItem from '../ReviewItem';
 
 const ReviewList = (props: any) => {
-  const {data} = props;
+  const {data, ITEMS_PER_PAGE = 6} = props;
   const [currentFeedbacks, setCurrentFeedbacks] = useState([]);
 
   const renderReviews = (reviews: any[]) => {
@@ -22,7 +22,7 @@ const ReviewList = (props: any) => {
       }}>
       {renderReviews(currentFeedbacks)}
       <Pagination
-        ITEMS_PER_PAGE={6}
+        ITEMS_PER_PAGE={ITEMS_PER_PAGE}
         data={data}
         onChangeDataInPage={onChangeCurrentFeedbacks}
       />

@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 8,
     width: width * 0.95,
-    marginTop: 16,
+    marginTop: 12,
     marginBottom: 12,
   },
   info: {

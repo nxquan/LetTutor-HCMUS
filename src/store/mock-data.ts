@@ -5730,7 +5730,7 @@ export const FEEDBACKS = [
     firstId: '6a14262d-a2a0-4cad-8505-695769c7b261',
     secondId: 'f23c4d9f-6043-4cb8-a038-9538a609f5ca',
     rating: 5,
-    content: '',
+    content: 'https://api.app.lettutaaaaaaaaaaaaaaaaaaaaaaaa',
     createdAt: '2023-11-08T13:27:27.833Z',
     updatedAt: '2023-11-08T13:27:27.833Z',
     firstInfo: {
@@ -5745,7 +5745,7 @@ export const FEEDBACKS = [
     firstId: '6a14262d-a2a0-4cad-8505-695769c7b261',
     secondId: 'f23c4d9f-6043-4cb8-a038-9538a609f5ca',
     rating: 5,
-    content: '',
+    content: 'Good at English',
     createdAt: '2023-11-01T13:27:49.364Z',
     updatedAt: '2023-11-01T13:27:49.364Z',
     firstInfo: {
@@ -5908,21 +5908,21 @@ export const FEEDBACKS = [
 
 export const LEARN_TOPICS = [
   {
-    id: 3,
+    id: 9,
     key: 'english-for-kids',
     name: 'English for Kids',
     createdAt: '2021-09-05T15:12:34.138Z',
     updatedAt: '2021-09-05T15:12:34.138Z',
   },
   {
-    id: 4,
+    id: 10,
     key: 'business-english',
     name: 'Business English',
     createdAt: '2021-09-05T15:12:34.138Z',
     updatedAt: '2021-09-05T15:12:34.138Z',
   },
   {
-    id: 5,
+    id: 11,
     key: 'conversational-english',
     name: 'Conversational',
     createdAt: '2021-09-05T15:12:34.138Z',
@@ -5986,6 +5986,121 @@ export const TEST_PREPARATIONS = [
     name: 'TOEIC',
     createdAt: '2021-09-05T15:12:34.907Z',
     updatedAt: '2021-09-05T15:12:34.907Z',
+  },
+];
+
+export const INFO = [
+  {
+    id: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+    email: 'student@lettutor.com',
+    name: 'Hai Pham',
+    avatar:
+      'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
+    country: 'VN',
+    phone: '842499996508',
+    roles: ['student', 'CHANGE_PASSWORD'],
+    language: 'Albanian',
+    birthday: '1999-06-01',
+    isActivated: true,
+    tutorInfo: {
+      id: 'db37f185-399f-470d-995b-bf6143cb1a5f',
+      video:
+        'https://sandbox.api.lettutor.com/video/f569c202-7bbf-4620-af77-ecc1419a6b28video1643096811438.mp4',
+      bio: "You can't Xi me ! Bing chilling ! 1",
+      education: 'University of Science 3',
+      experience: '3 years',
+      profession: 'WWE, Online English teacher',
+      accent: null,
+      targetStudent: 'Advanced',
+      interests: 'I like reading book',
+      languages: '+1268',
+      specialties:
+        'conversational-english,movers,flyers,toefl,toeic,business-english,Business English,Conversational English,Ielts,Movers,Toeic',
+      resume: null,
+      rating: 3.7401960784313726,
+      isActivated: false,
+      isNative: false,
+      youtubeVideoId: null,
+    },
+    walletInfo: {
+      amount: '964800000',
+      isBlocked: false,
+      bonus: 0,
+    },
+    requireNote: 'aa',
+    level: 'UPPER_INTERMEDIATE',
+    learnTopics: [
+      {
+        id: 3,
+        key: 'english-for-kids',
+        name: 'English for Kids',
+      },
+      {
+        id: 4,
+        key: 'business-english',
+        name: 'Business English',
+      },
+      {
+        id: 5,
+        key: 'conversational-english',
+        name: 'Conversational English',
+      },
+    ],
+    testPreparations: [
+      {
+        id: 1,
+        key: 'starters',
+        name: 'STARTERS',
+      },
+      {
+        id: 2,
+        key: 'movers',
+        name: 'MOVERS',
+      },
+      {
+        id: 3,
+        key: 'flyers',
+        name: 'FLYERS',
+      },
+      {
+        id: 4,
+        key: 'ket',
+        name: 'KET',
+      },
+      {
+        id: 5,
+        key: 'pet',
+        name: 'PET',
+      },
+      {
+        id: 6,
+        key: 'ielts',
+        name: 'IELTS',
+      },
+      {
+        id: 7,
+        key: 'toefl',
+        name: 'TOEFL',
+      },
+      {
+        id: 8,
+        key: 'toeic',
+        name: 'TOEIC',
+      },
+    ],
+    isPhoneActivated: true,
+    timezone: 7,
+    referralInfo: {
+      referralCode: 'RSJYDZYQLE',
+      referralPackInfo: {
+        earnPercent: 5,
+      },
+    },
+    studySchedule: 'hello ',
+    canSendMessage: false,
+    studentGroup: null,
+    studentInfo: null,
+    avgRating: 3.7401960784313726,
   },
 ];
 

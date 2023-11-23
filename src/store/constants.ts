@@ -5,4 +5,6 @@ export const ADD_USER = 'ADD_USERS';
 export const LOGIN = 'LOGIN';
 export const LOG_OUT = 'LOG_OUT';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
+export const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 export const TOGGLE_FAVORITE_TUTOR = 'ADD_FAVORITE_TUTOR';
+export const CHANGE_PROFILE = 'CHANGE_PROFILE';

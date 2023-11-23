@@ -101,7 +101,14 @@ const CourseDetail = (props: any) => {
       <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
       <View style={styles.inner}>
         <View style={styles.intro}>
-          <Image source={images.courseItem1} style={styles.image} />
+          <Image
+            source={{
+              uri:
+                course?.imageUrl ||
+                'https://camblycurriculumicons.s3.amazonaws.com/5e0e8b212ac750e7dc9886ac?h=d41d8cd98f00b204e9800998ecf8427e',
+            }}
+            style={styles.image}
+          />
           <View style={styles.info}>
             <Text style={styles.title}>{course?.name}</Text>
             <Text style={styles.des}>{course?.description}</Text>
@@ -189,7 +196,7 @@ const CourseDetail = (props: any) => {
                     activeOpacity={0.7}
                     onPress={() =>
                       navigation.navigate('CourseTopic', {
-                        topic: course?.topics,
+                        course: course,
                         selectedTopic: topic,
                       })
                     }>

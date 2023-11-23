@@ -44,6 +44,7 @@ export const getEnglishNameOfMonth = (month: number) => {
 
   return months[month - 1];
 };
+
 export const formatTime = (seconds: number) => {
   const mins = Math.floor(seconds / 60)
     .toString()
@@ -51,4 +52,16 @@ export const formatTime = (seconds: number) => {
   const secs = (Math.trunc(seconds) % 60).toString().padStart(2, '0');
 
   return `${mins}:${secs}`;
+};
+
+export const formatDate = (date: Date): string => {
+  if (date === undefined) {
+    return 'dd/mm/yyyy';
+  }
+
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day} - ${month} - ${year}`;
 };

@@ -8,11 +8,13 @@ import {
   TUTOR_DETAILS,
   TUTORS,
   COURSE_CATEGORIES,
+  INFO,
 } from './mock-data';
 
 export type initStateType = {
   users: User[];
-  currentUser: User | null;
+  userInfos: any;
+  currentUser: any;
   tutors: any[];
   tutorDetails: any[];
   feedbacks: any[];
@@ -26,7 +28,11 @@ export type initStateType = {
 
 export const initState: initStateType = {
   users: [],
-  currentUser: null,
+  userInfos: INFO,
+  currentUser: {
+    email: '',
+    password: 'Hello@99',
+  },
   theme: '',
   language: '',
   tutors: TUTORS,
@@ -66,6 +72,28 @@ const reducer = (
         users,
       };
     }
+    case ACTION_TYPE.CHANGE_PASSWORD: {
+      const currentUser = state.currentUser;
+      if (currentUser.password == action.payload.currentPassword) {
+        currentUser.password = action.payload.newPassword;
+        return {
+          ...state,
+          currentUser,
+        };
+      }
+    }
+
+    case ACTION_TYPE.CHANGE_PROFILE: {
+      const userInfos = state.userInfos.filter(
+        (item: any) => item.id !== action.payload?.id,
+      );
+
+      return {
+        ...state,
+        userInfos: [...userInfos, action.payload],
+      };
+    }
+
     case ACTION_TYPE.TOGGLE_FAVORITE_TUTOR: {
       const tutors = state.tutors;
       const index = tutors.findIndex(

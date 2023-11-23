@@ -12,13 +12,25 @@ type Props = {
   value: string;
   duplicateValue?: string;
   onChange: any;
+  required?: boolean;
+  editable?: boolean;
 };
 
 const FormGroup = (props: Props) => {
-  const {title, type, placeholder, field, value, onChange, duplicateValue} =
-    props;
+  const {
+    title,
+    type,
+    placeholder,
+    field,
+    value,
+    onChange,
+    duplicateValue,
+    required,
+    editable,
+  } = props;
   const [isShowPassword, setIsShowPassword] = useState(type === 'password');
   const [error, setError] = useState('');
+
   const renderActionShow = () => {
     if (type === 'password') {
       if (isShowPassword) {
@@ -62,7 +74,9 @@ const FormGroup = (props: Props) => {
           setError('Email không hợp lệ');
         }
         break;
-      case 'password': {
+      case 'password':
+      case 'currentPassword':
+      case 'newPassword': {
         const isMatch = String(value).match(
           /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$/,
         );
@@ -104,11 +118,15 @@ const FormGroup = (props: Props) => {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} className="text-gray-800">
+        {required && <Text className="text-red-500">* </Text>}
+        {title}
+      </Text>
       <View
         style={[
           styles.textControl,
           error.length > 0 && styles.textControlError,
+          editable === false && {backgroundColor: colors.grey200},
         ]}>
         <TextInput
           style={styles.textInput}
@@ -116,6 +134,7 @@ const FormGroup = (props: Props) => {
           placeholder={placeholder}
           placeholderTextColor={colors.text}
           secureTextEntry={isShowPassword}
+          editable={editable}
           onBlur={() => {
             validate();
           }}

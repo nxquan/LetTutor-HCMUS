@@ -5,7 +5,7 @@ const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   dropdownMenu: {
-    maxHeight: height * 0.4,
+    maxHeight: height * 0.35,
     backgroundColor: colors.white,
     shadowColor: 'rgba(0,0,0,0.5)',
     elevation: 10,

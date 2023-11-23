@@ -67,6 +67,7 @@ const defaultSpecialty = {
   createdAt: '2021-09-05T15:12:34.907Z',
   updatedAt: '2021-09-05T15:12:34.907Z',
 };
+
 const Tutor = () => {
   const navigation = useNavigation<StackProps>();
   const [state, dispatch] = useGlobalContext();

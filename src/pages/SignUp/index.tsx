@@ -25,7 +25,6 @@ const SignUp = () => {
   const [user, setUser] = useState({
     email: '',
     password: '',
-    confirmPassword: '',
   });
   const [notification, setNotification] = useState({
     message: '',
@@ -51,10 +50,7 @@ const SignUp = () => {
     const isMatch = String(user.password).match(
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$/,
     );
-
-    const isDuplicate =
-      user.password.length > 0 && user.password === user.confirmPassword;
-    return !!isEmail && !!isMatch && !!isDuplicate;
+    return !!isEmail && !!isMatch;
   };
 
   const handleSubmit = () => {
@@ -75,7 +71,6 @@ const SignUp = () => {
       setUser({
         email: '',
         password: '',
-        confirmPassword: '',
       });
     } else {
       setNotification({
@@ -125,14 +120,6 @@ const SignUp = () => {
             type="password"
             field="password"
             value={user.password}
-            onChange={onChangeDataOfUser}
-          />
-          <FormGroup
-            title="PASSWORD CONFIRM"
-            type="password"
-            field="confirmPassword"
-            value={user.confirmPassword}
-            duplicateValue={user.password}
             onChange={onChangeDataOfUser}
           />
           {notification.message.length > 0 && (

@@ -32,7 +32,7 @@ const defaultSource = {
 
 const CourseTopic = () => {
   const route: any = useRoute();
-  const [topics, setTopics] = useState<any>([]);
+  const [course, setCourse] = useState<any>({});
   const [selectedTopic, setSelectedTopic] = useState<any>({});
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -41,7 +41,7 @@ const CourseTopic = () => {
   };
 
   useEffect(() => {
-    setTopics(route.params?.topic);
+    setCourse(route.params?.course);
     setSelectedTopic(route.params?.selectedTopic);
     setIsOpenModal(true);
   }, [route.params]);
@@ -54,16 +54,21 @@ const CourseTopic = () => {
       <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
       <View style={styles.inner}>
         <View style={styles.courseInfo}>
-          <Image source={images.courseItem1} style={styles.image} />
+          <Image
+            source={{
+              uri:
+                course?.imageUrl ||
+                'https://camblycurriculumicons.s3.amazonaws.com/5e0e8b212ac750e7dc9886ac?h=d41d8cd98f00b204e9800998ecf8427e',
+            }}
+            style={styles.image}
+          />
           <View style={styles.info}>
-            <Text style={styles.title}>Life in the Internet Age</Text>
-            <Text style={styles.des}>
-              Let's discuss how technology is changing the way we live
-            </Text>
+            <Text style={styles.title}>{course?.name}</Text>
+            <Text style={styles.des}>{course?.description}</Text>
           </View>
           <View style={styles.topicList}>
             <Text style={styles.topicHeading}>List Topic</Text>
-            {topics?.map((topic: any) => {
+            {course?.topics?.map((topic: any) => {
               return (
                 <TopicItem
                   data={topic}
@@ -111,7 +116,7 @@ const CourseTopic = () => {
                 textAlign: 'center',
                 marginLeft: 16,
               }}>
-              {selectedTopic?.orderCourse}. {selectedTopic?.name}
+              {selectedTopic?.orderCourse + 1}. {selectedTopic?.name}
             </Text>
           </View>
           <View style={styles.pdfHeader}>

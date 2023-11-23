@@ -14,13 +14,15 @@ import {GlobalProvider} from '@/store';
 import Tutor from '@/pages/Tutor';
 import TutorDetail from '@/pages/TutorDetail';
 import Courses from '@/pages/Courses';
+import Profile from '@/pages/Profile';
 
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <GlobalProvider>
         <EventProvider>
-          <MainStackRouter />
+          {/* <MainStackRouter /> */}
+          <Profile />
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>
