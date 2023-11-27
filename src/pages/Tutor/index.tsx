@@ -31,6 +31,7 @@ import {useNavigation} from '@react-navigation/native';
 import DrawerButton from '@/components/DrawerButton';
 import {useGlobalContext} from '@/hooks';
 import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
+import {convertMinutesToHours, convertSecondsToMinutes} from '@/utils';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -79,6 +80,30 @@ const Tutor = () => {
 
   const [tutors, setTutors] = useState<any[]>([]);
   const [currentTutors, setCurrentTutors] = useState([]);
+  const [learningHourTotal, setLearningHourTotal] = useState(0);
+  const [upcomingLesson, setUpcomingLesson] = useState<any>({
+    startedAtTimeStamp: 1701107316859,
+    createdAtTimeStamp: 1685608409920,
+    updatedAtTimeStamp: 1685608409920,
+    id: 3,
+    userId: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+    courseId: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
+    status: 'INIT',
+    startedAt: '2023-06-01T08:33:29.919Z',
+    createdAt: '2023-06-01T08:33:29.920Z',
+    updatedAt: '2023-06-01T08:33:29.920Z',
+    course: {
+      id: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
+      name: 'English Conversation 101',
+      description: 'Approachable lessons for absolute beginners',
+    },
+  });
+
+  const [remainingTimeForUpcomingLesson, setRemainingTimeForUpcomingLesson] =
+    useState<number>(0);
+
+  const [teachingTime, setTeachingTime] = useState<number>(0);
+
   const scrollRef: any = useRef();
   const tutorRef: any = useRef();
 
@@ -294,7 +319,46 @@ const Tutor = () => {
     };
 
     handleSearch();
+    setRemainingTimeForUpcomingLesson(prev => {
+      const currentDate = new Date();
+      const startDate = new Date(upcomingLesson.startedAtTimeStamp);
+
+      // return Math.abs(
+      //   (startDate.getMilliseconds() - currentDate.getMilliseconds()) / 1000,
+      // );
+      return 20;
+    });
+
+    setLearningHourTotal(state.learningHourTotal);
   }, [filters]);
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setRemainingTimeForUpcomingLesson(prev => {
+        if (prev == 0) {
+          setUpcomingLesson((prevUp: any) => ({
+            ...prevUp,
+            status: 'TEACHING',
+          }));
+
+          clearInterval(timerId);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, []);
+
+  useEffect(() => {
+    if (remainingTimeForUpcomingLesson === 0) {
+      const timerId = setInterval(() => {
+        setTeachingTime(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(timerId);
+    }
+  }, [remainingTimeForUpcomingLesson]);
 
   return (
     <ScrollView
@@ -315,23 +379,28 @@ const Tutor = () => {
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             <View style={{flex: 1}}>
               <Text style={styles.notiDateText}>
-                Fri, 20 Oct 23 00:30 - 00:55
+                {
+                  new Date(upcomingLesson.startedAtTimeStamp)
+                    .toString()
+                    .split('GMT')[0]
+                }
               </Text>
-              <Text style={styles.notiRemainTimeText}>(starts in ...)</Text>
+              {upcomingLesson.status == 'INIT' ? (
+                <Text style={styles.notiRemainTimeText}>
+                  (starts in{' '}
+                  {convertSecondsToMinutes(remainingTimeForUpcomingLesson)})
+                </Text>
+              ) : (
+                <Text
+                  style={[styles.notiRemainTimeText, {color: colors.success}]}>
+                  (Teaching in {convertSecondsToMinutes(teachingTime)})
+                </Text>
+              )}
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate('VideoCall')}
               activeOpacity={0.8}
-              style={{
-                backgroundColor: colors.white,
-                flex: 1,
-                flexDirection: 'row',
-                flexShrink: 0,
-                alignItems: 'center',
-                borderRadius: 20,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-              }}>
+              className="flex-row items-center bg-white rounded-full px-3 py-1.5">
               <Feather name="youtube" size={24} color={colors.primary} />
               <Text
                 style={{marginLeft: 6, color: colors.primary, fontSize: 14}}>
@@ -347,7 +416,7 @@ const Tutor = () => {
               fontWeight: '500',
               marginTop: 12,
             }}>
-            Total lesson time is 507 hours 5 minutes
+            Total lesson time is {convertMinutesToHours(learningHourTotal)}
           </Text>
         </View>
       </LinearGradient>

@@ -9,19 +9,20 @@ const styles = StyleSheet.create({
   notiHeading: {
     color: colors.white,
     fontSize: 24,
+    marginTop: -12,
     fontWeight: '500',
     textAlign: 'center',
   },
   notiDateText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
     textAlign: 'center',
     lineHeight: 24,
   },
   notiRemainTimeText: {
     color: colors.yellow,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
   },

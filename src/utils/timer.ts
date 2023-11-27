@@ -65,3 +65,19 @@ export const formatDate = (date: Date): string => {
 
   return `${day} - ${month} - ${year}`;
 };
+
+export const convertMinutesToHours = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const _minutes = minutes - hours * 60;
+  return `${hours} hours ${_minutes} minutes`;
+};
+
+export const convertSecondsToMinutes = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds - hours * 3600) / 60);
+  const remainingSeconds = seconds - hours * 3600 - minutes * 60;
+
+  return `${hours >= 10 ? hours : '0' + hours} : ${
+    minutes >= 10 ? minutes : '0' + minutes
+  } : ${remainingSeconds >= 10 ? remainingSeconds : '0' + remainingSeconds}`;
+};

@@ -9,6 +9,7 @@ import {
   TUTORS,
   COURSE_CATEGORIES,
   INFO,
+  learningHourTotal,
 } from './mock-data';
 
 export type initStateType = {
@@ -25,6 +26,7 @@ export type initStateType = {
   theme: '';
   language: '';
   applications: any[];
+  learningHourTotal: number;
 };
 
 export const initState: initStateType = {
@@ -44,6 +46,7 @@ export const initState: initStateType = {
   courseCategories: COURSE_CATEGORIES,
   schedules: SCHEDULES,
   applications: [],
+  learningHourTotal: learningHourTotal,
 };
 
 const reducer = (
