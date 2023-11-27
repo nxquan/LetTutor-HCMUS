@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import React, {useCallback, useState, useEffect} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,6 +21,14 @@ import {colors} from '@/constants';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import DocumentPicker, {
+  DirectoryPickerResponse,
+  DocumentPickerResponse,
+  isCancel,
+  isInProgress,
+  types,
+} from 'react-native-document-picker';
+
 import DropdownMenu from '@/components/DropdownMenu';
 import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
 import Header from '@/components/Header';
@@ -97,6 +106,13 @@ const Profile = () => {
     confirmPassword: '',
   });
   const [isChange, setIsChange] = useState(false);
+  const [avatar, setAvatar] = React.useState<any>();
+
+  useEffect(() => {
+    if (avatar) {
+      onChangeProfile('avatar', avatar?.[0]?.fileCopyUri);
+    }
+  }, [avatar]);
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
@@ -231,7 +247,16 @@ const Profile = () => {
     );
   };
 
-  console.log('state', state.currentUser);
+  const handleError = (err: unknown) => {
+    if (isCancel(err)) {
+    } else if (isInProgress(err)) {
+      console.warn(
+        'multiple pickers were opened, only the first will be considered',
+      );
+    } else {
+      throw err;
+    }
+  };
 
   return (
     <ScrollView
@@ -243,13 +268,46 @@ const Profile = () => {
         style={styles.inner}
         className="border border-gray-300 rounded-md mx-4 my-8">
         <View className="flex justify-center px-6 py-4">
-          <Image
-            className="self-center rounded-full"
-            source={{
-              uri: 'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
-            }}
-            style={{width: 140, height: 140}}
-          />
+          <View style={{width: 140, height: 140}} className="self-center">
+            <Image
+              className="self-center rounded-full"
+              resizeMode="cover"
+              resizeMethod="auto"
+              source={{
+                uri:
+                  profile?.avatar ||
+                  'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
+              }}
+              style={{
+                width: 140,
+                height: 140,
+                borderWidth: 1,
+                borderColor: 'rgba(0,0,0,0.1)',
+              }}
+            />
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pickSingle({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                  });
+                  setAvatar([pickerResult]);
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+              className="bg-blue-500 rounded-full flex justify-center items-center"
+              style={{
+                width: 36,
+                height: 36,
+                position: 'absolute',
+                top: '65%',
+                right: 5,
+              }}>
+              <FontAwesome5 name="pen" size={20} color={colors.white} />
+            </TouchableOpacity>
+          </View>
           <Text className="font-bold text-blue-500 text-2xl text-center mt-1">
             Hai pham
           </Text>

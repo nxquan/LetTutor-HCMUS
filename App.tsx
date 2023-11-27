@@ -15,6 +15,7 @@ import Tutor from '@/pages/Tutor';
 import TutorDetail from '@/pages/TutorDetail';
 import Courses from '@/pages/Courses';
 import Profile from '@/pages/Profile';
+import BecomeTutor from '@/pages/BecomeTutor';
 
 function App(): React.JSX.Element {
   return (
@@ -22,7 +23,8 @@ function App(): React.JSX.Element {
       <GlobalProvider>
         <EventProvider>
           {/* <MainStackRouter /> */}
-          <Profile />
+          {/* <Profile /> */}
+          <BecomeTutor />
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>

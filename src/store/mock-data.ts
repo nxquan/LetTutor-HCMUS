@@ -6104,7 +6104,7 @@ export const INFO = [
   },
 ];
 
-export const category = [
+export const CATEGORIES = [
   {
     id: '128a2815-e6ab-468f-bf03-0cf2dac33dbf',
     title: 'languages',

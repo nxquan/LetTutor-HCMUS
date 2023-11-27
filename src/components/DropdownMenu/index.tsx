@@ -47,12 +47,12 @@ function DropdownMenu(props: {
                 activeOpacity={0.8}
                 underlayColor="rgba(0,0,0,0.1)"
                 onPress={() => {
-                  onChangeOpen(false);
                   if (!!typeOfMenu) {
                     onChangeSelected(typeOfMenu, item);
                   } else {
                     onChangeSelected(item);
                   }
+                  onChangeOpen(false);
                 }}>
                 <View
                   style={[
