@@ -34,6 +34,8 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
+import {useGlobalContext} from '@/hooks';
+import {AddApplication} from '@/store';
 
 const BecomeTutor = () => {
   const [generalInfo, setGeneralInfo] = useState({
@@ -66,9 +68,10 @@ const BecomeTutor = () => {
     fileCopyUri: '',
   });
 
+  const [state, dispatch] = useGlobalContext();
   const navigation = useNavigation<StackProps>();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [tab, setTab] = useState(2);
+  const [tab, setTab] = useState(1);
   const [isOpenCountryModal, setIsOpenCountryModal] = useState(false);
   const [isOpenLanguageMenu, setIsOpenLanguageMenu] = useState(false);
   const [countries, setCountries] = useState<any[]>([]);
@@ -178,6 +181,18 @@ const BecomeTutor = () => {
     });
   };
 
+  const handleSubmitApplication = () => {
+    const payload = {
+      id: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+      generalInfo,
+      cv,
+      teaching,
+      languages,
+      video,
+    };
+    dispatch(AddApplication(payload));
+  };
+
   const radioButtons = useMemo(
     () => [
       {
@@ -226,6 +241,17 @@ const BecomeTutor = () => {
       });
       return temp;
     });
+
+    const application = state.applications.find(
+      (app: any) => app.id === 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+    );
+    if (application) {
+      setGeneralInfo(application.generalInfo);
+      setCV(application.cv);
+      setTeaching(application.teaching);
+      setLanguages(application.languages);
+      setVideo(application.video);
+    }
   }, []);
 
   const handleError = (err: unknown) => {
@@ -765,7 +791,10 @@ const BecomeTutor = () => {
               />
               <Button
                 title="Hoàn tất"
-                onPress={() => setTab(3)}
+                onPress={() => {
+                  handleSubmitApplication();
+                  setTab(3);
+                }}
                 style={{
                   backgroundColor: colors.primary,
                   color: colors.white,

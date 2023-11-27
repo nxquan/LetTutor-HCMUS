@@ -24,6 +24,7 @@ export type initStateType = {
   schedules: any[];
   theme: '';
   language: '';
+  applications: any[];
 };
 
 export const initState: initStateType = {
@@ -42,6 +43,7 @@ export const initState: initStateType = {
   courses: COURSES,
   courseCategories: COURSE_CATEGORIES,
   schedules: SCHEDULES,
+  applications: [],
 };
 
 const reducer = (
@@ -125,6 +127,23 @@ const reducer = (
       return {
         ...state,
       };
+
+    case ACTION_TYPE.ADD_APPLICATION:
+      return {
+        ...state,
+        applications: [...state.applications, action.payload],
+      };
+    case ACTION_TYPE.UPDATE_APPLICATION:
+      return {
+        ...state,
+        applications: [
+          ...state.applications.filter(
+            application => application.id !== action.payload.id,
+          ),
+          action.payload,
+        ],
+      };
+
     default:
       throw new Error('Invalid action in global reducer');
   }

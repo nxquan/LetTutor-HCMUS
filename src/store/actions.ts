@@ -7,6 +7,8 @@ import {
   LOG_OUT,
   RESET_PASSWORD,
   TOGGLE_FAVORITE_TUTOR,
+  ADD_APPLICATION,
+  UPDATE_APPLICATION,
 } from './constants';
 
 export const login = (payload: {email: string; password: string}) => {
@@ -59,5 +61,12 @@ export const addCourse = (payload: any) => {
   return {
     payload,
     type: ADD_COURSE,
+  };
+};
+
+export const AddApplication = (payload: any) => {
+  return {
+    payload,
+    type: ADD_APPLICATION,
   };
 };
