@@ -1,5 +1,5 @@
 import {View, Text, Image, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Header from '@/components/Header';
 import styles from './styles';
 import {images} from '@/assets';
@@ -7,13 +7,46 @@ import {colors} from '@/constants';
 import ScheduleItem from './components/ScheduleItem';
 import Pagination from '@/components/Pagination';
 import DrawerButton from '@/components/DrawerButton';
+import {useGlobalContext} from '@/hooks';
 
 const Schedule = () => {
+  const [state, dispatch] = useGlobalContext();
+  const [schedules, setSchedules] = useState<any[]>([]);
+  const [currentSchedules, setCurrentSchedules] = useState<any[]>([]);
+
+  const onChangeDataInPage = (data: any) => {
+    setCurrentSchedules(data);
+  };
+
+  useEffect(() => {
+    setSchedules(() => {
+      const bookings = state.bookings;
+      const result: any[] = [];
+
+      bookings.forEach((item: any) => {
+        if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
+          const startLessonDate =
+            item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
+          if (!item.isDeleted && startLessonDate - Date.now() >= 0) {
+            result.push({
+              ...item,
+            });
+          }
+        }
+      });
+
+      result.sort(
+        (a, b) =>
+          a.scheduleDetailInfo.startPeriodTimestamp -
+          b.scheduleDetailInfo.startPeriodTimestamp,
+      );
+
+      return result;
+    });
+  }, [state]);
+
   return (
-    <ScrollView
-      style={styles.container}
-      stickyHeaderIndices={[0]}
-      showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.container} stickyHeaderIndices={[0]}>
       <Header drawerBtn={<DrawerButton />} />
       <View style={styles.intro}>
         <Image
@@ -86,11 +119,17 @@ const Schedule = () => {
       </View>
 
       <View style={styles.scheduleList}>
-        <ScheduleItem />
-        <ScheduleItem />
-        <ScheduleItem />
+        {currentSchedules.length > 0 &&
+          currentSchedules.map((item, index) => {
+            return <ScheduleItem data={item} key={index} />;
+          })}
       </View>
-      <Pagination style={{paddingHorizontal: 20}} />
+      <Pagination
+        data={schedules}
+        ITEMS_PER_PAGE={5}
+        style={{paddingHorizontal: 20}}
+        onChangeDataInPage={onChangeDataInPage}
+      />
     </ScrollView>
   );
 };

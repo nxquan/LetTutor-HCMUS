@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1',
     marginBottom: 12,
     padding: 10,
-    borderRadius: 6,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.05)',
     elevation: 4,
@@ -34,15 +34,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     resizeMode: 'contain',
     marginRight: 10,
-  },
-  name: {
-    color: colors.black,
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  nationality: {
-    fontSize: 13,
-    color: colors.text,
   },
   content: {
     marginTop: 16,

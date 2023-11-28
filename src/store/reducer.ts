@@ -194,6 +194,17 @@ const reducer = (
         bookings: [...state.bookings, booking],
       };
     }
+    case ACTION_TYPE.EDIT_STUDENT_REQUEST: {
+      const index = state.bookings.findIndex(
+        booking => booking.id === action.payload.id,
+      );
+      if (index !== -1) {
+        state.bookings[index].studentRequest = action.payload.studentRequest;
+      }
+      return {
+        ...state,
+      };
+    }
     default:
       throw new Error('Invalid action in global reducer');
   }

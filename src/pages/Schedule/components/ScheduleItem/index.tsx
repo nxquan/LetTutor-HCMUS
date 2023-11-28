@@ -17,18 +17,28 @@ import {colors} from '@/constants';
 import ModalPopper from '@/components/ModalPopper';
 import Lesson from '@/components/Lesson';
 import DropdownMenu from '@/components/DropdownMenu';
-
+import {useGlobalContext} from '@/hooks';
+import {editStudentRequest} from '@/store';
 const reasons = [
-  'Reschedule at another time',
-  'Busy at that time',
-  'Asked by the tutor',
-  'Other',
+  {id: 1, title: 'Reschedule at another time', key: 'reschedule'},
+  {id: 2, title: 'Busy at that time', key: 'busy'},
+  {id: 3, title: 'Asked by the tutor', key: 'asked'},
+  {id: 4, title: 'Other', key: 'other'},
 ];
-const index = () => {
+
+type Props = {
+  data: any;
+};
+const ScheduleItem = (props: Props) => {
+  const {data} = props;
+  const {scheduleDetailInfo} = data;
+
+  const [state, dispatch] = useGlobalContext();
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
   const [isOpenRequestModal, setIsOpenRequestModal] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const [studentRequest, setStudentRequest] = useState('');
 
   const [reason, setReason] = useState({
     type: 'Choose a reason',
@@ -47,11 +57,34 @@ const index = () => {
     });
   };
 
+  const isAllowedToJoinMeeting = () => {
+    const diff =
+      Date.now() -
+      (scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000);
+    if (diff >= 0 && diff <= 25 * 60 * 1000) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleSubmitRequestStudent = () => {
+    if (studentRequest.length > 0) {
+      const payload = {
+        studentRequest,
+        id: data.id,
+      };
+      dispatch(editStudentRequest(payload));
+    }
+    setIsOpenRequestModal(false);
+  };
+
   return (
-    <Lesson>
+    <Lesson data={data}>
       <View style={styles.requestContainer}>
         <View style={styles.requestHeader}>
-          <Text style={{fontSize: 16, fontWeight: '500'}}>01:00 - 01:25</Text>
+          <Text className="text-base font-medium text-black">
+            {scheduleDetailInfo.startPeriod} - {scheduleDetailInfo.endPeriod}
+          </Text>
           <TouchableOpacity
             style={styles.cancelBtn}
             onPress={() => setIsOpenCancelModal(true)}>
@@ -79,15 +112,36 @@ const index = () => {
         {isOpenRequest && (
           <View style={{paddingHorizontal: 12, marginTop: 8}}>
             <Text style={styles.requestText}>
-              Currently there are no requests for this class. Please write down
-              any requests for the teacher.
+              {data.studentRequest !== null
+                ? data.studentRequest
+                : 'Currently there are no requests for this class. Please write down any requests for the teacher.'}
             </Text>
           </View>
         )}
       </View>
 
-      <TouchableOpacity disabled style={styles.goMeetingBtn}>
-        <Text style={[styles.disabledTextBtn, {color: colors.text}]}>
+      <TouchableOpacity
+        disabled={!isAllowedToJoinMeeting()}
+        style={[
+          styles.goMeetingBtn,
+          !isAllowedToJoinMeeting() && {
+            borderColor: colors.grey350,
+          },
+        ]}
+        onPress={() => {
+          if (isAllowedToJoinMeeting()) {
+            console.log('GO MEETING');
+          } else {
+            console.log('CAN NOT ENTER');
+          }
+        }}>
+        <Text
+          style={[
+            {color: colors.primary},
+            !isAllowedToJoinMeeting() && {
+              color: colors.grey400,
+            },
+          ]}>
           Go to meeting
         </Text>
       </TouchableOpacity>
@@ -100,7 +154,7 @@ const index = () => {
             <AntDesign name="close" size={20} color="black" />
           </TouchableOpacity>
           <View style={styles.modalInfo}>
-            <Image source={images.avatar} style={styles.avatar} />
+            <Image source={images.becomeTutor2} style={styles.avatar} />
             <Text
               style={{
                 fontSize: 18,
@@ -280,10 +334,13 @@ const index = () => {
               Notes
             </Text>
             <TextInput
+              onChangeText={t => setStudentRequest(t)}
               multiline={true}
               numberOfLines={12}
               textAlignVertical="top"
               placeholder="Additional notes"
+              placeholderTextColor={colors.grey600}
+              value={studentRequest}
               style={{
                 textAlign: 'left',
                 paddingHorizontal: 8,
@@ -294,6 +351,7 @@ const index = () => {
                 marginTop: 16,
                 zIndex: -1,
                 fontSize: 15,
+                color: colors.black,
               }}
             />
             <Text style={{fontSize: 12, color: colors.text, marginTop: 6}}>
@@ -307,7 +365,10 @@ const index = () => {
                 marginTop: 16,
               }}>
               <TouchableOpacity
-                onPress={() => setIsOpenRequestModal(false)}
+                onPress={() => {
+                  setStudentRequest('');
+                  setIsOpenRequestModal(false);
+                }}
                 style={{
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -318,7 +379,7 @@ const index = () => {
                 <Text style={{fontSize: 14, color: colors.text}}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setIsOpenRequestModal(false)}
+                onPress={() => handleSubmitRequestStudent()}
                 style={{
                   backgroundColor: colors.primary,
                   paddingVertical: 5,
@@ -337,4 +398,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default ScheduleItem;

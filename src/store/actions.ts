@@ -10,6 +10,7 @@ import {
   ADD_APPLICATION,
   UPDATE_APPLICATION,
   ADD_BOOKING,
+  EDIT_STUDENT_REQUEST,
 } from './constants';
 
 export const login = (payload: {email: string; password: string}) => {
@@ -75,5 +76,12 @@ export const addBooking = (payload: any) => {
   return {
     payload,
     type: ADD_BOOKING,
+  };
+};
+
+export const editStudentRequest = (payload: any) => {
+  return {
+    payload,
+    type: EDIT_STUDENT_REQUEST,
   };
 };

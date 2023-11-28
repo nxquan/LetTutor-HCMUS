@@ -1,5 +1,5 @@
-import { colors } from '@/constants';
-import { StyleSheet } from 'react-native';
+import {colors} from '@/constants';
+import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f1f1f1',
@@ -72,15 +72,12 @@ const styles = StyleSheet.create({
   },
   goMeetingBtn: {
     alignSelf: 'flex-end',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     marginTop: 8,
-    borderColor: colors.grey350,
+    borderColor: colors.primary,
     borderWidth: 1,
     borderRadius: 6,
-  },
-  disabledTextBtn: {
-    opacity: 0.4,
   },
   modalInfo: {
     alignItems: 'center',

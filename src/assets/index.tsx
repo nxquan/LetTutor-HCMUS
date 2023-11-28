@@ -9,6 +9,7 @@ export const images = {
   course: require('./course.png'),
   becomeTutor: require('./become-tutor.png'),
   becomeTutor2: require('./become-tutor-2.png'),
+  noData: require('./no-data.png'),
 };
 
 export const languageImages = {
