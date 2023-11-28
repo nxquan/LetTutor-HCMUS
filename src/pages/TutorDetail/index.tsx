@@ -23,7 +23,6 @@ import {images} from '@/assets';
 import {colors} from '@/constants';
 import InfoPart from './components/InfoPart';
 import ButtonItem from '@/components/Button';
-import BookButton from './components/BookBtn';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
@@ -33,7 +32,7 @@ import ModalPopper from '@/components/ModalPopper';
 
 import {useGlobalContext} from '@/hooks';
 import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
-import {toggleFavoriteTutor} from '@/store';
+import {addBooking, toggleFavoriteTutor} from '@/store';
 
 import {
   getCountryNameFromCode,
@@ -43,9 +42,28 @@ import {
 } from '@/utils';
 
 import ReviewList from '@/components/ReviewList';
-import index from '../Schedule/components/ScheduleItem';
 
 const timers = [
+  '00:00 - 00:25',
+  '00:30 - 00:55',
+  '01:00 - 01:25',
+  '01:30 - 01:55',
+  '02:00 - 02:25',
+  '02:30 - 02:55',
+  '03:00 - 03:25',
+  '03:30 - 03:55',
+  '04:00 - 04:25',
+  '04:30 - 04:55',
+  '05:00 - 05:25',
+  '05:30 - 05:55',
+  '06:00 - 06:25',
+  '06:30 - 06:55',
+  '07:00 - 07:25',
+  '07:30 - 07:55',
+  '08:00 - 08:25',
+  '08:30 - 08:55',
+  '09:00 - 09:25',
+  '09:30 - 09:55',
   '10:00 - 10:25',
   '10:30 - 10:55',
   '11:00 - 11:25',
@@ -114,6 +132,9 @@ const TutorDetail = () => {
 
   const [isOpenReport, setIsOpenReport] = useState(false);
   const [isOpenBookingModal, setIsOpenBookingModal] = useState(false);
+  const [isOpenBookingResult, setIsOpenBookingResult] = useState(false);
+  const [selectedBookingItem, setSelectedBookingItem] = useState(undefined);
+
   const [reports, setReports] = useState<number[]>([]);
 
   const [feedbacks, setFeedbacks] = useState([]);
@@ -127,24 +148,27 @@ const TutorDetail = () => {
     },
   );
   const [bookings, setBookings]: any = useState();
+  const [notes, setNotes] = useState('');
 
   const extractBookings = (tutorId: string) => {
-    const result = [];
+    const result: any[] = [];
     for (let i = 0; i < schedules.data.length; i++) {
       let bookingsInDate: any[] = [];
 
+      const schedule = schedules.data[i];
+
       timers.forEach(time => {
         const times = time.split(' - ');
-        const schedule = new Date(schedules.data[i]);
-
         let _booking = state.schedules.find((item: any) => {
-          const startDate = new Date(item?.startTimestamp);
+          const startLessonDate = new Date(
+            item?.startTimestamp - 7 * 60 * 60 * 1000,
+          );
           return (
             item?.tutorId === tutorId &&
             item?.startTime === times[0] &&
             item?.endTime === times[1] &&
-            startDate.getDate() === schedule.getDate() &&
-            startDate.getMonth() === schedule.getMonth()
+            startLessonDate.getDate() === schedule.getDate() &&
+            startLessonDate.getMonth() === schedule.getMonth()
           );
         });
 
@@ -156,7 +180,7 @@ const TutorDetail = () => {
   };
 
   useEffect(() => {
-    const tutorId = 'f23c4d9f-6043-4cb8-a038-9538a609f5ca'; //route.params?.tutorId ;
+    const tutorId = '4d54d3d7-d2a9-42e5-97a2-5ed38af5789a'; //route.params?.tutorId ;
     const detailItem = state.tutorDetails.find(
       (item: any) => item?.userId === tutorId,
     );
@@ -167,8 +191,8 @@ const TutorDetail = () => {
     const _feedbacks = state.feedbacks.filter(
       (item: any) => item.secondId === tutorId,
     );
-    const bookings = extractBookings(tutorId);
-    setBookings(bookings);
+    const _bookings = extractBookings(tutorId);
+    setBookings(_bookings);
     setTutorDetail(detailItem);
     setFeedbacks(_feedbacks);
   }, [state]);
@@ -215,9 +239,10 @@ const TutorDetail = () => {
     let ResultComponent: JSX.Element;
     if (item === undefined) {
       ResultComponent = <Text></Text>;
-    } else if (item?.isBooked) {
-      const isSelfBooking = item?.scheduleDetails?.bookingInfo?.find(
-        (item: any) => item?.userId === '123',
+    } else if (item?.scheduleDetails[0].bookingInfo.length > 0) {
+      const isSelfBooking = item?.scheduleDetails[0].bookingInfo?.find(
+        (booking: any) =>
+          booking?.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28',
       );
 
       //MY BOOK
@@ -229,21 +254,41 @@ const TutorDetail = () => {
       }
     } else {
       //AVAILABLE
-      ResultComponent = (
-        <Button
-          style={{
-            backgroundColor: '#009dff',
-            color: colors.white,
-            paddingVertical: 2,
-            paddingHorizontal: 12,
-            borderRadius: 99,
-          }}
-          title="Book"
-          onPress={() => {
-            setIsOpenBookingModal(true);
-          }}
-        />
-      );
+      // console.log('item', index, ' ', item);
+      if (item?.startTimestamp - (Date.now() + 7 * 60 * 60 * 1000) < 0) {
+        // console.log('I here ', index);
+        ResultComponent = (
+          <Button
+            style={{
+              borderWidth: 1,
+              borderColor: colors.grey600,
+              backgroundColor: colors.white,
+              color: colors.grey600,
+              paddingVertical: 2,
+              paddingHorizontal: 12,
+              borderRadius: 99,
+            }}
+            title="Book"
+          />
+        );
+      } else {
+        ResultComponent = (
+          <Button
+            style={{
+              backgroundColor: '#009dff',
+              color: colors.white,
+              paddingVertical: 2,
+              paddingHorizontal: 12,
+              borderRadius: 99,
+            }}
+            title="Book"
+            onPress={() => {
+              setSelectedBookingItem(item);
+              setIsOpenBookingModal(true);
+            }}
+          />
+        );
+      }
     }
 
     return (
@@ -253,6 +298,81 @@ const TutorDetail = () => {
     );
   };
 
+  const handleBooking = (data: any) => {
+    const scheduleDetailInfo = {
+      ...data.scheduleDetails[0],
+    };
+    delete scheduleDetailInfo.bookingInfo;
+    delete scheduleDetailInfo.isBooked;
+
+    const scheduleInfo = {
+      ...data,
+    };
+    delete scheduleInfo.scheduleDetails;
+    delete scheduleInfo.isBooked;
+
+    const payload = {
+      tutorInfo: {
+        id: '4d54d3d7-d2a9-42e5-97a2-5ed38af5789a',
+        avatar:
+          'https://api.app.lettutor.com/avatar/f23c4d9f-6043-4cb8-a038-9538a609f5caavatar1679934381110.jpg',
+        country: 'VN',
+        name: 'Lê Xuân Quỳnh',
+        level: 'HIGHER_BEGINNER',
+        email: 'teacher@lettutor.com',
+        google: null,
+        facebook: null,
+        apple: null,
+        phone: '843560308665856',
+        language: 'Ukrainian',
+        birthday: '1999-06-01',
+        requestPassword: true,
+        isActivated: true,
+        isPhoneActivated: null,
+        requireNote: notes.length > 0 ? notes : null,
+        timezone: 7,
+        phoneAuth: null,
+        isPhoneAuthActivated: false,
+        studySchedule: 'Good luck to you all',
+        canSendMessage: false,
+        isPublicRecord: false,
+        caredByStaffId: null,
+        zaloUserId: null,
+        createdAt: '2021-08-02T13:59:37.290Z',
+        updatedAt: '2023-05-22T12:59:48.026Z',
+        deletedAt: null,
+        studentGroupId: null,
+      },
+      general: {
+        createdAtTimeStamp: Date.now(),
+        updatedAtTimeStamp: Date.now(),
+        id: '93f7b80f-456e-4e4c-8f33-f09673909e0b',
+        userId: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+        scheduleDetailId: '7ae027cf-1fa7-40e5-87f2-9b7f1530cd76',
+        tutorMeetingLink: null,
+        studentMeetingLink: null,
+        googleMeetLink: null,
+        studentRequest: null,
+        tutorReview: null,
+        scoreByTutor: null,
+        createdAt: '2023-11-26T14:12:02.692Z',
+        updatedAt: '2023-11-26T14:12:02.739Z',
+        recordUrl: null,
+        cancelReasonId: null,
+        lessonPlanId: null,
+        cancelNote: null,
+        calendarId: null,
+        isDeleted: false,
+        isTrial: false,
+        convertedLesson: 0,
+      },
+      scheduleDetailInfo,
+      scheduleInfo,
+    };
+
+    dispatch(addBooking(payload));
+    setIsOpenBookingResult(true);
+  };
   return (
     <ScrollView
       style={styles.container}
@@ -495,7 +615,7 @@ const TutorDetail = () => {
                           fontWeight: '500',
                           textAlign: 'center',
                         }}>
-                        {item?.getDate()} / {item?.getMonth() + 1} {'\n'}
+                        {item.getDate()} / {item.getMonth() + 1} {'\n'}
                         {getDayInEnglish(item.getDay())}
                       </Text>
                     </View>
@@ -701,161 +821,218 @@ const TutorDetail = () => {
               backgroundColor: colors.grey300,
             }}
           />
-          <View style={styles.modalBody}>
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: colors.grey200,
-                borderRadius: 6,
-              }}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '500',
-                  color: colors.black,
-                  backgroundColor: colors.grey200,
-                  padding: 8,
-                }}>
-                Booking Time
-              </Text>
-              <Text
-                style={{
-                  margin: 8,
-                  backgroundColor: 'rgb(238, 234, 255)',
-                  color: 'rgb(119, 102, 199)',
-                  padding: 8,
-                  fontSize: 14,
-                  fontWeight: '500',
-                  borderRadius: 6,
-                  textAlign: 'center',
-                }}>
-                20:30 - 20:55 Saturday, 25 November 2023
-              </Text>
-            </View>
-            <View
-              style={{
-                borderWidth: 1,
-                borderColor: colors.grey200,
-                borderRadius: 6,
-                marginTop: 8,
-                backgroundColor: colors.grey100,
-                padding: 8,
-              }}>
+          {isOpenBookingResult ? (
+            <View style={[styles.modalBody]}>
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginBottom: 8,
+                  alignItems: 'center',
+                  paddingBottom: 50,
+                  paddingTop: 20,
                 }}>
-                <Text
+                <AntDesign
+                  name="check"
+                  size={32}
+                  color={colors.white}
                   style={{
-                    fontSize: 14,
-                    fontWeight: '500',
-                    color: colors.black,
-                  }}>
-                  Balance
+                    width: 50,
+                    height: 50,
+                    backgroundColor: colors.success,
+                    textAlign: 'center',
+                    lineHeight: 50,
+                    borderRadius: 999,
+                  }}
+                />
+                <Text className="font-bold text-xl text-black mx-5">
+                  Booking success
                 </Text>
-                <Text
-                  style={{
-                    color: 'rgb(119, 102, 199)',
-                    fontSize: 14,
-                  }}>
-                  You have 0 class left
+                <Text className="text-gray-400 text-base">
+                  Check your mail's inbox to see detail order
                 </Text>
               </View>
               <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '500',
-                    color: colors.black,
-                  }}>
-                  Price
-                </Text>
-                <Text
-                  style={{
-                    color: 'rgb(119, 102, 199)',
-                    fontSize: 14,
-                  }}>
-                  1 class
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                marginTop: 16,
-                borderWidth: 1,
-                borderRadius: 6,
-                borderColor: colors.grey300,
-              }}>
-              <Text
                 style={{
-                  fontSize: 14,
-                  fontWeight: '500',
-                  color: colors.black,
-                  backgroundColor: colors.grey200,
-                  padding: 8,
-                }}>
-                Notes
-              </Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={8}
-                textAlignVertical="top"
-                placeholder="Please let us know details about your problem"
-                placeholderTextColor={colors.grey500}
-                style={{
-                  color: colors.black,
-                  textAlign: 'left',
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
-                  borderRadius: 6,
-                  marginTop: 8,
-                  fontSize: 14,
-                }}>
-                {reports
-                  .sort((a, b) => a - b)
-                  .map((item, index) => {
-                    return REPORTS[item] + '\n';
-                  })}
-              </TextInput>
-            </View>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                marginTop: 16,
-              }}>
+                  marginVertical: 16,
+                  height: 1,
+                  backgroundColor: colors.grey300,
+                }}
+              />
               <Button
-                title="Cancel"
+                title="Done"
                 onPress={() => {
                   setIsOpenBookingModal(false);
+                  setIsOpenBookingResult(false);
                 }}
                 style={{
                   borderColor: colors.primary,
                   color: colors.primary,
-                }}
-              />
-              <Button
-                title="Book"
-                onPress={() => setIsOpenBookingModal(false)}
-                leftIcon={
-                  <Feather
-                    name="chevrons-right"
-                    size={20}
-                    color={colors.white}
-                  />
-                }
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.white,
-                  marginLeft: 16,
+                  paddingHorizontal: 28,
+                  alignSelf: 'flex-end',
                 }}
               />
             </View>
-          </View>
+          ) : (
+            <View style={styles.modalBody}>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: colors.grey200,
+                  borderRadius: 6,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '500',
+                    color: colors.black,
+                    backgroundColor: colors.grey200,
+                    padding: 8,
+                  }}>
+                  Booking Time
+                </Text>
+                <Text
+                  style={{
+                    margin: 8,
+                    backgroundColor: 'rgb(238, 234, 255)',
+                    color: 'rgb(119, 102, 199)',
+                    padding: 8,
+                    fontSize: 14,
+                    fontWeight: '500',
+                    borderRadius: 6,
+                    textAlign: 'center',
+                  }}>
+                  20:30 - 20:55 Saturday, 25 November 2023
+                </Text>
+              </View>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: colors.grey200,
+                  borderRadius: 6,
+                  marginTop: 8,
+                  backgroundColor: colors.grey100,
+                  padding: 8,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: '500',
+                      color: colors.black,
+                    }}>
+                    Balance
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'rgb(119, 102, 199)',
+                      fontSize: 14,
+                    }}>
+                    You have 0 class left
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: '500',
+                      color: colors.black,
+                    }}>
+                    Price
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'rgb(119, 102, 199)',
+                      fontSize: 14,
+                    }}>
+                    1 class
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  marginTop: 16,
+                  borderWidth: 1,
+                  borderRadius: 6,
+                  borderColor: colors.grey300,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '500',
+                    color: colors.black,
+                    backgroundColor: colors.grey200,
+                    padding: 8,
+                  }}>
+                  Notes
+                </Text>
+                <TextInput
+                  onChangeText={t => setNotes(t)}
+                  multiline={true}
+                  numberOfLines={8}
+                  textAlignVertical="top"
+                  placeholder="Please let us know details about your problem"
+                  placeholderTextColor={colors.grey500}
+                  style={{
+                    color: colors.black,
+                    textAlign: 'left',
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 6,
+                    marginTop: 8,
+                    fontSize: 14,
+                  }}>
+                  {reports
+                    .sort((a, b) => a - b)
+                    .map((item, index) => {
+                      return REPORTS[item] + '\n';
+                    })}
+                </TextInput>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'flex-end',
+                  marginTop: 16,
+                }}>
+                <Button
+                  title="Cancel"
+                  onPress={() => {
+                    setIsOpenBookingModal(false);
+                  }}
+                  style={{
+                    borderColor: colors.primary,
+                    color: colors.primary,
+                  }}
+                />
+                <Button
+                  title="Book"
+                  onPress={() => {
+                    handleBooking(selectedBookingItem);
+                  }}
+                  leftIcon={
+                    <Feather
+                      name="chevrons-right"
+                      size={20}
+                      color={colors.white}
+                    />
+                  }
+                  style={{
+                    backgroundColor: colors.primary,
+                    color: colors.white,
+                    marginLeft: 16,
+                  }}
+                />
+              </View>
+            </View>
+          )}
         </View>
       </ModalPopper>
 

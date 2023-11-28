@@ -9,6 +9,7 @@ import {
   TOGGLE_FAVORITE_TUTOR,
   ADD_APPLICATION,
   UPDATE_APPLICATION,
+  ADD_BOOKING,
 } from './constants';
 
 export const login = (payload: {email: string; password: string}) => {
@@ -64,9 +65,15 @@ export const addCourse = (payload: any) => {
   };
 };
 
-export const AddApplication = (payload: any) => {
+export const addApplication = (payload: any) => {
   return {
     payload,
     type: ADD_APPLICATION,
+  };
+};
+export const addBooking = (payload: any) => {
+  return {
+    payload,
+    type: ADD_BOOKING,
   };
 };

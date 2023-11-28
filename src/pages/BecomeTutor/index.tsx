@@ -35,7 +35,7 @@ import DocumentPicker, {
 import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
 import {useGlobalContext} from '@/hooks';
-import {AddApplication} from '@/store';
+import {addApplication} from '@/store';
 
 const BecomeTutor = () => {
   const [generalInfo, setGeneralInfo] = useState({
@@ -190,7 +190,7 @@ const BecomeTutor = () => {
       languages,
       video,
     };
-    dispatch(AddApplication(payload));
+    dispatch(addApplication(payload));
   };
 
   const radioButtons = useMemo(

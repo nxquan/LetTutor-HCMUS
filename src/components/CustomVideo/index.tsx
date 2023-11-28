@@ -23,19 +23,22 @@ type Props = {
 };
 const CustomVideo = (props: Props) => {
   const {uri, isFullscreen, onChangeOrientation} = props;
-  const [isPaused, setIsPausedVideo] = useState(false);
+  const [isPaused, setIsPausedVideo] = useState(true);
   const [videoProgress, setVideoProgress] = useState<any>({});
   const videoRef = useRef<any>();
   const [isClickedVideo, setIsClickedVideo] = useState(false);
   useEffect(() => {
     const timerId = setTimeout(() => {
-      setIsClickedVideo(false);
+      if (isClickedVideo) {
+        setIsClickedVideo(false);
+      }
     }, 3000);
 
     return () => {
       clearTimeout(timerId);
     };
   }, [isClickedVideo]);
+
   return (
     <Pressable
       onPress={() => setIsClickedVideo(true)}
@@ -50,6 +53,9 @@ const CustomVideo = (props: Props) => {
         onProgress={x => {
           setVideoProgress(x);
         }}
+        onLoad={() => {
+          videoRef.current.seek(0);
+        }}
         onEnd={() => {
           setIsPausedVideo(true);
           videoRef.current.seek(0);
@@ -62,6 +68,8 @@ const CustomVideo = (props: Props) => {
       />
       {isClickedVideo && (
         <TouchableOpacity
+          onPress={() => setIsClickedVideo(!isClickedVideo)}
+          activeOpacity={1}
           style={{
             width: '100%',
             height: isFullscreen ? height : 240,

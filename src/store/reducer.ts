@@ -10,6 +10,7 @@ import {
   COURSE_CATEGORIES,
   INFO,
   learningHourTotal,
+  BOOKINGS,
 } from './mock-data';
 
 export type initStateType = {
@@ -26,6 +27,7 @@ export type initStateType = {
   theme: '';
   language: '';
   applications: any[];
+  bookings: any[];
   learningHourTotal: number;
 };
 
@@ -46,6 +48,7 @@ export const initState: initStateType = {
   courseCategories: COURSE_CATEGORIES,
   schedules: SCHEDULES,
   applications: [],
+  bookings: BOOKINGS,
   learningHourTotal: learningHourTotal,
 };
 
@@ -146,7 +149,51 @@ const reducer = (
           action.payload,
         ],
       };
+    case ACTION_TYPE.ADD_BOOKING: {
+      const booking = {
+        ...action.payload?.general,
+        scheduleDetailInfo: {
+          ...action.payload?.scheduleDetailInfo,
+          scheduleInfo: {
+            ...action.payload?.scheduleInfo,
+            tutorInfo: action.payload?.tutorInfo,
+          },
+        },
+      };
 
+      const bookingInfo = {
+        createdAtTimeStamp: action.payload?.general?.createdAtTimeStamp,
+        updatedAtTimeStamp: action.payload?.general?.updatedAtTimeStamp,
+        id: 'c009b14d-a5b2-4e2b-bc73-6900eab49202',
+        isDeleted: false,
+        createdAt: '2023-11-28T10:39:25.281Z',
+        scheduleDetailId: action.payload?.scheduleDetailInfo.id,
+        updatedAt: '2023-11-28T10:39:25.401Z',
+        cancelReasonId: null,
+        userId: action.payload?.general?.userId,
+      };
+
+      const schedule = state.schedules.find(item => {
+        return item.id === action.payload?.scheduleInfo.id;
+      });
+
+      const scheduleDetails = schedule.scheduleDetails;
+      scheduleDetails[0].bookingInfo = [
+        ...scheduleDetails[0].bookingInfo,
+        bookingInfo,
+      ];
+
+      return {
+        ...state,
+        schedules: [
+          ...state.schedules.filter(item => {
+            return item.id !== action.payload?.scheduleInfo.id;
+          }),
+          schedule,
+        ],
+        bookings: [...state.bookings, booking],
+      };
+    }
     default:
       throw new Error('Invalid action in global reducer');
   }
