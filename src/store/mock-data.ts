@@ -8089,7 +8089,7 @@ export const INFO = [
   {
     id: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
     email: 'student@lettutor.com',
-    name: 'Hai Pham',
+    name: 'Nguyễn Xuân Quân',
     avatar:
       'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
     country: 'VN',

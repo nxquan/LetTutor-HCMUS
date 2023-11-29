@@ -6,6 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import {images} from '@/assets';
 import {getCountryNameFromCode} from '@/utils';
+import {useTranslations} from '@/hooks';
 type Props = {
   children: any;
   data: any;
@@ -15,6 +16,7 @@ const Lesson = (props: Props) => {
   const {children, data} = props;
   const {scheduleDetailInfo} = data;
   const {scheduleInfo} = scheduleDetailInfo;
+  const {t} = useTranslations();
 
   return (
     <View style={styles.container}>
@@ -23,7 +25,9 @@ const Lesson = (props: Props) => {
           <Text style={styles.meetDate}>
             {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
           </Text>
-          <Text style={{fontSize: 14, color: colors.text}}>1 lesson</Text>
+          <Text style={{fontSize: 14, color: colors.text}}>
+            1 {t('lesson')}
+          </Text>
         </View>
         <View style={styles.info}>
           <Image
@@ -52,11 +56,16 @@ const Lesson = (props: Props) => {
             </View>
             <TouchableOpacity onPress={() => {}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <AntDesign name="message1" size={14} color={colors.primary} />
+                <AntDesign
+                  name="message1"
+                  size={16}
+                  color={colors.primary}
+                  style={{width: 24}}
+                />
                 <Text
                   numberOfLines={2}
                   style={{fontSize: 14, color: colors.primary, marginLeft: 4}}>
-                  Message
+                  {t('message')}
                 </Text>
               </View>
             </TouchableOpacity>

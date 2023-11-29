@@ -1,3 +1,5 @@
+import {useTranslations} from '@/hooks';
+
 export const getCurrentWeek = (distance: number = 0): any[] => {
   const currentDate = new Date();
   const startDate: Date = new Date(
@@ -67,9 +69,10 @@ export const formatDate = (date: Date): string => {
 };
 
 export const convertMinutesToHours = (minutes: number) => {
+  const {t} = useTranslations();
   const hours = Math.floor(minutes / 60);
   const _minutes = minutes - hours * 60;
-  return `${hours} hours ${_minutes} minutes`;
+  return `${hours} ${t('tutor.hours')} ${_minutes} ${t('tutor.minutes')}`;
 };
 
 export const convertSecondsToMinutes = (seconds: number) => {

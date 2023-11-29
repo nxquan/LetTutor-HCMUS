@@ -17,7 +17,7 @@ import {colors} from '@/constants';
 import ModalPopper from '@/components/ModalPopper';
 import Lesson from '@/components/Lesson';
 import DropdownMenu from '@/components/DropdownMenu';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {editStudentRequest} from '@/store';
 const reasons = [
   {id: 1, title: 'Reschedule at another time', key: 'reschedule'},
@@ -34,6 +34,7 @@ const ScheduleItem = (props: Props) => {
   const {scheduleDetailInfo} = data;
 
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
   const [isOpenRequestModal, setIsOpenRequestModal] = useState(false);
@@ -93,7 +94,9 @@ const ScheduleItem = (props: Props) => {
               size={18}
               color={colors.error}
             />
-            <Text style={{marginLeft: 4, color: colors.error}}>Cancel</Text>
+            <Text style={{marginLeft: 4, color: colors.error}}>
+              {t('schedule.cancel')}
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.requestTime}>
@@ -102,11 +105,11 @@ const ScheduleItem = (props: Props) => {
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Entypo name="chevron-small-right" size={24} color="black" />
             {/* <Entypo name='chevron-small-down' size={24} color='black' /> */}
-            <Text style={{fontSize: 14}}>Request for lesson</Text>
+            <Text style={{fontSize: 14}}>{t('schedule.requestForLesson')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setIsOpenRequestModal(!isOpenRequestModal)}>
-            <Text style={styles.requestBtn}>Edit Request</Text>
+            <Text style={styles.requestBtn}>{t('schedule.editRequest')}</Text>
           </TouchableOpacity>
         </View>
         {isOpenRequest && (
@@ -114,7 +117,7 @@ const ScheduleItem = (props: Props) => {
             <Text style={styles.requestText}>
               {data.studentRequest !== null
                 ? data.studentRequest
-                : 'Currently there are no requests for this class. Please write down any requests for the teacher.'}
+                : t('schedule.request')}
             </Text>
           </View>
         )}

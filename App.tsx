@@ -24,12 +24,7 @@ function App(): React.JSX.Element {
     <NavigationContainer>
       <GlobalProvider>
         <EventProvider>
-          {/* <MainStackRouter /> */}
-          {/* <Profile /> */}
-          {/* <BecomeTutor /> */}
-          {/* <TutorDetail /> */}
-          {/* <Schedule /> */}
-          <History />
+          <MainStackRouter />
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>

@@ -12,21 +12,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingRight: 12,
+    padding: 12,
   },
   actionBtn: {
     color: colors.primary,
+    fontSize: 16,
   },
   commentText: {
     fontSize: 14,
     color: colors.text,
     paddingBottom: 12,
+    paddingRight: 12,
   },
   lessonComment: {
     borderColor: '#f1f1f1',
     borderWidth: 1,
-    paddingLeft: 12,
   },
   modalInfo: {
     alignItems: 'center',

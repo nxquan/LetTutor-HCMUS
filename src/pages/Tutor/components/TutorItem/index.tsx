@@ -11,7 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import StackProps from '@/types/type';
 import {getCountryNameFromCode} from '@/utils';
 import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {toggleFavoriteTutor} from '@/store';
 import RenderRating from '@/components/RenderRating';
 
@@ -23,6 +23,7 @@ const TutorItem = (props: Props) => {
   const {data} = props;
   const navigation = useNavigation<StackProps>();
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
 
   const renderSpecialties = () => {
     const _specialties = String(data?.specialties).split(',');
@@ -34,7 +35,7 @@ const TutorItem = (props: Props) => {
         specialties.push(
           <Button
             key={topic.key}
-            title={topic.name}
+            title={t(topic.key)}
             style={{
               color: colors.primary,
               backgroundColor: colors.backgroundActive,
@@ -55,7 +56,7 @@ const TutorItem = (props: Props) => {
           specialties.push(
             <Button
               key={testItem.key}
-              title={testItem.name}
+              title={t(testItem.key)}
               style={{
                 color: colors.primary,
                 backgroundColor: colors.backgroundActive,
@@ -166,7 +167,7 @@ const TutorItem = (props: Props) => {
             fontWeight: '400',
             color: colors.primary,
           }}>
-          Book
+          {t('tutor.book')}
         </Text>
       </TouchableOpacity>
     </View>

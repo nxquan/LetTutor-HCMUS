@@ -11,6 +11,7 @@ import {
   UPDATE_APPLICATION,
   ADD_BOOKING,
   EDIT_STUDENT_REQUEST,
+  CHANGE_LANGUAGE,
 } from './constants';
 
 export const login = (payload: {email: string; password: string}) => {
@@ -38,6 +39,14 @@ export const changePassword = (payload: any) => {
     type: CHANGE_PASSWORD,
   };
 };
+
+export const changeLanguage = (payload: any) => {
+  return {
+    payload,
+    type: CHANGE_LANGUAGE,
+  };
+};
+
 export const changeProfile = (payload: any) => {
   return {
     payload,

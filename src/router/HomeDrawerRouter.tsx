@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {DrawerItemList, createDrawerNavigator} from '@react-navigation/drawer';
 import {
   Image,
@@ -30,14 +30,27 @@ import CourseDetail from '@/pages/CourseDetail';
 import {colors} from '@/constants';
 import {useGlobalContext} from '@/hooks';
 import {logout} from '@/store';
+import BecomeTutor from '@/pages/BecomeTutor';
+import Profile from '@/pages/Profile';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
   const [state, dispatch] = useGlobalContext();
+  const [profile, setProfile] = useState<any>({});
   const handleLogout = (navigation: any) => {
     dispatch(logout());
     navigation.navigate('SignIn');
   };
+
+  useEffect(() => {
+    const userId = 'f569c202-7bbf-4620-af77-ecc1419a6b28';
+
+    const user = state.userInfos.find((item: any) => item?.id === userId);
+    if (user) {
+      setProfile(user);
+    }
+  }, [state]);
+
   return (
     <Drawer.Navigator
       drawerContent={(props: any) => {
@@ -47,7 +60,7 @@ const HomeDrawerRouter = () => {
             <TouchableHighlight
               activeOpacity={0.8}
               underlayColor="rgba(0,0,0,0.1)"
-              onPress={() => {}}
+              onPress={() => navigation.navigate('Profile')}
               style={{
                 marginTop: 20,
                 marginBottom: 6,
@@ -62,7 +75,11 @@ const HomeDrawerRouter = () => {
                   paddingHorizontal: 12,
                 }}>
                 <Image
-                  source={images.defaultAvatar}
+                  source={{
+                    uri:
+                      profile?.avatar ||
+                      'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
+                  }}
                   style={{
                     width: 54,
                     height: 54,
@@ -78,7 +95,7 @@ const HomeDrawerRouter = () => {
                     fontWeight: '600',
                     color: colors.black,
                   }}>
-                  Anna Phuong
+                  {profile?.name}
                 </Text>
               </View>
             </TouchableHighlight>
@@ -194,8 +211,16 @@ const HomeDrawerRouter = () => {
         }}
       />
       <Drawer.Screen
-        name="TutorDetail"
-        component={TutorDetail}
+        name="Profile"
+        component={Profile}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="BecomeTutor"
+        component={BecomeTutor}
         options={{
           drawerLabel: 'Become a tutor',
           title: 'Become a tutor',

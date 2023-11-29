@@ -1,10 +1,12 @@
 import {View, Image, Pressable} from 'react-native';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import styles from './styles';
 import {images, languageImages} from '@/assets';
 import DropdownMenu from '../DropdownMenu';
+import {useGlobalContext, useTranslations} from '@/hooks';
+import {changeLanguage} from '@/store';
 
 type Props = {
   style?: any;
@@ -15,7 +17,7 @@ const languages = [
   {
     id: 1,
     title: 'Vietnamese',
-    key: 'vietnamese',
+    key: 'Vietnamese',
     icon: (
       <Image
         source={languageImages.vietNam}
@@ -32,7 +34,7 @@ const languages = [
   {
     id: 2,
     title: 'English',
-    key: 'english',
+    key: 'English',
     icon: (
       <Image
         source={languageImages.unitedState}
@@ -51,16 +53,30 @@ const languages = [
 function Header(props: Props) {
   const {style, backIcon, drawerBtn} = props;
   const [isOpenLanguageMenu, setIsOpenLanguageMenu] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState({
-    id: 1,
-    title: 'Vietnamese',
-    key: 'vietnamese',
-    icon: <Image source={languageImages.vietNam} style={styles.languageIcon} />,
-  });
+  const [state, dispatch] = useGlobalContext();
 
-  const onChangeSearchValue = (item: any) => {
-    setCurrentLanguage(item);
+  const [currentLanguage, setCurrentLanguage] = useState<any>({});
+  const {t, i18next} = useTranslations();
+
+  const onChangeLanguage = (item: any) => {
+    let lng = '';
+    if (item.key === 'English') {
+      lng = 'en';
+    } else if (item.key === 'Vietnamese') {
+      lng = 'vn';
+    }
+    const payload = {
+      language: item.key,
+    };
+
+    dispatch(changeLanguage(payload));
+    i18next.changeLanguage(lng);
   };
+
+  useEffect(() => {
+    const language = languages.find(l => l.key === state.language);
+    setCurrentLanguage(language);
+  }, [state]);
 
   return (
     <View style={[styles.nav, style]}>
@@ -77,7 +93,7 @@ function Header(props: Props) {
           isOpen={isOpenLanguageMenu}
           data={languages}
           onChangeOpen={setIsOpenLanguageMenu}
-          onChangeSelected={onChangeSearchValue}
+          onChangeSelected={onChangeLanguage}
           selectedItem={currentLanguage}
           styleMenu={{width: 160, left: -120}}>
           <Pressable onPress={() => setIsOpenLanguageMenu(!isOpenLanguageMenu)}>

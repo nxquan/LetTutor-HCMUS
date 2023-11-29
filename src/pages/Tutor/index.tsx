@@ -29,7 +29,7 @@ import DropdownMenu from '@/components/DropdownMenu';
 import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
 import {convertMinutesToHours, convertSecondsToMinutes} from '@/utils';
 
@@ -72,6 +72,7 @@ const defaultSpecialty = {
 const Tutor = () => {
   const navigation = useNavigation<StackProps>();
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
 
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isShowTimePicker, setIsShowTimePicker] = useState(false);
@@ -184,7 +185,7 @@ const Tutor = () => {
         <Button
           key={index}
           onPress={() => setFilters(prev => ({...prev, specialty: item}))}
-          title={item.name}
+          title={t(item.key)}
           style={{
             paddingVertical: 6,
             paddingHorizontal: 10,
@@ -218,7 +219,7 @@ const Tutor = () => {
             marginLeft: 4,
             marginTop: 4,
           }}>
-          <Text style={{fontSize: 14, color: colors.text}}>{item.title}</Text>
+          <Text style={{fontSize: 14, color: colors.text}}>{t(item.key)}</Text>
           <TouchableWithoutFeedback
             onPress={() => {
               setIsOpenNationality(false);
@@ -374,7 +375,7 @@ const Tutor = () => {
         style={styles.notiContainer}
         colors={['rgb(12, 61, 223)', 'rgb(5, 23, 157)']}>
         <View>
-          <Text style={styles.notiHeading}>Upcoming lesson</Text>
+          <Text style={styles.notiHeading}>{t('tutor.upcoming')}</Text>
           <View
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             <View style={{flex: 1}}>
@@ -387,13 +388,14 @@ const Tutor = () => {
               </Text>
               {upcomingLesson.status == 'INIT' ? (
                 <Text style={styles.notiRemainTimeText}>
-                  (starts in{' '}
+                  ({t('tutor.startIn')}{' '}
                   {convertSecondsToMinutes(remainingTimeForUpcomingLesson)})
                 </Text>
               ) : (
                 <Text
                   style={[styles.notiRemainTimeText, {color: colors.success}]}>
-                  (Teaching in {convertSecondsToMinutes(teachingTime)})
+                  ({t('tutor.teachingIn')}{' '}
+                  {convertSecondsToMinutes(teachingTime)})
                 </Text>
               )}
             </View>
@@ -404,7 +406,7 @@ const Tutor = () => {
               <Feather name="youtube" size={24} color={colors.primary} />
               <Text
                 style={{marginLeft: 6, color: colors.primary, fontSize: 14}}>
-                Enter lesson room
+                {t('tutor.enterUpcomingText')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -416,7 +418,7 @@ const Tutor = () => {
               fontWeight: '500',
               marginTop: 12,
             }}>
-            Total lesson time is {convertMinutesToHours(learningHourTotal)}
+            {t('tutor.totalTime')} {convertMinutesToHours(learningHourTotal)}
           </Text>
         </View>
       </LinearGradient>
@@ -430,20 +432,17 @@ const Tutor = () => {
             fontWeight: '700',
             marginBottom: 6,
           }}>
-          Find a tutor
+          {t('tutor.findATutor')}
         </Text>
 
         <TextInput
-          placeholder="Enter tutor name"
+          placeholder={t('tutor.tutorName')}
           placeholderTextColor={colors.text}
           value={filters.tutorName}
           onChangeText={text =>
             setFilters(prev => ({...prev, tutorName: text}))
           }
-          style={[
-            styles.inputContainer,
-            {flex: 1, marginRight: 12, marginBottom: 12},
-          ]}
+          style={[styles.inputContainer, {flex: 1, marginBottom: 12}]}
         />
 
         <DropdownMenu
@@ -467,7 +466,7 @@ const Tutor = () => {
                 renderNationalities()
               ) : (
                 <Text style={{fontSize: 14, color: colors.text}}>
-                  Select nationalities
+                  {t('tutor.selectNationalities')}
                 </Text>
               )}
             </View>
@@ -496,7 +495,7 @@ const Tutor = () => {
             marginTop: 10,
             marginBottom: 4,
           }}>
-          Select available tutoring time:
+          {t('tutor.selectTutoringTime')}
         </Text>
 
         {/*Input date & time */}
@@ -513,7 +512,9 @@ const Tutor = () => {
             ]}>
             <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
               <Text style={{color: colors.text, paddingVertical: 2}}>
-                {filters.date ? filters.date?.toDateString() : 'Select a day'}
+                {filters.date
+                  ? filters.date?.toDateString()
+                  : t('tutor.selectADay')}
               </Text>
             </Pressable>
             <FontAwesome
@@ -556,7 +557,7 @@ const Tutor = () => {
                 style={{flex: 1, color: colors.text}}>
                 {filters.startTime
                   ? filters.startTime.toLocaleTimeString()
-                  : 'Start time'}
+                  : t('tutor.startTime')}
               </Text>
             </Pressable>
             <Entypo
@@ -577,7 +578,7 @@ const Tutor = () => {
                 style={{flex: 1, color: colors.text}}>
                 {filters.endTime
                   ? filters.endTime.toLocaleTimeString()
-                  : 'End time'}
+                  : t('tutor.endTime')}
               </Text>
             </Pressable>
             <AntDesign
@@ -616,7 +617,7 @@ const Tutor = () => {
           {renderSpecialties()}
         </View>
         <Button
-          title="Reset filters"
+          title={t('tutor.resetFilter')}
           style={styles.resetBtn}
           onPress={() => {
             setFilters({
@@ -638,7 +639,7 @@ const Tutor = () => {
               fontWeight: '600',
               marginTop: 10,
             }}>
-            Recommended Tutors
+            {t('tutor.recommendedTutor')}
           </Text>
           <View style={styles.tutorList}>
             {currentTutors.length > 0 ? (

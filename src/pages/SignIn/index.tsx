@@ -18,12 +18,13 @@ import Header from '@/components/Header';
 import {useNavigation} from '@react-navigation/native';
 import Props from '@/types/type';
 import {colors} from '@/constants';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {login, resetPassword} from '@/store';
 
 const SignIn = () => {
   const navigation = useNavigation<Props>();
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [user, setUser] = useState({
@@ -90,34 +91,34 @@ const SignIn = () => {
   const handleSubmit = () => {
     navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
 
-    // const isExisting = state.users.find((item: any) => {
-    //   return String(item.email) === user.email.trim().toLowerCase();
-    // });
-    // if (isExisting) {
-    //   if (isExisting.password === user.password) {
-    //     setUser({
-    //       email: '',
-    //       password: '',
-    //     });
-    //     const payload = {
-    //       email: user.email,
-    //       password: user.password,
-    //     };
+    const isExisting = state.users.find((item: any) => {
+      return String(item.email) === user.email.trim().toLowerCase();
+    });
+    if (isExisting) {
+      if (isExisting.password === user.password) {
+        setUser({
+          email: '',
+          password: '',
+        });
+        const payload = {
+          email: user.email,
+          password: user.password,
+        };
 
-    //     dispatch(login(payload));
-    //     navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
-    //   } else {
-    //     setNotification({
-    //       type: 'error',
-    //       message: 'Mật khẩu không đúng. Hãy thử lại!',
-    //     });
-    //   }
-    // } else {
-    //   setNotification({
-    //     type: 'error',
-    //     message: 'Email không tồn tại. Vui lòng đăng ký!',
-    //   });
-    // }
+        dispatch(login(payload));
+        navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+      } else {
+        setNotification({
+          type: 'error',
+          message: 'Mật khẩu không đúng. Hãy thử lại!',
+        });
+      }
+    } else {
+      setNotification({
+        type: 'error',
+        message: 'Email không tồn tại. Vui lòng đăng ký!',
+      });
+    }
   };
   const handleResetPassword = () => {
     const isExisting = state.users.find((item: any) => {
@@ -171,13 +172,10 @@ const SignIn = () => {
         <View style={styles.inner}>
           <Image source={images.banner} style={styles.banner} />
           <View style={styles.body}>
-            <Text style={styles.heading}>Đăng nhập</Text>
-            <Text style={styles.des}>
-              Phát triển kỹ năng tiếng Anh nhanh nhất bằng cách học 1 kèm 1 trực
-              tuyến theo mục tiêu và lộ trình dành cho riêng bạn.
-            </Text>
+            <Text style={styles.heading}>{t('signin.longTitle')}</Text>
+            <Text style={styles.des}>{t('signin.description')}</Text>
             <FormGroup
-              title="EMAIL"
+              title={t('email')}
               type="email"
               field="email"
               placeholder="Example@email.com"
@@ -185,7 +183,7 @@ const SignIn = () => {
               onChange={onChangeDataOfUser}
             />
             <FormGroup
-              title="PASSWORD"
+              title={t('password')}
               type="password"
               field="password"
               value={user.password}
@@ -193,7 +191,9 @@ const SignIn = () => {
             />
 
             <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
-              <Text style={styles.forgetPassword}>Quên mật khẩu?</Text>
+              <Text style={styles.forgetPassword}>
+                {t('signin.forgotPassword')}
+              </Text>
             </TouchableOpacity>
             {notification.message.length > 0 && (
               <Text style={[styles.error, styles.notification]}>
@@ -207,10 +207,10 @@ const SignIn = () => {
               ]}
               disabled={!validate(user.email, user.password)}
               onPress={() => handleSubmit()}>
-              <Text style={styles.loginBtnText}>Đăng nhập</Text>
+              <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
             </TouchableOpacity>
 
-            <Text style={styles.moreText}>Hoặc tiếp tục với</Text>
+            <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
             <View style={styles.loginList}>
               <View style={styles.loginItem}>
                 <FontAwesome name="facebook" size={24} color="#0071F0" />
@@ -226,11 +226,11 @@ const SignIn = () => {
               </View>
             </View>
             <Text style={styles.signupText}>
-              Chưa có tài khoản?{' '}
+              {t('signin.other')}{' '}
               <Text
                 style={styles.signupLink}
                 onPress={() => navigation.navigate('SignUp')}>
-                Đăng ký
+                {t('signup.title')}
               </Text>
             </Text>
           </View>
@@ -240,15 +240,15 @@ const SignIn = () => {
           <View
             style={[styles.body, {height: Dimensions.get('window').height}]}>
             <Text style={[styles.heading, {marginTop: 24}]}>
-              Quên mật khẩu?
+              {t('signin.resetPassword')}
             </Text>
             <Text
               style={[
                 styles.des,
                 {textAlign: 'left', paddingHorizontal: 0, marginBottom: 8},
               ]}>
-              <Text style={{color: colors.error}}>*</Text> Nhập email để lấy mã
-              code!
+              <Text style={{color: colors.error}}>*</Text>{' '}
+              {t('signin.enterEmail')}
             </Text>
             <FormGroup
               title="Email"
@@ -266,7 +266,7 @@ const SignIn = () => {
                 marginBottom: 6,
               }}>
               <Text style={{color: colors.black, fontWeight: '500'}}>
-                Thời gian: <Text style={{color: colors.error}}>60s</Text>
+                {t('time')}: <Text style={{color: colors.error}}>60s</Text>
               </Text>
               <TouchableOpacity>
                 <Text
@@ -275,7 +275,7 @@ const SignIn = () => {
                     fontSize: 15,
                     fontWeight: '500',
                   }}>
-                  Lấy mã
+                  {t('send')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -285,12 +285,13 @@ const SignIn = () => {
                 styles.des,
                 {textAlign: 'left', paddingHorizontal: 0, marginBottom: 8},
               ]}>
-              <Text style={{color: colors.error}}>*</Text> Lấy lại mật khẩu
+              <Text style={{color: colors.error}}>*</Text>{' '}
+              {t('signin.changePassword')}
             </Text>
 
             <FormGroup
-              title="Mã code"
-              placeholder="Nhập mã code"
+              title={t('signin.code')}
+              placeholder={t('signin.inputCode')}
               type="number"
               field="code"
               value={resetInfo.code}
@@ -298,7 +299,7 @@ const SignIn = () => {
             />
 
             <FormGroup
-              title="Mật khẩu mới"
+              title={t('newPassword')}
               type="password"
               field="password"
               value={resetInfo.password}
@@ -306,7 +307,7 @@ const SignIn = () => {
             />
 
             <FormGroup
-              title="Nhập lại mật khẩu mới"
+              title={t('confirmPassword')}
               type="password"
               field="confirmPassword"
               duplicateValue={resetInfo.password}
@@ -339,7 +340,7 @@ const SignIn = () => {
                 )
               }
               onPress={() => handleResetPassword()}>
-              <Text style={styles.loginBtnText}>Xác nhận</Text>
+              <Text style={styles.loginBtnText}>{t('confirm')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsForgotPassword(false)}>
               <Text
@@ -349,7 +350,7 @@ const SignIn = () => {
                   fontWeight: '500',
                   marginTop: 12,
                 }}>
-                Quay lại
+                {t('back')}
               </Text>
             </TouchableOpacity>
           </View>

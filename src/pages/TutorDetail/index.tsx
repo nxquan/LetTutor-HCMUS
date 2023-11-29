@@ -30,7 +30,7 @@ import RenderRating from '@/components/RenderRating';
 import CustomVideo from '@/components/CustomVideo';
 import ModalPopper from '@/components/ModalPopper';
 
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
 import {addBooking, toggleFavoriteTutor} from '@/store';
 
@@ -117,6 +117,8 @@ type DetailTutor = {
 const TutorDetail = () => {
   // const route: any = useRoute();
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
+
   const [tutorDetail, setTutorDetail] = useState<DetailTutor>({
     rating: 0,
     languages: '',
@@ -247,7 +249,9 @@ const TutorDetail = () => {
 
       //MY BOOK
       if (!!isSelfBooking) {
-        ResultComponent = <Text style={{color: colors.success}}>Booked</Text>;
+        ResultComponent = (
+          <Text style={{color: colors.success}}>{t('booked')}</Text>
+        );
       } else {
         //OTHER BOOKINGS
         ResultComponent = <Text style={{color: colors.grey600}}>Reserved</Text>;
@@ -268,7 +272,7 @@ const TutorDetail = () => {
               paddingHorizontal: 12,
               borderRadius: 99,
             }}
-            title="Book"
+            title={t('book')}
           />
         );
       } else {
@@ -281,7 +285,7 @@ const TutorDetail = () => {
               paddingHorizontal: 12,
               borderRadius: 99,
             }}
-            title="Book"
+            title={t('book')}
             onPress={() => {
               setSelectedBookingItem(item);
               setIsOpenBookingModal(true);
@@ -489,32 +493,32 @@ const TutorDetail = () => {
             onChangeOrientation={setIsFullscreen}
           />
 
-          <InfoPart title="Education">
+          <InfoPart title={t('tutorDetail.education')}>
             <Text style={{fontSize: 14, color: colors.text, marginLeft: 12}}>
               {tutorDetail?.education}
             </Text>
           </InfoPart>
-          <InfoPart title="Languages">
+          <InfoPart title={t('tutorDetail.languages')}>
             <View style={{flexDirection: 'row'}}>
               {renderItem(String(tutorDetail?.languages).split(', '))}
             </View>
           </InfoPart>
-          <InfoPart title="Specialties">
+          <InfoPart title={t('tutorDetail.specialties')}>
             <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
               {renderItem(getSpecialtyNames(String(tutorDetail?.specialties)))}
             </View>
           </InfoPart>
-          <InfoPart title="Interests">
+          <InfoPart title={t('tutorDetail.interests')}>
             <Text style={{marginLeft: 10, fontSize: 14, color: colors.text}}>
               {tutorDetail?.interests}
             </Text>
           </InfoPart>
-          <InfoPart title="Teaching Experience">
+          <InfoPart title={t('tutorDetail.teachingExperience')}>
             <Text style={{marginLeft: 10, fontSize: 14, color: colors.text}}>
               {tutorDetail?.experience}
             </Text>
           </InfoPart>
-          <InfoPart title="Others review">
+          <InfoPart title={t('tutorDetail.othersReview')}>
             <ReviewList data={feedbacks} />
           </InfoPart>
         </View>
@@ -534,7 +538,7 @@ const TutorDetail = () => {
                 fontWeight: '500',
                 borderRadius: 6,
               }}
-              title="Today"
+              title={t('tutorDetail.today')}
               onPress={() => {
                 setSchedules({
                   distance: 0,

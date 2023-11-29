@@ -3,6 +3,7 @@ import React from 'react';
 
 import styles from './styles';
 import OutsidePressHandler from 'react-native-outside-press';
+import {useTranslations} from '@/hooks';
 
 function DropdownMenu(props: {
   data: Array<any>;
@@ -26,6 +27,8 @@ function DropdownMenu(props: {
     style,
     styleMenu,
   } = props;
+
+  const {t} = useTranslations();
 
   return (
     <OutsidePressHandler
@@ -66,7 +69,7 @@ function DropdownMenu(props: {
                   ]}>
                   {item?.icon}
                   <Text style={[styles.dropdownItem]}>
-                    {item?.title || item?.name}
+                    {t(item?.key) || item?.title || item?.name}
                   </Text>
                 </View>
               </TouchableHighlight>

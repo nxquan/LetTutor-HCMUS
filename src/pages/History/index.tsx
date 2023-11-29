@@ -8,10 +8,11 @@ import {colors} from '@/constants';
 import Pagination from '@/components/Pagination';
 import HistoryItem from './components/HistoryItem';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import Button from '@/components/Button';
 const History = () => {
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [currentSchedules, setCurrentSchedules] = useState<any[]>([]);
 
@@ -25,15 +26,18 @@ const History = () => {
       const result: any[] = [];
 
       bookings.forEach((item: any) => {
-        if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
-          const startLessonDate =
-            item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-          if (!item.isDeleted && startLessonDate - Date.now() < 0) {
-            result.push({
-              ...item,
-            });
-          }
-        }
+        // if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
+        //   const startLessonDate =
+        //     item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
+        //   if (!item.isDeleted && startLessonDate - Date.now() < 0) {
+        //     result.push({
+        //       ...item,
+        //     });
+        //   }
+        // }
+        result.push({
+          ...item,
+        });
       });
 
       result.sort(
@@ -55,17 +59,14 @@ const History = () => {
       <View style={styles.intro}>
         <Image source={images.history} style={{width: 120, height: 120}} />
         <View>
-          <Text style={styles.heading}>History</Text>
+          <Text style={styles.heading}>{t('history.title')}</Text>
           <View
             style={{
               borderLeftWidth: 2,
               borderLeftColor: colors.grey400,
               paddingLeft: 10,
             }}>
-            <Text style={styles.text}>
-              The following is a list of lessons you have attended. You can
-              review the details of the lessons you have attended
-            </Text>
+            <Text style={styles.text}>{t('history.description')}</Text>
           </View>
         </View>
       </View>

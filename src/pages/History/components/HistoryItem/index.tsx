@@ -15,18 +15,40 @@ import ModalPopper from '@/components/ModalPopper';
 import {colors} from '@/constants';
 import {images} from '@/assets';
 import DropdownMenu from '@/components/DropdownMenu';
+import {useTranslations} from '@/hooks';
 
 const reasons = [
-  'Tutor was late',
-  'Tutor was absent',
-  'Network unstable',
-  'Other',
+  {
+    id: 1,
+    title: 'Tutor was late',
+    key: 'wasLate',
+  },
+  {
+    id: 2,
+    title: 'Tutor was absent',
+    key: 'wasAbsent',
+  },
+  {
+    id: 3,
+    title: 'Network unstable',
+    key: 'networkUnstable',
+  },
+  {
+    id: 4,
+    title: 'Other',
+    key: 'other',
+  },
 ];
+
 type Props = {
   data: any;
 };
 const HistoryItem = (props: Props) => {
   const {data} = props;
+  const {scheduleDetailInfo} = data;
+  const {scheduleInfo} = scheduleDetailInfo;
+  const {t} = useTranslations();
+
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenReview, setIsOpenReview] = useState(true);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -41,7 +63,7 @@ const HistoryItem = (props: Props) => {
     setReason((prev: any) => {
       return {
         ...prev,
-        type: item,
+        type: item.key,
       };
     });
   };
@@ -49,14 +71,16 @@ const HistoryItem = (props: Props) => {
   return (
     <Lesson data={data}>
       <View style={styles.requestHeader}>
-        <Text style={styles.timeText}>Lesson Time: 01:00 - 01:25</Text>
+        <Text style={styles.timeText}>
+          {t('history.lessonTime')} 01:00 - 01:25
+        </Text>
       </View>
       <View style={styles.lessonComment}>
         <TouchableOpacity
           style={styles.lessonBar}
           onPress={() => setIsOpenRequest(!isOpenRequest)}>
           <Text style={{fontSize: 14, color: colors.black}}>
-            Request for lesson
+            {t('schedule.requestForLesson')}
           </Text>
           {!isOpenRequest ? (
             <Entypo name="chevron-small-right" size={24} color="black" />
@@ -65,11 +89,8 @@ const HistoryItem = (props: Props) => {
           )}
         </TouchableOpacity>
         {isOpenRequest && (
-          <View style={{marginTop: 8}}>
-            <Text style={styles.commentText}>
-              Currently there are no requests for this class. Please write down
-              any requests for the teacher.
-            </Text>
+          <View style={{marginTop: 8, paddingHorizontal: 12}}>
+            <Text style={styles.commentText}>{t('schedule.request')}</Text>
           </View>
         )}
       </View>
@@ -78,7 +99,7 @@ const HistoryItem = (props: Props) => {
           style={styles.lessonBar}
           onPress={() => setIsOpenReview(!isOpenReview)}>
           <Text style={{fontSize: 14, color: colors.black}}>
-            Review from tutor
+            {t('history.reviewFromTutor')}
           </Text>
           {!isOpenReview ? (
             <Entypo name="chevron-small-right" size={24} color="black" />
@@ -87,11 +108,8 @@ const HistoryItem = (props: Props) => {
           )}
         </TouchableOpacity>
         {isOpenReview && (
-          <View style={{marginTop: 8}}>
-            <Text style={styles.commentText}>
-              Currently there are no requests for this class. Please write down
-              any requests for the teacher.
-            </Text>
+          <View style={{marginTop: 8, paddingHorizontal: 12}}>
+            <Text style={styles.commentText}>{t('history.review')}</Text>
           </View>
         )}
       </View>
@@ -104,13 +122,13 @@ const HistoryItem = (props: Props) => {
           paddingTop: 12,
         }}>
         <TouchableOpacity onPress={() => setIsOpenModal('rating')}>
-          <Text style={styles.actionBtn}>Add a Rating</Text>
+          <Text style={styles.actionBtn}>{t('rating')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             setIsOpenModal('report');
           }}>
-          <Text style={styles.actionBtn}>Report</Text>
+          <Text style={styles.actionBtn}>{t('report')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -122,14 +140,17 @@ const HistoryItem = (props: Props) => {
             <AntDesign name="close" size={20} color="black" />
           </TouchableOpacity>
           <View style={styles.modalInfo}>
-            <Image source={images.defaultAvatar} style={styles.avatar} />
+            <Image
+              source={{uri: scheduleInfo.tutorInfo.avatar}}
+              style={styles.avatar}
+            />
             <Text
               style={{
                 fontSize: 14,
                 color: colors.black,
                 marginVertical: 4,
               }}>
-              Lesson time
+              {t('history.lessonTime')}
             </Text>
             <Text
               style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
@@ -160,14 +181,14 @@ const HistoryItem = (props: Props) => {
                   }}>
                   *
                 </Text>
-                What was the reason you cancel this booking?
+                {t('history.reason')}
               </Text>
 
               <DropdownMenu
                 isOpen={isOpenMenu}
                 onChangeOpen={setIsOpenMenu}
                 data={reasons}
-                selectedItem={reason.type}
+                selectedItem={{key: reason.type}}
                 onChangeSelected={onChangeSelected}>
                 <Pressable onPress={() => setIsOpenMenu(!isOpenMenu)}>
                   <View
@@ -181,7 +202,7 @@ const HistoryItem = (props: Props) => {
                         textAlign: 'center',
                         color: colors.text,
                       }}>
-                      {reason.type}
+                      {t(reason.type)}
                     </Text>
                     {isOpenMenu ? (
                       <Entypo
@@ -203,7 +224,7 @@ const HistoryItem = (props: Props) => {
                 multiline={true}
                 numberOfLines={8}
                 textAlignVertical="top"
-                placeholder="Additional notes"
+                placeholder={t('history.additionalNote')}
                 onBlur={() => {}}
                 style={{
                   textAlign: 'left',
@@ -235,7 +256,9 @@ const HistoryItem = (props: Props) => {
                     paddingHorizontal: 12,
                     zIndex: -1,
                   }}>
-                  <Text style={{fontSize: 14, color: colors.text}}>Later</Text>
+                  <Text style={{fontSize: 14, color: colors.text}}>
+                    {t('later')}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -249,7 +272,7 @@ const HistoryItem = (props: Props) => {
                     marginLeft: 16,
                     zIndex: -1,
                   }}>
-                  <Text style={{color: colors.white}}>Submit</Text>
+                  <Text style={{color: colors.white}}>{t('submit')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -270,7 +293,7 @@ const HistoryItem = (props: Props) => {
                   }}>
                   *
                 </Text>
-                What is your rating for Keegan?
+                {t('history.ratingQuestion')} {scheduleInfo.tutorInfo.name}
               </Text>
 
               <View
@@ -304,7 +327,7 @@ const HistoryItem = (props: Props) => {
                 multiline={true}
                 numberOfLines={8}
                 textAlignVertical="top"
-                placeholder="Content reviews"
+                placeholder={t('history.contentReview')}
                 onBlur={() => {}}
                 style={{
                   textAlign: 'left',
@@ -336,7 +359,9 @@ const HistoryItem = (props: Props) => {
                     paddingHorizontal: 12,
                     zIndex: -1,
                   }}>
-                  <Text style={{fontSize: 14, color: colors.text}}>Later</Text>
+                  <Text style={{fontSize: 14, color: colors.text}}>
+                    {t('later')}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -350,7 +375,7 @@ const HistoryItem = (props: Props) => {
                     marginLeft: 16,
                     zIndex: -1,
                   }}>
-                  <Text style={{color: colors.white}}>Submit</Text>
+                  <Text style={{color: colors.white}}>{t('submit')}</Text>
                 </TouchableOpacity>
               </View>
             </View>

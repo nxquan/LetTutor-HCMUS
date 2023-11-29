@@ -25,10 +25,10 @@ export type initStateType = {
   courseCategories: any[];
   schedules: any[];
   theme: '';
-  language: '';
   applications: any[];
   bookings: any[];
   learningHourTotal: number;
+  language: any;
 };
 
 export const initState: initStateType = {
@@ -39,7 +39,6 @@ export const initState: initStateType = {
     password: 'Hello@99',
   },
   theme: '',
-  language: '',
   tutors: TUTORS,
   tutorDetails: TUTOR_DETAILS,
   feedbacks: FEEDBACKS,
@@ -50,6 +49,7 @@ export const initState: initStateType = {
   applications: [],
   bookings: BOOKINGS,
   learningHourTotal: learningHourTotal,
+  language: 'English',
 };
 
 const reducer = (
@@ -90,7 +90,12 @@ const reducer = (
         };
       }
     }
-
+    case ACTION_TYPE.CHANGE_LANGUAGE: {
+      return {
+        ...state,
+        language: action.payload?.language,
+      };
+    }
     case ACTION_TYPE.CHANGE_PROFILE: {
       const userInfos = state.userInfos.filter(
         (item: any) => item.id !== action.payload?.id,

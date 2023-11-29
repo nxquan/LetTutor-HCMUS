@@ -16,12 +16,13 @@ import FormGroup from '@/components/FormGroup';
 import Header from '@/components/Header';
 import StackProps from '@/types/type';
 import BackButton from '@/components/BackButton';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {addUser} from '@/store';
 
 const SignUp = () => {
   const navigation = useNavigation<StackProps>();
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -102,13 +103,10 @@ const SignUp = () => {
       <View style={styles.inner}>
         <Image source={images.banner} style={styles.banner} />
         <View style={styles.body}>
-          <Text style={styles.heading}>Đăng ký</Text>
-          <Text style={styles.des}>
-            Phát triển kỹ năng tiếng Anh nhanh nhất bằng cách học 1 kèm 1 trực
-            tuyến theo mục tiêu và lộ trình dành cho riêng bạn.
-          </Text>
+          <Text style={styles.heading}>{t('signup.longTitle')}</Text>
+          <Text style={styles.des}>{t('signup.description')}</Text>
           <FormGroup
-            title="EMAIL"
+            title={t('email')}
             type="email"
             field="email"
             placeholder="example@email.com"
@@ -116,7 +114,7 @@ const SignUp = () => {
             onChange={onChangeDataOfUser}
           />
           <FormGroup
-            title="PASSWORD"
+            title={t('password')}
             type="password"
             field="password"
             value={user.password}
@@ -135,14 +133,14 @@ const SignUp = () => {
             style={[styles.loginBtn, !validate() && styles.disable]}
             disabled={!validate()}
             onPress={() => handleSubmit()}>
-            <Text style={styles.loginBtnText}>Đăng ký</Text>
+            <Text style={styles.loginBtnText}>{t('signup.title')}</Text>
           </TouchableOpacity>
           <Text style={styles.signupText}>
-            Đã có tài khoản?
+            {t('signup.other')}{' '}
             <Text
               style={styles.signupLink}
               onPress={() => navigation.navigate('SignIn')}>
-              Đăng nhập
+              {t('signin.title')}
             </Text>
           </Text>
         </View>

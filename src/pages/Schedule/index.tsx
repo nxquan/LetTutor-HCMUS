@@ -7,10 +7,11 @@ import {colors} from '@/constants';
 import ScheduleItem from './components/ScheduleItem';
 import Pagination from '@/components/Pagination';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 
 const Schedule = () => {
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [currentSchedules, setCurrentSchedules] = useState<any[]>([]);
 
@@ -61,7 +62,7 @@ const Schedule = () => {
               fontWeight: '500',
               marginBottom: 8,
             }}>
-            Schedule
+            {t('schedule.title')}
           </Text>
           <View
             style={{
@@ -69,13 +70,8 @@ const Schedule = () => {
               borderLeftColor: colors.grey400,
               paddingLeft: 10,
             }}>
-            <Text style={styles.text}>
-              Here is a list of the sessions you have booked
-            </Text>
-            <Text style={styles.text}>
-              You can track when the meeting starts, join the meeting with one
-              click or can cancel the meeting before 2 hours
-            </Text>
+            <Text style={styles.text}>{t('schedule.description1')}</Text>
+            <Text style={styles.text}>{t('schedule.description2')}</Text>
           </View>
         </View>
       </View>
@@ -86,10 +82,12 @@ const Schedule = () => {
             styles.text,
             {fontWeight: '500', color: colors.black, marginBottom: 8},
           ]}>
-          Latest books
+          {t('schedule.latestBook')}
         </Text>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableCol, {width: '30%'}]}>Name</Text>
+          <Text style={[styles.tableCol, {width: '30%'}]}>
+            {t('schedule.name')}
+          </Text>
           <Text
             style={[
               styles.tableCol,
@@ -97,7 +95,9 @@ const Schedule = () => {
             ]}>
             Sample.pdf
           </Text>
-          <Text style={[styles.tableCol, {width: '18%'}]}>Page</Text>
+          <Text style={[styles.tableCol, {width: '18%'}]}>
+            {t('schedule.page')}
+          </Text>
           <Text
             style={[
               styles.tableCol,
@@ -107,7 +107,9 @@ const Schedule = () => {
           </Text>
         </View>
         <View style={styles.tableRow}>
-          <Text style={[styles.tableCol, {width: '30%'}]}>Description</Text>
+          <Text style={[styles.tableCol, {width: '30%'}]}>
+            {t('schedule.description')}
+          </Text>
           <Text
             style={[
               styles.tableCol,

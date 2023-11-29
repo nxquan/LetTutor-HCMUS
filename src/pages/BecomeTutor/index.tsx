@@ -34,8 +34,9 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {addApplication} from '@/store';
+import DrawerButton from '@/components/DrawerButton';
 
 const BecomeTutor = () => {
   const [generalInfo, setGeneralInfo] = useState({
@@ -69,6 +70,7 @@ const BecomeTutor = () => {
   });
 
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const navigation = useNavigation<StackProps>();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [tab, setTab] = useState(1);
@@ -197,17 +199,17 @@ const BecomeTutor = () => {
     () => [
       {
         id: 1, // acts as primary key, should be unique and non-empty string
-        label: 'Người mới bắt đầu',
+        label: 'beginner',
         value: 'option1',
       },
       {
         id: 2,
-        label: 'Trung cấp',
+        label: 'intermediate',
         value: 'option2',
       },
       {
         id: 3,
-        label: 'Trình độ cao',
+        label: 'advanced',
         value: 'option3',
       },
     ],
@@ -271,12 +273,12 @@ const BecomeTutor = () => {
   }, [video]);
 
   return (
-    <ScrollView>
-      <Header />
+    <ScrollView className="bg-white">
+      <Header drawerBtn={<DrawerButton />} />
       <View className="flex-column mt-4 px-2.5">
         <View className="flex-row items-center">
           <Text
-            className="bg-blue-500 rounded-full text-white w-8 h-8 text-center leading-8 font-bold"
+            className="bg-blue-500 rounded-full text-gray-300 w-8 h-8 text-center leading-8 font-bold"
             style={
               tab !== 1 && {
                 backgroundColor: colors.white,
@@ -293,12 +295,12 @@ const BecomeTutor = () => {
           <Text
             className="ml-2.5 text-black text-base"
             style={tab == 1 && {fontWeight: '500'}}>
-            Complete profile
+            {t('becomeTutor.tab1')}
           </Text>
         </View>
         <View className="flex-row items-center mt-2.5">
           <Text
-            className="border border-gray-400 rounded-full w-8 h-8 text-center leading-8"
+            className="border border-gray-400 text-gray-300 rounded-full w-8 h-8 text-center leading-8"
             style={[
               tab === 2 && {
                 backgroundColor: colors.primary,
@@ -322,12 +324,12 @@ const BecomeTutor = () => {
               tab === 2 && {fontWeight: '500', color: colors.black},
               tab == 3 && {fontWeight: '400', color: colors.black},
             ]}>
-            Video introduction
+            {t('becomeTutor.tab2')}
           </Text>
         </View>
         <View className="flex-row items-center mt-2.5">
           <Text
-            className="border border-gray-400 rounded-full w-8 h-8 text-center leading-8"
+            className="border border-gray-400  text-gray-300 rounded-full w-8 h-8 text-center leading-8"
             style={[
               tab === 3 && {
                 backgroundColor: colors.primary,
@@ -339,7 +341,7 @@ const BecomeTutor = () => {
           <Text
             className="ml-2.5 text-gray-400 text-base"
             style={[tab === 3 && {fontWeight: '500', color: colors.black}]}>
-            Approval
+            {t('becomeTutor.tab3')}
           </Text>
         </View>
       </View>
@@ -351,24 +353,20 @@ const BecomeTutor = () => {
               style={{width: 140, height: 140}}
             />
             <Text className="text-gray-700 text-xl font-bold mt-1">
-              Thiết lập hồ sơ gia sư của bạn
+              {t('becomeTutor.title')}
             </Text>
             <Text className="text-base text-gray-700 text-justify">
-              Hồ sơ gia sư của bạn là cơ hội tiếp cận với học viên trên
-              Tutoring. Bạn có thể sửa lại sau tại trang hồ sơ cá nhân.
+              {t('becomeTutor.description1')}
             </Text>
             <Text className="text-base text-gray-700 mt-4 text-justify">
-              Học viên mới có thể duyệt qua hồ sơ gia sư để tìm một gia sư phù
-              hợp với mục tiêu học tập và tính cách của họ. Khi một học viên
-              quay trở lại họ có thể tìm từ hồ sơ của gia sư người mà sẵn sàng
-              cho họ những trải nghiệm tuyệt vời.
+              {t('becomeTutor.description2')}
             </Text>
           </View>
           <View className="px-2.5 mb-8">
             <View className="flex-row items-center mt-2">
               <View className="h-px bg-gray-300 w-6" />
               <Text className="text-gray-700 text-xl font-bold px-2">
-                Thông tin cơ bản
+                {t('becomeTutor.basicInfo')}
               </Text>
               <View className="ml-2 h-px bg-gray-300 flex-1" />
             </View>
@@ -378,19 +376,21 @@ const BecomeTutor = () => {
               className="self-center my-2"
             />
             <Text className="w-2/3 text-center text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
-              Vui lòng tải lên một bức ảnh đại diện. Xem hướng dẫn.
+              {t('becomeTutor.noteForAvatar')}
             </Text>
 
             <View className="px-6 mt-2">
               <FormGroup
-                title="Tên gia sư"
-                placeholder="Nhập tên gia sư của bạn"
+                title={t('becomeTutor.tutorName')}
+                placeholder={t('becomeTutor.enterTutorName')}
                 field="fullName"
                 value={generalInfo.fullName}
                 onChange={handleChangeGeneralInfo}
               />
 
-              <Text className="text-base mb-1 text-black">Tôi đến từ</Text>
+              <Text className="text-base mb-1 text-black">
+                {t('becomeTutor.iAmFrom')}
+              </Text>
               <DropdownMenu
                 isOpen={isOpenCountryModal}
                 data={countries}
@@ -404,7 +404,8 @@ const BecomeTutor = () => {
                   onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
                   style={styles.dropdownMenuBtn}>
                   <Text style={{fontSize: 14, color: colors.text}}>
-                    {generalInfo.country?.name || 'Chọn quốc tịch'}
+                    {generalInfo.country?.name ||
+                      t('tutor.selectNationalities')}
                   </Text>
                   {isOpenCountryModal ? (
                     <Entypo name="chevron-small-down" size={24} color="black" />
@@ -419,7 +420,7 @@ const BecomeTutor = () => {
               </DropdownMenu>
 
               <Text className="text-base mb-1 text-black mt-2.5">
-                Ngày sinh
+                {t('birthday')}
               </Text>
               <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
                 <View
@@ -433,7 +434,7 @@ const BecomeTutor = () => {
                   <Text className="text-black py-0.5">
                     {generalInfo.birthday != ''
                       ? formatDate(new Date(generalInfo.birthday))
-                      : 'Chọn ngày sinh'}
+                      : t('enterBirthday')}
                   </Text>
                   <TouchableWithoutFeedback
                     onPress={() =>
@@ -468,16 +469,15 @@ const BecomeTutor = () => {
                 <View className="ml-2 h-px bg-gray-300 flex-1" />
               </View>
               <Text className="text-base text-gray-700 text-justify">
-                Học viên sẽ xem thông tin từ hồ sơ của bạn để quyết định nếu bạn
-                phù hợp với nhu cầu của họ.
+                {t('becomeTutor.desForCV')}
               </Text>
               <Text className="mt-2.5 text-center text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
-                Để bảo mật quyền riêng tư của bạn, vui lòng không chia sẻ bất cứ
-                thông tin các nhân như email, số điện thoại, skype,... Trong hồ
-                sơ của bạn.
+                {t('becomeTutor.noteForCV')}
               </Text>
               <View>
-                <Text className="text-base mb-2 mt-4 text-black">Sở thích</Text>
+                <Text className="text-base mb-2 mt-4 text-black">
+                  {t('tutorDetail.interests')}
+                </Text>
                 <TextInput
                   onChangeText={text => {
                     handleChangeCV('hobbies', text);
@@ -496,7 +496,9 @@ const BecomeTutor = () => {
                 </TextInput>
               </View>
               <View>
-                <Text className="text-base mb-2 mt-4 text-black">Học vấn</Text>
+                <Text className="text-base mb-2 mt-4 text-black">
+                  {t('tutorDetail.education')}
+                </Text>
                 <TextInput
                   onChangeText={text => {
                     handleChangeCV('qualification', text);
@@ -516,7 +518,7 @@ const BecomeTutor = () => {
               </View>
               <View>
                 <Text className="text-base mb-2 mt-4 text-black">
-                  Kinh nghiệm
+                  {t('becomeTutor.experience')}
                 </Text>
                 <TextInput
                   onChangeText={text => {
@@ -536,7 +538,7 @@ const BecomeTutor = () => {
               </View>
               <View>
                 <Text className="text-base mb-2 mt-4 text-black">
-                  Nghề nghiệp hiện tại hoặc trước đây
+                  {t('becomeTutor.previousProfession')}
                 </Text>
                 <TextInput
                   onChangeText={text => handleChangeCV('oldExperience', text)}
@@ -554,7 +556,7 @@ const BecomeTutor = () => {
               </View>
               <View>
                 <Text className="text-base mb-2 mt-4 text-black">
-                  Chứng nhận
+                  {t('becomeTutor.certificate')}
                 </Text>
               </View>
             </View>
@@ -563,13 +565,13 @@ const BecomeTutor = () => {
               <View className="flex-row items-center mt-2">
                 <View className="h-px bg-gray-300 w-6" />
                 <Text className="text-gray-700 text-xl font-bold px-2">
-                  Về ngôn ngữ
+                  {t('becomeTutor.myLanguages')}
                 </Text>
                 <View className="ml-2 h-px bg-gray-300 flex-1" />
               </View>
               <View>
                 <Text className="text-base mb-2 mt-4 text-black">
-                  Chứng nhận
+                  {t('tutorDetail.languages')}
                 </Text>
               </View>
               <DropdownMenu
@@ -615,16 +617,16 @@ const BecomeTutor = () => {
               <View className="flex-row items-center mt-2">
                 <View className="h-px bg-gray-300 w-6" />
                 <Text className="text-gray-700 text-xl font-bold px-2">
-                  Về việc dạy
+                  {t('becomeTutor.whoITeach')}
                 </Text>
                 <View className="ml-2 h-px bg-gray-300 flex-1" />
               </View>
               <Text className="mt-2.5 text-center text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
-                Để bảo mật quyền riêng tư của bạn, vui lòng không chia sẻ bất cứ
-                thông tin các nhân như email, số điện thoại, skype,... Trong hồ
-                sơ của bạn.
+                {t('becomeTutor.noteForTeach')}
               </Text>
-              <Text className="text-base mb-2 mt-4 text-black">Giới thiệu</Text>
+              <Text className="text-base mb-2 mt-4 text-black">
+                {t('becomeTutor.introduction')}
+              </Text>
               <TextInput
                 onChangeText={text => handleChangeTeaching('intro', text)}
                 multiline={true}
@@ -640,7 +642,7 @@ const BecomeTutor = () => {
                 {teaching.intro}
               </TextInput>
               <Text className="text-base mb-2 mt-4 text-black">
-                Tôi giỏi nhất trong việc dạy những học viên
+                {t('becomeTutor.whoStudents')}
               </Text>
               <View>
                 {radioButtons.map((item, index) => {
@@ -649,7 +651,7 @@ const BecomeTutor = () => {
                       key={String(index)}
                       onPress={() => handleChangeTeaching('skill', item)}
                       id={String(item.id)}
-                      label={item.label}
+                      label={t(`becomeTutor.${item.label}`)}
                       value={item.value}
                       color={
                         teaching.skill.id === item.id
@@ -665,7 +667,7 @@ const BecomeTutor = () => {
                 })}
               </View>
               <Text className="text-base mb-2 mt-4 text-black">
-                Chuyên ngành của tôi là
+                {t('becomeTutor.mySpecialties')}
               </Text>
               {SPECIALTIES.map((item, index) => {
                 return (
@@ -683,17 +685,17 @@ const BecomeTutor = () => {
                       }}
                     />
                     <Text className="text-base text-black ml-2">
-                      {item.name}
+                      {t(item.key)}
                     </Text>
                   </View>
                 );
               })}
               <Text className="text-base text-red-500">
-                Vui lòng nhập các chuyên ngành của bạn!
+                {t('becomeTutor.warning')}
               </Text>
             </View>
             <Button
-              title="Tiếp theo"
+              title={t('next')}
               onPress={() => setTab(2)}
               style={{
                 backgroundColor: colors.primary,
@@ -710,17 +712,13 @@ const BecomeTutor = () => {
           <View className="px-2.5 mt-4">
             <Image
               source={images.becomeTutor2}
-              style={{width: 140, height: 140}}
+              style={{width: 120, height: 120}}
             />
-            <Text className="text-gray-700 text-xl font-bold mt-1">
-              Giới thiệu bản thân
+            <Text className="text-gray-700 text-xl font-bold my-2">
+              {t('becomeTutor.introMySelf')}
             </Text>
             <Text className="text-base text-gray-700 text-justify">
-              Hãy để học viên biết những gì họ có thể mong đợi từ khoá học của
-              bạn bằng việc quay lại video điểm nhấn về việc dạy, chuyên môn và
-              tính cách của bạn. Học viên có thể lo lắng khi nói chuyện với
-              người bản xứ, vì vậy sẽ thực sự hữu ích khi có một video thân
-              thiện giới thiệu bản thân và mời học viên gọi điện cho bạn.
+              {t('becomeTutor.desForIntroMySelf')}
             </Text>
           </View>
           <View className="px-2.5 mb-8">
@@ -728,25 +726,28 @@ const BecomeTutor = () => {
               <View className="flex-row items-center mt-2">
                 <View className="h-px bg-gray-300 w-6" />
                 <Text className="text-gray-700 text-xl font-bold px-2">
-                  Video giới thiệu
+                  {t('becomeTutor.titleVideo')}
                 </Text>
                 <View className="ml-2 h-px bg-gray-300 flex-1" />
               </View>
 
               <Text className="mt-2.5 text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
-                Một số mẹo hữu dụng: {'\n  '}1. Tìm một không gian trong lành và
-                yên tĩnh {'\n  '}2. Cười thật tự nhiên, nhìn vào camera {'\n  '}
-                3. Ăn mặc lịch sự {'\n  '}4. Nói trong 1-3 phút {'\n  '}5. Brand
-                yourself and have fun!
+                {t('becomeTutor.trick')} {'\n  '}
+                {t('becomeTutor.trick1')} {'\n  '}
+                {t('becomeTutor.trick2')}
+                {'\n  '}
+                {t('becomeTutor.trick3')} {'\n  '}
+                {t('becomeTutor.trick4')} {'\n  '}
+                {t('becomeTutor.trick5')}
                 <Text className="text-red-500">
-                  {'\n'}Lưu ý: Chúng tôi chỉ hỗ trợ tải lên video có kích thước
-                  nhỏ hơn 64 MB.
+                  {'\n'}
+                  {t('becomeTutor.noteForVideo')}
                 </Text>
               </Text>
             </View>
             <View>
               <Button
-                title="Chọn video"
+                title={t('becomeTutor.chooseVideo')}
                 onPress={async () => {
                   try {
                     const pickerResult = await DocumentPicker.pickSingle({
@@ -778,7 +779,7 @@ const BecomeTutor = () => {
             </View>
             <View className="flex-row justify-between">
               <Button
-                title="Trở lại"
+                title={t('back')}
                 onPress={() => setTab(1)}
                 style={{
                   color: colors.primary,
@@ -790,7 +791,7 @@ const BecomeTutor = () => {
                 }}
               />
               <Button
-                title="Hoàn tất"
+                title={t('finish')}
                 onPress={() => {
                   handleSubmitApplication();
                   setTab(3);
@@ -811,10 +812,10 @@ const BecomeTutor = () => {
         <View className="px-2.5 mt-4 items-center">
           <FontAwesome name="smile-o" size={120} color={colors.primary} />
           <Text className="text-gray-700 text-xl mt-1 px-8 text-center">
-            Bạn đã hoàn thành đăng ký Vui lòng đợi phê duyệt
+            {t('becomeTutor.finishSubmission')}
           </Text>
           <Button
-            title="Trang chủ"
+            title={t('home')}
             onPress={() => navigation.navigate('Tutor')}
             style={{
               backgroundColor: colors.primary,

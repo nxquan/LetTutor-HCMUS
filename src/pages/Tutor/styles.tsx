@@ -33,12 +33,12 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: 15,
     borderWidth: 1,
     borderColor: colors.grey300,
     borderRadius: 6,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
   tutorList: {
     flexDirection: 'column',
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingLeft: 12,
     paddingRight: 6,
-    paddingVertical: 4,
+    paddingVertical: 8,
   },
 });
 

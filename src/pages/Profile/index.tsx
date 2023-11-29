@@ -38,6 +38,7 @@ import {useGlobalContext} from '@/hooks';
 import {changePassword, changeProfile} from '@/store';
 import ModalPopper from '@/components/ModalPopper';
 import ReviewList from '@/components/ReviewList';
+import DrawerButton from '@/components/DrawerButton';
 
 const LEVELS = [
   {
@@ -263,7 +264,7 @@ const Profile = () => {
       style={styles.container}
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={[0]}>
-      <Header />
+      <Header drawerBtn={<DrawerButton />} />
       <View
         style={styles.inner}
         className="border border-gray-300 rounded-md mx-4 my-8">

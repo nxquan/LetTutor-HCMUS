@@ -13,6 +13,8 @@ export type RootParamList = {
   TutorDetail: {tutorId: string};
   HomeDrawerRouter: undefined;
   VideoCall: undefined;
+  Profile: undefined;
+  BecomeTutor: undefined;
 };
 
 type StackProps = NativeStackNavigationProp<
@@ -25,7 +27,9 @@ type StackProps = NativeStackNavigationProp<
   'Courses',
   'CourseDetail',
   'CourseTopic',
-  'TutorDetail'
+  'TutorDetail',
+  'Profile',
+  'BecomeTutor'
 >;
 export type DrawerProps = DrawerNavigationProp<
   RootParamList,
@@ -35,8 +39,11 @@ export type DrawerProps = DrawerNavigationProp<
   'Courses',
   'CourseDetail',
   'CourseTopic',
-  'TutorDetail'
+  'TutorDetail',
+  'Profile',
+  'BecomeTutor'
 >;
+
 export type User = {
   email: string;
   password: string;
