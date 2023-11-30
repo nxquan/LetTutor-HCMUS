@@ -2,6 +2,7 @@
   "email": "Email",
   "password": "Mật khẩu",
   "newPassword": "Mật khẩu mới",
+  "curPassword": "Mật khẩu hiện tại",
   "confirmPassword": "Xác nhận mật khẩu",
   "foreign-tutor": "Gia sư nước ngoài",
   "vietnamese-tutor": "Gia sư Việt Nam",
@@ -158,5 +159,38 @@
   "networkUnstable": "Mạng không ổn định",
   "other": "Khác",
   "English": "Tiếng anh",
-  "Vietnamese": "Tiếng việt"
+  "Vietnamese": "Tiếng việt",
+  "profile": {
+    "account": "Tài khoản",
+    "othersReviewYou": "Người khác đánh giá bạn",
+    "name": "Tên",
+    "country": "Quốc gia",
+    "emailAddress": "Địa chỉ email",
+    "phoneNumber": "Số điện thoại",
+    "myLevel": "Trình độ",
+    "wantToLearn": "Muốn học",
+    "studySchedule": "Lịch học",
+    "noteForStudySchedule": "Ghi chú thời gian trong tuần mà bạn muốn học trên LetTutor",
+    "saveChanges": "Lưu thay đổi",
+    "selectLevel": "Chọn trình độ"
+  },
+  "courses": {
+    "title": "Khám phá các khóa học",
+    "des": "LiveTutor đã xây dựng nên các khóa học của các lĩnh vực trong cuộc sống chất lượng, bài bản và khoa học nhất cho những người đang có nhu cầu trau dồi thêm kiến thức về các lĩnh vực.",
+    "searchCourse": "Tìm kiếm khóa học",
+    "selectCategories": "Chọn danh mục",
+    "sortByLevel": "Sắp xếp độ khó",
+    "courses": "Khóa học"
+  },
+  "courseDetail": {
+    "overview": "Tổng quan",
+    "question1": "Tại sao bạn nên học khóa học này?",
+    "question2": "Bạn có thể làm gì?",
+    "experienceLevel": "Trình độ yêu cầu",
+    "courseLength": "Thời lượng khóa học",
+    "listTopics": "Danh sách chủ đề",
+    "suggestedTutors": "Gợi ý gia sư"
+  },
+  "topics": "chủ đề",
+  "discover": "Khám phá"
 }

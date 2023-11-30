@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
   },
   title: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: '500',
     marginBottom: 6,
     color: colors.black,
   },
   des: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.text,
     marginBottom: 24,
   },

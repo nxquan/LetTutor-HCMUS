@@ -9,6 +9,7 @@ import CourseDetail from '@/pages/CourseDetail';
 import CourseTopic from '@/pages/CourseTopic';
 import VideoCall from '@/pages/VideoCall';
 import Profile from '@/pages/Profile';
+import TutorDetail from '@/pages/TutorDetail';
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
@@ -24,6 +25,7 @@ const MainStackRouter = () => {
       <Stack.Screen name="VideoCall" component={VideoCall} />
       <Stack.Screen name="HomeDrawerRouter" component={HomeDrawerRouter} />
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="TutorDetail" component={TutorDetail} />
     </Stack.Navigator>
   );
 };

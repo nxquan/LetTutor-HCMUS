@@ -21,7 +21,7 @@ import {colors} from '@/constants';
 import DropdownMenu from '@/components/DropdownMenu';
 import CourseItem from './components/CourseItem';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 
 const levels = [
   {
@@ -166,6 +166,7 @@ const sorts = [
 
 const Courses = () => {
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
   const [isOpenCategoriesMenu, setIsOpenCategoriesMenu] = useState(false);
   const [isOpenSortMenu, setIsOpenSortMenu] = useState(false);
@@ -282,11 +283,11 @@ const Courses = () => {
       <View style={styles.intro}>
         <Image source={images.course} style={{width: 100, height: 100}} />
         <View>
-          <Text style={styles.headingText}>Discover Courses</Text>
+          <Text style={styles.headingText}>{t('courses.title')}</Text>
           <View style={styles.courseSearch}>
             <TextInput
               placeholderTextColor={colors.text}
-              placeholder="Search course"
+              placeholder={t('courses.searchCourse')}
               style={styles.courseInput}
             />
             <TouchableHighlight
@@ -303,11 +304,7 @@ const Courses = () => {
             </TouchableHighlight>
           </View>
         </View>
-        <Text style={styles.text}>
-          LiveTutor has built the most quality, methodical and scientific
-          courses in the fields of life for those who are in need of improving
-          their knowledge of the fields.
-        </Text>
+        <Text style={styles.text}>{t('courses.des')}</Text>
       </View>
 
       <View style={styles.search}>
@@ -333,7 +330,7 @@ const Courses = () => {
                 renderSearchItems('levels')
               ) : (
                 <Text style={{fontSize: 14, color: colors.text}}>
-                  Select levels
+                  {t('profile.selectLevel')}
                 </Text>
               )}
             </View>
@@ -369,7 +366,7 @@ const Courses = () => {
                 renderSearchItems('categories')
               ) : (
                 <Text style={{fontSize: 14, color: colors.text}}>
-                  Select categories
+                  {t('courses.selectCategories')}
                 </Text>
               )}
             </View>
@@ -395,7 +392,7 @@ const Courses = () => {
             <Text style={{fontSize: 14, color: colors.text}}>
               {searchValue.sortByLevel?.title?.length > 0
                 ? searchValue.sortByLevel?.title
-                : 'Sort by level'}
+                : t('courses.sortByLevel')}
             </Text>
             {isOpenSortMenu ? (
               <Entypo name="chevron-small-down" size={24} color="black" />
@@ -413,7 +410,7 @@ const Courses = () => {
               styles.courseTabText,
               tab === 'course' && {color: colors.primary},
             ]}>
-            Courses
+            {t('courses.courses')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7} onPress={() => setTab('e-book')}>

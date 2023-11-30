@@ -24,6 +24,7 @@ import ModalPopper from '@/components/ModalPopper';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
 import {useRoute} from '@react-navigation/native';
+import {useTranslations} from '@/hooks';
 
 const defaultSource = {
   uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
@@ -31,6 +32,7 @@ const defaultSource = {
 };
 
 const CourseTopic = () => {
+  const {t} = useTranslations();
   const route: any = useRoute();
   const [course, setCourse] = useState<any>({});
   const [selectedTopic, setSelectedTopic] = useState<any>({});
@@ -42,8 +44,15 @@ const CourseTopic = () => {
 
   useEffect(() => {
     setCourse(route.params?.course);
-    setSelectedTopic(route.params?.selectedTopic);
-    setIsOpenModal(true);
+    if (route.params?.selectedTopic != undefined) {
+      setSelectedTopic(route.params?.selectedTopic);
+      setIsOpenModal(true);
+    } else {
+      const topic = route.params?.course?.topics.find(
+        (item: any) => item.orderCourse === 0,
+      );
+      setSelectedTopic(topic);
+    }
   }, [route.params]);
 
   return (
@@ -67,7 +76,9 @@ const CourseTopic = () => {
             <Text style={styles.des}>{course?.description}</Text>
           </View>
           <View style={styles.topicList}>
-            <Text style={styles.topicHeading}>List Topic</Text>
+            <Text style={styles.topicHeading}>
+              {t('courseDetail.listTopics')}
+            </Text>
             {course?.topics?.map((topic: any) => {
               return (
                 <TopicItem

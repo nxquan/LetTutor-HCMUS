@@ -72,7 +72,8 @@ const HistoryItem = (props: Props) => {
     <Lesson data={data}>
       <View style={styles.requestHeader}>
         <Text style={styles.timeText}>
-          {t('history.lessonTime')} 01:00 - 01:25
+          {t('history.lessonTime')} {scheduleDetailInfo.startPeriod} -{' '}
+          {scheduleDetailInfo.endPeriod}
         </Text>
       </View>
       <View style={styles.lessonComment}>

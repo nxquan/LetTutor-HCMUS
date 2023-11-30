@@ -34,7 +34,7 @@ import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
 import Header from '@/components/Header';
 import Button from '@/components/Button';
 import {formatDate} from '@/utils';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import {changePassword, changeProfile} from '@/store';
 import ModalPopper from '@/components/ModalPopper';
 import ReviewList from '@/components/ReviewList';
@@ -93,6 +93,7 @@ const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
 
 const Profile = () => {
   const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
   const [isOpenSpecialtyMenu, setIsOpenSpecialtyMenu] = useState(false);
@@ -230,7 +231,7 @@ const Profile = () => {
     }
 
     const feedbacks = state.feedbacks.filter(
-      (item: any) => item?.secondId === 'f23c4d9f-6043-4cb8-a038-9538a609f5ca',
+      (item: any) => item?.secondId === '4d54d3d7-d2a9-42e5-97a2-5ed38af5789a',
     );
     setFeedbacks(feedbacks);
   }, [state]);
@@ -261,7 +262,7 @@ const Profile = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      className="bg-white"
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={[0]}>
       <Header drawerBtn={<DrawerButton />} />
@@ -319,43 +320,43 @@ const Profile = () => {
             onPress={() => setIsOpenReviewModal(true)}
             className="my-1">
             <Text className="text-base text-blue-500 font-medium">
-              Others review you
+              {t('profile.othersReviewYou')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setIsOpenPasswordModal(true)}>
             <Text className="text-base text-blue-500 font-medium">
-              Change password
+              {t('signin.changePassword')}
             </Text>
           </TouchableOpacity>
         </View>
         <Text className="text-base text-black font-medium p-3 bg-gray-200">
-          Account
+          {t('profile.account')}
         </Text>
         <View className="px-6 pt-6 pb-9">
           <FormGroup
             required={true}
-            title="Name"
+            title={t('profile.name')}
             field="name"
             value={profile?.name}
             onChange={onChangeProfile}
           />
           <FormGroup
             editable={false}
-            title="Email Address"
+            title={t('profile.emailAddress')}
             field="email"
             value={profile?.email}
             onChange={onChangeProfile}
           />
           <FormGroup
             required
-            title="Country"
+            title={t('profile.country')}
             field="name"
             value="Hai pham"
             onChange={() => {}}
           />
           <FormGroup
             required
-            title="Phone Number"
+            title={t('profile.phoneNumber')}
             type="phone"
             field="phone"
             value={profile?.phone}
@@ -364,7 +365,7 @@ const Profile = () => {
 
           <Text className="text-base font-normal text-gray-800">
             <Text className="text-red-500">* </Text>
-            Birthday
+            {t('birthday')}
           </Text>
           <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
             <View
@@ -378,7 +379,7 @@ const Profile = () => {
               <Text className="text-black py-0.5">
                 {profile?.birthday
                   ? formatDate(new Date(profile?.birthday))
-                  : 'Select a day'}
+                  : t('tutor.selectADay')}
               </Text>
               <TouchableWithoutFeedback
                 onPress={() =>
@@ -404,7 +405,7 @@ const Profile = () => {
 
           <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
             <Text className="text-red-500">* </Text>
-            My Level
+            {t('profile.myLevel')}
           </Text>
           <DropdownMenu
             isOpen={isOpenLevelMenu}
@@ -429,7 +430,7 @@ const Profile = () => {
                   {profile?.level
                     ? LEVELS.find((level: any) => level.key === profile?.level)
                         ?.title
-                    : 'Select level'}
+                    : t('profile.selectLevel')}
                 </Text>
               </View>
               {isOpenLevelMenu ? (
@@ -442,7 +443,7 @@ const Profile = () => {
 
           <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
             <Text className="text-red-500">* </Text>
-            Want To Learn
+            {t('profile.wantToLearn')}
           </Text>
           <DropdownMenu
             isOpen={isOpenSpecialtyMenu}
@@ -486,13 +487,13 @@ const Profile = () => {
           <View className="mt-3">
             <Text className="text-base text-gray-800 font-normal mb-1.5">
               <Text className="text-red-500">* </Text>
-              Study Schedule
+              {t('profile.studySchedule')}
             </Text>
             <TextInput
               multiline={true}
               numberOfLines={12}
               textAlignVertical="top"
-              placeholder="Please let us know details about your problem"
+              placeholder={t('profile.noteForStudySchedule')}
               placeholderTextColor={colors.grey600}
               className="text-black text-left py-3 px-2.5 border rounded-md text-base"
               onChangeText={text => onChangeProfile('studySchedule', text)}
@@ -504,7 +505,7 @@ const Profile = () => {
           </View>
 
           <Button
-            title="Save changes"
+            title={t('profile.saveChanges')}
             onPress={isChange ? handleSubmit : undefined}
             style={{
               backgroundColor: colors.primary,
@@ -519,7 +520,7 @@ const Profile = () => {
         <View style={{width: '100%'}}>
           <View className="flex-row justify-between items-center">
             <Text className="text-black text-base font-semibold">
-              Change password
+              {t('signin.changePassword')}
             </Text>
             <TouchableOpacity
               onPress={() => {
@@ -532,7 +533,7 @@ const Profile = () => {
           <View className="w-full pt-3">
             <FormGroup
               required
-              title="Mật khẩu cũ"
+              title={t('curPassword')}
               type="password"
               field="currentPassword"
               value={passwordState.currentPassword}
@@ -540,7 +541,7 @@ const Profile = () => {
             />
             <FormGroup
               required
-              title="Mật khẩu mới"
+              title={t('newPassword')}
               type="password"
               field="newPassword"
               value={passwordState.newPassword}
@@ -549,7 +550,7 @@ const Profile = () => {
 
             <FormGroup
               required
-              title="Nhập lại mật khẩu mới"
+              title={t('newPassword')}
               type="password"
               value={passwordState.confirmPassword}
               field="confirmPassword"
@@ -595,7 +596,7 @@ const Profile = () => {
         <View style={{width: '100%'}}>
           <View className="flex-row justify-between items-center">
             <Text className="text-black text-base font-semibold">
-              Others review
+              {t('tutorDetail.othersReview')}
             </Text>
 
             <TouchableOpacity

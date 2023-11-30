@@ -23,7 +23,9 @@ const Lesson = (props: Props) => {
       <View style={styles.infoLesson}>
         <View>
           <Text style={styles.meetDate}>
-            {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
+            {new Date(
+              scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000,
+            ).toDateString()}
           </Text>
           <Text style={{fontSize: 14, color: colors.text}}>
             1 {t('lesson')}

@@ -2,9 +2,9 @@ import {colors} from '@/constants';
 import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {},
   inner: {
-    borderWidth: 1,
+    borderTopColor: colors.primary,
+    borderTopWidth: 5,
   },
   inputContainer: {
     color: colors.text,

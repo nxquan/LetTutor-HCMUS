@@ -18,6 +18,7 @@ const languages = [
     id: 1,
     title: 'Vietnamese',
     key: 'Vietnamese',
+    image: languageImages.vietNam,
     icon: (
       <Image
         source={languageImages.vietNam}
@@ -35,6 +36,7 @@ const languages = [
     id: 2,
     title: 'English',
     key: 'English',
+    image: languageImages.unitedState,
     icon: (
       <Image
         source={languageImages.unitedState}
@@ -99,7 +101,7 @@ function Header(props: Props) {
           <Pressable onPress={() => setIsOpenLanguageMenu(!isOpenLanguageMenu)}>
             <View style={styles.languageBtn}>
               <Image
-                source={languageImages.vietNam}
+                source={currentLanguage.image || languageImages.unitedState}
                 style={styles.languageIcon}
               />
             </View>

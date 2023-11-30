@@ -2,6 +2,7 @@
   "email": "Email",
   "password": "Password",
   "newPassword": "New Password",
+  "curPassword": "Current password",
   "confirmPassword": "Confirm Password",
   "foreign-tutor": "Foreign tutor",
   "vietnamese-tutor": "Vietnamese Tutor",
@@ -159,5 +160,38 @@
     "noteForVideo": "Note: We only support uploading video file that is less than 64 MB in size.",
     "chooseVideo": "Choose video",
     "finishSubmission": "You have done all the steps \nPlease, wait for the operator's approval"
-  }
+  },
+  "profile": {
+    "account": "Account",
+    "othersReviewYou": "Others review you",
+    "name": "Name",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone Number",
+    "myLevel": "My Level",
+    "country": "Country",
+    "wantToLearn": "Want to learn",
+    "studySchedule": "Study Schedule",
+    "noteForStudySchedule": "Note the time of the week you want to study on LetTutor",
+    "saveChanges": "Save changes",
+    "selectLevel": "Select Level"
+  },
+  "courses": {
+    "title": "Discover Courses",
+    "des": "LiveTutor has built the most quality, methodical and scientific courses in the fields of life for those who are in need of improving their knowledge of the fields.",
+    "searchCourse": "Search course",
+    "selectCategories": "Select categories",
+    "sortByLevel": "Sort by level",
+    "courses": "Courses"
+  },
+  "courseDetail": {
+    "overview": "Overview",
+    "question1": "Why take this course?",
+    "question2": "What will you be able to do?",
+    "experienceLevel": "Experience Level",
+    "courseLength": "Course Length",
+    "listTopics": "List Topics",
+    "suggestedTutors": "Suggested Tutors"
+  },
+  "topics": "topics",
+  "discover": "Discover"
 }

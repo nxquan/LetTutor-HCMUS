@@ -115,7 +115,7 @@ type DetailTutor = {
 };
 
 const TutorDetail = () => {
-  // const route: any = useRoute();
+  const route: any = useRoute();
   const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
 

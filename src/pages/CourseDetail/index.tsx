@@ -17,7 +17,7 @@ import {DrawerActions, useNavigation, useRoute} from '@react-navigation/native';
 import StackProps, {DrawerProps} from '@/types/type';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
-import {useGlobalContext} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 
 const levels = [
   {
@@ -70,6 +70,7 @@ const levels = [
 const CourseDetail = (props: any) => {
   const {} = props;
 
+  const {t} = useTranslations();
   const [state, dispatch] = useGlobalContext();
   const navigation = useNavigation<DrawerProps>();
   const route: any = useRoute();
@@ -112,15 +113,25 @@ const CourseDetail = (props: any) => {
           <View style={styles.info}>
             <Text style={styles.title}>{course?.name}</Text>
             <Text style={styles.des}>{course?.description}</Text>
-            <TouchableOpacity style={styles.discoverBtn} activeOpacity={0.7}>
-              <Text style={{fontSize: 16, color: colors.white}}>Discover</Text>
+            <TouchableOpacity
+              style={styles.discoverBtn}
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.navigate('CourseTopic', {
+                  course: course,
+                  selectedTopic: undefined,
+                });
+              }}>
+              <Text style={{fontSize: 16, color: colors.white}}>
+                {t('discover')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.detail}>
           <View style={styles.detailContent}>
             <View style={styles.detailHeading}>
-              <Text style={styles.heading}>Overview</Text>
+              <Text style={styles.heading}>{t('courseDetail.overview')}</Text>
               <View style={styles.line} />
             </View>
             <View style={styles.detailItem}>
@@ -131,7 +142,7 @@ const CourseDetail = (props: any) => {
                   color={colors.error}
                 />
                 <Text style={styles.detailItemHeading}>
-                  Why take this course
+                  {t('courseDetail.question1')}
                 </Text>
               </View>
               <Text style={styles.detailItemText}>{course?.reason}</Text>
@@ -144,7 +155,7 @@ const CourseDetail = (props: any) => {
                   color={colors.error}
                 />
                 <Text style={styles.detailItemHeading}>
-                  What will you be able to do
+                  {t('courseDetail.question2')}
                 </Text>
               </View>
               <Text style={styles.detailItemText}>{course?.purpose}</Text>
@@ -152,7 +163,9 @@ const CourseDetail = (props: any) => {
           </View>
           <View style={styles.detailContent}>
             <View style={styles.detailHeading}>
-              <Text style={styles.heading}>Experience Level</Text>
+              <Text style={styles.heading}>
+                {t('courseDetail.experienceLevel')}
+              </Text>
               <View style={styles.line}></View>
             </View>
             <View style={styles.detailItem}>
@@ -170,21 +183,23 @@ const CourseDetail = (props: any) => {
           </View>
           <View style={styles.detailContent}>
             <View style={styles.detailHeading}>
-              <Text style={styles.heading}>Course Length</Text>
+              <Text style={styles.heading}>
+                {t('courseDetail.courseLength')}
+              </Text>
               <View style={styles.line}></View>
             </View>
             <View style={styles.detailItem}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <AntDesign name="book" size={18} color={colors.primary} />
                 <Text style={styles.detailItemHeading}>
-                  {course?.topics?.length} topics
+                  {course?.topics?.length} {t('topics')}
                 </Text>
               </View>
             </View>
           </View>
           <View style={styles.detailContent}>
             <View style={styles.detailHeading}>
-              <Text style={styles.heading}>List Topics</Text>
+              <Text style={styles.heading}>{t('courseDetail.listTopics')}</Text>
               <View style={styles.line}></View>
             </View>
             <View style={[styles.detailItem]}>
@@ -211,7 +226,9 @@ const CourseDetail = (props: any) => {
 
           <View style={styles.detailContent}>
             <View style={styles.detailHeading}>
-              <Text style={styles.heading}>Suggested Tutors</Text>
+              <Text style={styles.heading}>
+                {t('courseDetail.suggestedTutors')}
+              </Text>
               <View style={styles.line} />
             </View>
             <View style={styles.detailItem}>

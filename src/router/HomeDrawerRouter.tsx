@@ -134,7 +134,7 @@ const HomeDrawerRouter = () => {
           marginRight: 0,
         },
       }}>
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="RecurringLessonSchedule"
         component={Tutor}
         options={{
@@ -146,7 +146,7 @@ const HomeDrawerRouter = () => {
             />
           ),
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="Tutor"
         component={Tutor}

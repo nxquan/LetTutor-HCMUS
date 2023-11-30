@@ -84,8 +84,7 @@ const SignIn = () => {
       isSamePassword = password === confirmPassword;
     }
 
-    return true;
-    // return !!isEmail && !!isMatch && isSamePassword;
+    return !!isEmail && !!isMatch && isSamePassword;
   };
 
   const handleSubmit = () => {

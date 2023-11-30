@@ -26,8 +26,9 @@ const styles = StyleSheet.create({
     borderColor: colors.grey300,
     paddingLeft: 12,
     marginBottom: 12,
+    borderRadius: 6,
   },
-  courseInput: {paddingVertical: 4, flex: 1, color: colors.text},
+  courseInput: {paddingVertical: 6, fontSize: 15, flex: 1, color: colors.text},
   searchBtn: {
     borderColor: colors.grey300,
     borderLeftWidth: 1,
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingLeft: 12,
     paddingRight: 6,
-    paddingVertical: 4,
+    paddingVertical: 8,
   },
   courseTabs: {
     flexDirection: 'row',

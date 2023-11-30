@@ -26,18 +26,18 @@ const History = () => {
       const result: any[] = [];
 
       bookings.forEach((item: any) => {
-        // if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
-        //   const startLessonDate =
-        //     item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-        //   if (!item.isDeleted && startLessonDate - Date.now() < 0) {
-        //     result.push({
-        //       ...item,
-        //     });
-        //   }
-        // }
-        result.push({
-          ...item,
-        });
+        if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
+          const startLessonDate =
+            item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
+          if (!item.isDeleted && startLessonDate - Date.now() < 0) {
+            result.push({
+              ...item,
+            });
+          }
+        }
+        // result.push({
+        //   ...item,
+        // });
       });
 
       result.sort(
