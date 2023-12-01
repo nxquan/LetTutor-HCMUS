@@ -8,6 +8,10 @@ For example: react-native-pdf lib is not work for Expo go or something!
 
 Link: https://app.diagrams.net/#G1uKldG1G-AoHq1dvfCl5EjjAtZG4Gh6aW
 
+## Link youtube milestone 2:
+
+Link: https://youtu.be/FxtGvYdELAA
+
 ## Getting Started
 
 > **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
