@@ -23,7 +23,7 @@ const reasons = [
   {id: 1, title: 'Reschedule at another time', key: 'reschedule'},
   {id: 2, title: 'Busy at that time', key: 'busy'},
   {id: 3, title: 'Asked by the tutor', key: 'asked'},
-  {id: 4, title: 'Other', key: 'other'},
+  {id: 4, title: 'Other', key: 'other1'},
 ];
 
 type Props = {
@@ -53,7 +53,7 @@ const ScheduleItem = (props: Props) => {
     setReason((prev: any) => {
       return {
         ...prev,
-        type: item,
+        type: item.title,
       };
     });
   };

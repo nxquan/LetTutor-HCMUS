@@ -445,7 +445,7 @@ const TutorDetail = () => {
               onPress={() => {
                 dispatch(
                   toggleFavoriteTutor({
-                    tutorId: 'f23c4d9f-6043-4cb8-a038-9538a609f5ca',
+                    tutorId: '4d54d3d7-d2a9-42e5-97a2-5ed38af5789a',
                   }),
                 ); //route.params?.tutorId
               }}

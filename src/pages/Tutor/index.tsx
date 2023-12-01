@@ -158,6 +158,7 @@ const Tutor = () => {
   const onChangeNationality = useCallback((item: any) => {
     if (!filters.nationalities.includes(item)) {
       setFilters((prev: any) => {
+        console.log('prev', prev);
         return {
           ...prev,
           nationalities: [...prev.nationalities, item],
@@ -320,6 +321,9 @@ const Tutor = () => {
     };
 
     handleSearch();
+  }, [filters]);
+
+  useEffect(() => {
     const total = state.bookings.reduce((acc: number, booking: any) => {
       const {scheduleDetailInfo} = booking;
       const startTime =
@@ -406,7 +410,8 @@ const Tutor = () => {
         },
       };
     });
-  }, []);
+  }, [state]);
+
   useEffect(() => {
     const timerId = setInterval(() => {
       setRemainingTimeForUpcomingLesson(prev => {
@@ -698,7 +703,7 @@ const Tutor = () => {
           onPress={() => {
             setFilters({
               tutorName: '',
-              nationalities: {},
+              nationalities: [],
               date: null,
               startTime: null,
               endTime: null,

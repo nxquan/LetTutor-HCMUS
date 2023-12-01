@@ -88,8 +88,6 @@ const SignIn = () => {
   };
 
   const handleSubmit = () => {
-    navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
-
     const isExisting = state.users.find((item: any) => {
       return String(item.email) === user.email.trim().toLowerCase();
     });
@@ -195,7 +193,11 @@ const SignIn = () => {
               </Text>
             </TouchableOpacity>
             {notification.message.length > 0 && (
-              <Text style={[styles.error, styles.notification]}>
+              <Text
+                style={[
+                  notification.type === 'error' ? styles.error : styles.success,
+                  styles.notification,
+                ]}>
                 {notification.message}
               </Text>
             )}
@@ -341,7 +343,14 @@ const SignIn = () => {
               onPress={() => handleResetPassword()}>
               <Text style={styles.loginBtnText}>{t('confirm')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsForgotPassword(false)}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsForgotPassword(false);
+                setNotification({
+                  message: '',
+                  type: '',
+                });
+              }}>
               <Text
                 style={{
                   color: colors.primary,

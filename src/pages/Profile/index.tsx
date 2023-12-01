@@ -99,6 +99,8 @@ const Profile = () => {
   const [isOpenSpecialtyMenu, setIsOpenSpecialtyMenu] = useState(false);
   const [isOpenPasswordModal, setIsOpenPasswordModal] = useState(false);
   const [isOpenReviewModal, setIsOpenReviewModal] = useState(false);
+  const [countries, setCountries] = useState<any[]>([]);
+  const [isOpenCountryModal, setIsOpenCountryModal] = useState(false);
 
   const [feedbacks, setFeedbacks] = useState([]);
   const [profile, setProfile] = useState<any>(undefined);
@@ -109,7 +111,7 @@ const Profile = () => {
   });
   const [isChange, setIsChange] = useState(false);
   const [avatar, setAvatar] = React.useState<any>();
-
+  const [curName, setCurName] = useState('');
   useEffect(() => {
     if (avatar) {
       onChangeProfile('avatar', avatar?.[0]?.fileCopyUri);
@@ -227,7 +229,16 @@ const Profile = () => {
 
     const user = state.userInfos.find((item: any) => item?.id === userId);
     if (user) {
-      setProfile(user);
+      setProfile({
+        ...user,
+        country: {
+          name: '',
+          region: '',
+          key: '',
+          id: '',
+        },
+      });
+      setCurName(user.name);
     }
 
     const feedbacks = state.feedbacks.filter(
@@ -239,6 +250,25 @@ const Profile = () => {
   const handleSubmit = () => {
     dispatch(changeProfile(profile));
   };
+
+  useEffect(() => {
+    fetch('https://api.first.org/data/v1/countries')
+      .then(response => {
+        return response.json();
+      })
+      .then(({data}: any) => {
+        const _countries = Object.keys(data).map(key => {
+          return {
+            name: data[key].country,
+            region: data[key].region,
+            key: key,
+            id: key,
+          };
+        });
+        _countries.sort((a, b) => a.key.localeCompare(b.key));
+        setCountries(_countries);
+      });
+  }, []);
 
   const handleChangePassword = () => {
     dispatch(
@@ -311,7 +341,7 @@ const Profile = () => {
             </TouchableOpacity>
           </View>
           <Text className="font-bold text-blue-500 text-2xl text-center mt-1">
-            Hai pham
+            {curName}
           </Text>
           <Text className="text-base text-grey-500 mt-1">
             Account ID: f569c202-7bbf-4620-af77-ecc1419a6b28
@@ -347,13 +377,34 @@ const Profile = () => {
             value={profile?.email}
             onChange={onChangeProfile}
           />
-          <FormGroup
-            required
-            title={t('profile.country')}
-            field="name"
-            value="Hai pham"
-            onChange={() => {}}
-          />
+
+          <Text className="text-base mb-1 font-normal text-gray-800">
+            <Text className="text-red-500">* </Text>
+            {t('profile.country')}
+          </Text>
+          <DropdownMenu
+            isOpen={isOpenCountryModal}
+            data={countries}
+            onChangeOpen={setIsOpenCountryModal}
+            onChangeSelected={onChangeProfile}
+            selectedItem={profile?.country}
+            typeOfMenu="country"
+            style={{zIndex: 1}}>
+            <Pressable
+              className="py-2.5 mb-2.5"
+              onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
+              style={styles.dropdownMenuBtn}>
+              <Text style={{fontSize: 14, color: colors.text}}>
+                {profile?.country?.name || t('tutor.selectNationalities')}
+              </Text>
+              {isOpenCountryModal ? (
+                <Entypo name="chevron-small-down" size={24} color="black" />
+              ) : (
+                <Entypo name="chevron-small-right" size={24} color="black" />
+              )}
+            </Pressable>
+          </DropdownMenu>
+
           <FormGroup
             required
             title={t('profile.phoneNumber')}

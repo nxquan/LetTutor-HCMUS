@@ -15,6 +15,7 @@ function DropdownMenu(props: {
   typeOfMenu?: string;
   style?: any;
   styleMenu?: any;
+  translation?: boolean;
 }) {
   const {
     data,
@@ -26,6 +27,7 @@ function DropdownMenu(props: {
     typeOfMenu,
     style,
     styleMenu,
+    translation,
   } = props;
 
   const {t} = useTranslations();
@@ -69,7 +71,9 @@ function DropdownMenu(props: {
                   ]}>
                   {item?.icon}
                   <Text style={[styles.dropdownItem]}>
-                    {t(item?.key) || item?.title || item?.name}
+                    {translation === true
+                      ? t(item?.key)
+                      : item?.title || item?.name}
                   </Text>
                 </View>
               </TouchableHighlight>

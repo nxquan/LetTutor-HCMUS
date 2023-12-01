@@ -16,7 +16,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   dropdownMenuBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    borderWidth: 1,
     borderColor: colors.grey500,
+    borderRadius: 6,
+    paddingLeft: 12,
+    paddingRight: 6,
+    paddingVertical: 4,
   },
 });
 
