@@ -10,7 +10,7 @@ Link: https://app.diagrams.net/#G1uKldG1G-AoHq1dvfCl5EjjAtZG4Gh6aW
 
 ## Link youtube milestone 2:
 
-Link: https://youtu.be/FxtGvYdELAA
+Link: https://youtu.be/9VFV5svS4dk
 
 ## Getting Started
 
