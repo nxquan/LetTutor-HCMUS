@@ -271,12 +271,21 @@ const Profile = () => {
   }, []);
 
   const handleChangePassword = () => {
-    dispatch(
-      changePassword({
-        currentPassword: passwordState.currentPassword,
-        newPassword: passwordState.newPassword,
-      }),
+    console.log(
+      'email:',
+      state.currentUser.email,
+      'currentPassword:',
+      passwordState.currentPassword,
+      'newPassword:',
+      passwordState.newPassword,
     );
+    const payload = {
+      email: state.currentUser.email.toLowerCase(),
+      currentPassword: passwordState.currentPassword,
+      newPassword: passwordState.newPassword,
+    };
+    dispatch(changePassword(payload));
+    setIsOpenPasswordModal(false);
   };
 
   const handleError = (err: unknown) => {
@@ -290,6 +299,7 @@ const Profile = () => {
     }
   };
 
+  console.log('users', state.users);
   return (
     <ScrollView
       className="bg-white"
@@ -623,7 +633,6 @@ const Profile = () => {
                 title="Save"
                 onPress={() => {
                   handleChangePassword();
-                  setIsOpenPasswordModal(false);
                 }}
                 leftIcon={
                   <Feather

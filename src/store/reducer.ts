@@ -81,14 +81,18 @@ const reducer = (
       };
     }
     case ACTION_TYPE.CHANGE_PASSWORD: {
-      const currentUser = state.currentUser;
-      if (currentUser.password == action.payload.currentPassword) {
-        currentUser.password = action.payload.newPassword;
-        return {
-          ...state,
-          currentUser,
-        };
-      }
+      const users = state.users;
+      users.forEach(item => {
+        if (item.email === action.payload.email) {
+          if (item.password == action.payload.currentPassword) {
+            item.password = action.payload.newPassword;
+          }
+        }
+      });
+      return {
+        ...state,
+        users,
+      };
     }
     case ACTION_TYPE.CHANGE_LANGUAGE: {
       return {
