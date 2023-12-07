@@ -17,6 +17,7 @@ export type initStateType = {
   users: User[];
   userInfos: any;
   currentUser: any;
+  tokens: any;
   tutors: any[];
   tutorDetails: any[];
   feedbacks: any[];
@@ -34,10 +35,8 @@ export type initStateType = {
 export const initState: initStateType = {
   users: [],
   userInfos: INFO,
-  currentUser: {
-    email: '',
-    password: 'Hello@99',
-  },
+  currentUser: {},
+  tokens: {},
   theme: '',
   tutors: TUTORS,
   tutorDetails: TUTOR_DETAILS,
@@ -60,11 +59,13 @@ const reducer = (
     case ACTION_TYPE.LOGIN:
       return {
         ...state,
-        currentUser: action.payload,
+        tokens: action.payload?.tokens,
+        currentUser: action.payload.user,
       };
     case ACTION_TYPE.LOG_OUT:
       return {
         ...state,
+        tokens: {},
         currentUser: null,
       };
 

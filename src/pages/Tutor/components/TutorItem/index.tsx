@@ -1,5 +1,5 @@
 import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -9,7 +9,6 @@ import {images, languageImages} from '@/assets';
 import Button from '@/components/Button';
 import {useNavigation} from '@react-navigation/native';
 import StackProps from '@/types/type';
-import {getCountryNameFromCode} from '@/utils';
 import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {toggleFavoriteTutor} from '@/store';
@@ -24,7 +23,10 @@ const TutorItem = (props: Props) => {
   const navigation = useNavigation<StackProps>();
   const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
-
+  const [country, setCountry] = useState({
+    flag: undefined,
+    name: '',
+  });
   const renderSpecialties = () => {
     const _specialties = String(data?.specialties).split(',');
     const specialties: any = [];
@@ -39,7 +41,7 @@ const TutorItem = (props: Props) => {
             style={{
               color: colors.primary,
               backgroundColor: colors.backgroundActive,
-              paddingVertical: 8,
+              paddingVertical: 4,
               paddingHorizontal: 12,
               marginBottom: 8,
               borderRadius: 999,
@@ -60,7 +62,7 @@ const TutorItem = (props: Props) => {
               style={{
                 color: colors.primary,
                 backgroundColor: colors.backgroundActive,
-                paddingVertical: 8,
+                paddingVertical: 4,
                 paddingHorizontal: 12,
                 marginBottom: 8,
                 borderRadius: 999,
@@ -74,6 +76,21 @@ const TutorItem = (props: Props) => {
 
     return specialties;
   };
+
+  useEffect(() => {
+    const getCountryFromCode = async (code: string) => {
+      const res = await fetch(`https://restcountries.com/v3.1/alpha/${code}`);
+      const data = await res.json();
+      if (data) {
+        setCountry({
+          name: data?.[0]?.name?.common,
+          flag: data?.[0]?.flags?.png,
+        });
+      }
+    };
+    getCountryFromCode(data?.country);
+  }, [data]);
+
   return (
     <View style={styles.wrapper}>
       <View
@@ -88,7 +105,12 @@ const TutorItem = (props: Props) => {
           <View style={styles.info}>
             <Image
               source={images.defaultAvatar}
-              src={data?.avatar}
+              src={
+                data?.avatar !=
+                'https://www.alliancerehabmed.com/wp-content/uploads/icon-avatar-default.png'
+                  ? data?.avatar
+                  : null
+              }
               style={{
                 width: 80,
                 height: 80,
@@ -109,11 +131,11 @@ const TutorItem = (props: Props) => {
                 }}>
                 <Image
                   source={languageImages.vietNam}
-                  src={`https://flagsapi.com/${data?.country}/flat/64.png`}
+                  src={country.flag}
                   style={{width: 24, height: 16}}
                 />
                 <Text style={styles.nationality}>
-                  {getCountryNameFromCode(data?.country)}
+                  {country?.name && 'Vietnam'}
                 </Text>
               </View>
               <RenderRating rating={data?.rating} size={14} />

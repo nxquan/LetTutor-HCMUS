@@ -32,6 +32,8 @@ import DrawerButton from '@/components/DrawerButton';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
 import {convertMinutesToHours, convertSecondsToMinutes} from '@/utils';
+import * as tutorService from '@/services/tutorService';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -245,13 +247,13 @@ const Tutor = () => {
     });
   };
 
-  useEffect(() => {
-    scrollRef.current &&
-      scrollRef.current?.scrollTo({
-        y: 0, //680
-        animated: true,
-      });
-  }, [currentTutors]);
+  // useEffect(() => {
+  //   scrollRef.current &&
+  //     scrollRef.current?.scrollTo({
+  //       y: 0, //680
+  //       animated: true,
+  //     });
+  // }, [currentTutors]);
 
   useEffect(() => {
     const handleSearch = () => {
@@ -324,121 +326,141 @@ const Tutor = () => {
   }, [filters]);
 
   useEffect(() => {
-    const total = state.bookings.reduce((acc: number, booking: any) => {
-      const {scheduleDetailInfo} = booking;
-      const startTime =
-        scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-      if (startTime < Date.now() - 25 * 60) {
-        return acc + 25;
-      }
-      return acc;
-    }, 0);
-    setLearningHourTotal(total);
+    const fetch = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
 
-    let isTeaching = false;
-    const nearestBooking = state.bookings.reduce(
-      (acc: any, booking: any) => {
-        const {scheduleDetailInfo} = booking;
-        const startTime =
-          scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-        const endTime =
-          scheduleDetailInfo.endPeriodTimestamp - 7 * 60 * 60 * 1000;
-
-        const now = Date.now();
-        if (startTime < now && now < endTime) {
-          isTeaching = true;
-          return booking;
-        }
-
-        if (isTeaching == false) {
-          if (startTime >= Date.now()) {
-            if (
-              scheduleDetailInfo.startPeriodTimestamp <
-              acc.scheduleDetailInfo.startPeriodTimestamp
-            ) {
-              return booking;
-            } else {
-              return acc;
-            }
-          }
-          return acc;
-        }
-      },
-      {
-        scheduleDetailInfo: {
-          startPeriodTimestamp: 9999999999999999,
-          endPeriodTimestamp: 9999999999999999,
-          updatedAt: '2023-11-26T12:04:53.163Z',
-          scheduleInfo: {
-            startTimestamp: 9999999999999999,
-            endTimestamp: 9999999999999999,
-          },
+      const res = await tutorService.getTutorByPage({
+        params: {
+          perPage: 9999999,
+          page: 1,
         },
-      },
-    );
-
-    setUpcomingLesson(() => {
-      let status = 'INIT';
-      const {scheduleDetailInfo} = nearestBooking;
-      const startTime =
-        scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-      if (startTime <= Date.now()) {
-        status = 'IN_PROGRESS';
-        setRemainingTimeForUpcomingLesson(0);
-        setTeachingTime(Math.floor((Date.now() - startTime) / 1000));
-      } else {
-        setRemainingTimeForUpcomingLesson(
-          Math.floor((startTime - Date.now()) / 1000),
-        );
-      }
-
-      return {
-        startedAtTimeStamp: scheduleDetailInfo.startPeriodTimestamp,
-        createdAtTimeStamp: 1685608409920,
-        updatedAtTimeStamp: 1685608409920,
-        id: 3,
-        userId: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
-        courseId: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
-        status,
-        startedAt: '2023-06-01T08:33:29.919Z',
-        createdAt: '2023-06-01T08:33:29.920Z',
-        updatedAt: '2023-06-01T08:33:29.920Z',
-        course: {
-          id: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
-          name: 'English Conversation 101',
-          description: 'Approachable lessons for absolute beginners',
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
         },
-      };
-    });
-  }, [state]);
-
-  useEffect(() => {
-    const timerId = setInterval(() => {
-      setRemainingTimeForUpcomingLesson(prev => {
-        if (prev == 0) {
-          setUpcomingLesson((prevUp: any) => ({
-            ...prevUp,
-            status: 'TEACHING',
-          }));
-
-          clearInterval(timerId);
-          return 0;
-        }
-        return prev - 1;
       });
-    }, 1000);
-
-    return () => clearInterval(timerId);
+      if (res.success) {
+        setTutors(res.data.tutors.rows);
+      }
+    };
+    fetch();
   }, []);
 
-  useEffect(() => {
-    if (remainingTimeForUpcomingLesson === 0) {
-      const timerId = setInterval(() => {
-        setTeachingTime(prev => prev + 1);
-      }, 1000);
-      return () => clearInterval(timerId);
-    }
-  }, [remainingTimeForUpcomingLesson]);
+  // useEffect(() => {
+  //   const total = state.bookings.reduce((acc: number, booking: any) => {
+  //     const {scheduleDetailInfo} = booking;
+  //     const startTime =
+  //       scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
+  //     if (startTime < Date.now() - 25 * 60) {
+  //       return acc + 25;
+  //     }
+  //     return acc;
+  //   }, 0);
+  //   setLearningHourTotal(total);
+
+  //   let isTeaching = false;
+  //   const nearestBooking = state.bookings.reduce(
+  //     (acc: any, booking: any) => {
+  //       const {scheduleDetailInfo} = booking;
+  //       const startTime =
+  //         scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
+  //       const endTime =
+  //         scheduleDetailInfo.endPeriodTimestamp - 7 * 60 * 60 * 1000;
+
+  //       const now = Date.now();
+  //       if (startTime < now && now < endTime) {
+  //         isTeaching = true;
+  //         return booking;
+  //       }
+
+  //       if (isTeaching == false) {
+  //         if (startTime >= Date.now()) {
+  //           if (
+  //             scheduleDetailInfo.startPeriodTimestamp <
+  //             acc.scheduleDetailInfo.startPeriodTimestamp
+  //           ) {
+  //             return booking;
+  //           } else {
+  //             return acc;
+  //           }
+  //         }
+  //         return acc;
+  //       }
+  //     },
+  //     {
+  //       scheduleDetailInfo: {
+  //         startPeriodTimestamp: 9999999999999999,
+  //         endPeriodTimestamp: 9999999999999999,
+  //         updatedAt: '2023-11-26T12:04:53.163Z',
+  //         scheduleInfo: {
+  //           startTimestamp: 9999999999999999,
+  //           endTimestamp: 9999999999999999,
+  //         },
+  //       },
+  //     },
+  //   );
+
+  //   setUpcomingLesson(() => {
+  //     let status = 'INIT';
+  //     const {scheduleDetailInfo} = nearestBooking;
+  //     const startTime =
+  //       scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
+  //     if (startTime <= Date.now()) {
+  //       status = 'IN_PROGRESS';
+  //       setRemainingTimeForUpcomingLesson(0);
+  //       setTeachingTime(Math.floor((Date.now() - startTime) / 1000));
+  //     } else {
+  //       setRemainingTimeForUpcomingLesson(
+  //         Math.floor((startTime - Date.now()) / 1000),
+  //       );
+  //     }
+
+  //     return {
+  //       startedAtTimeStamp: scheduleDetailInfo.startPeriodTimestamp,
+  //       createdAtTimeStamp: 1685608409920,
+  //       updatedAtTimeStamp: 1685608409920,
+  //       id: 3,
+  //       userId: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+  //       courseId: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
+  //       status,
+  //       startedAt: '2023-06-01T08:33:29.919Z',
+  //       createdAt: '2023-06-01T08:33:29.920Z',
+  //       updatedAt: '2023-06-01T08:33:29.920Z',
+  //       course: {
+  //         id: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
+  //         name: 'English Conversation 101',
+  //         description: 'Approachable lessons for absolute beginners',
+  //       },
+  //     };
+  //   });
+  // }, [state]);
+
+  // useEffect(() => {
+  //   const timerId = setInterval(() => {
+  //     setRemainingTimeForUpcomingLesson(prev => {
+  //       if (prev == 0) {
+  //         setUpcomingLesson((prevUp: any) => ({
+  //           ...prevUp,
+  //           status: 'TEACHING',
+  //         }));
+
+  //         clearInterval(timerId);
+  //         return 0;
+  //       }
+  //       return prev - 1;
+  //     });
+  //   }, 1000);
+
+  //   return () => clearInterval(timerId);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (remainingTimeForUpcomingLesson === 0) {
+  //     const timerId = setInterval(() => {
+  //       setTeachingTime(prev => prev + 1);
+  //     }, 1000);
+  //     return () => clearInterval(timerId);
+  //   }
+  // }, [remainingTimeForUpcomingLesson]);
 
   return (
     <ScrollView
@@ -741,7 +763,7 @@ const Tutor = () => {
             )}
           </View>
           <Pagination
-            ITEMS_PER_PAGE={5}
+            ITEMS_PER_PAGE={20}
             data={tutors}
             onChangeDataInPage={onChangeTutorList}
           />

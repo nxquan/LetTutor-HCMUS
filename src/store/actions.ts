@@ -14,7 +14,7 @@ import {
   CHANGE_LANGUAGE,
 } from './constants';
 
-export const login = (payload: {email: string; password: string}) => {
+export const login = (payload: any) => {
   return {
     payload,
     type: LOGIN,

@@ -2,19 +2,12 @@ import {StyleSheet} from 'react-native';
 import {colors} from '@/constants';
 
 export default StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    backgroundColor: colors.white,
-  },
   inner: {},
   banner: {
     width: 300,
     height: 300,
     alignSelf: 'center',
     marginVertical: 30,
-  },
-  body: {
-    paddingHorizontal: 24,
   },
   heading: {
     fontSize: 28,
@@ -31,12 +24,6 @@ export default StyleSheet.create({
     lineHeight: 24,
     color: colors.black,
   },
-  forgetPassword: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.primary,
-    marginBottom: 12,
-  },
   loginBtn: {
     backgroundColor: colors.primary,
     paddingVertical: 10,
@@ -46,11 +33,6 @@ export default StyleSheet.create({
   },
   disable: {
     opacity: 0.7,
-  },
-  loginBtnText: {
-    color: colors.white,
-    fontWeight: '500',
-    fontSize: 16,
   },
   moreText: {
     textAlign: 'center',

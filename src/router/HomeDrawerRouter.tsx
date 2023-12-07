@@ -43,13 +43,10 @@ const HomeDrawerRouter = () => {
   };
 
   useEffect(() => {
-    const userId = 'f569c202-7bbf-4620-af77-ecc1419a6b28';
-
-    const user = state.userInfos.find((item: any) => item?.id === userId);
-    if (user) {
-      setProfile(user);
+    if (state?.currentUser) {
+      setProfile(state.currentUser);
     }
-  }, [state]);
+  }, []);
 
   return (
     <Drawer.Navigator

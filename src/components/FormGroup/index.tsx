@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import styles from './styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '@/constants';
+import {isEmail, isPassword} from '@/utils';
 
 type Props = {
   title: string;
@@ -64,25 +65,16 @@ const FormGroup = (props: Props) => {
   const validate = () => {
     switch (field) {
       case 'email':
-        const isEmail = String(value)
-          .trim()
-          .toLowerCase()
-          .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-          );
-        if (!isEmail) {
+        if (!isEmail(value)) {
           setError('Email không hợp lệ');
         }
         break;
       case 'password':
       case 'currentPassword':
       case 'newPassword': {
-        const isMatch = String(value).match(
-          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$/,
-        );
-        if (!isMatch) {
+        if (!isPassword(value)) {
           setError(
-            'Mật khẩu ít nhất 8 kí tự gồm kí tự hoa, thường, chữ số và đặc biệt',
+            'Mật khẩu ít nhất 6 kí tự', // gồm kí tự hoa, thường, chữ số và đặc biệt',
           );
         }
         break;
@@ -90,7 +82,7 @@ const FormGroup = (props: Props) => {
       case 'confirmPassword':
         if (value.length === 0) {
           setError(
-            'Mật khẩu ít nhất 8 kí tự gồm kí tự hoa, thường, chữ số và đặc biệt',
+            'Mật khẩu ít nhất 6 kí tự', // gồm kí tự hoa, thường, chữ số và đặc biệt',
           );
         }
 

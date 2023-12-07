@@ -10,6 +10,7 @@ import CourseTopic from '@/pages/CourseTopic';
 import VideoCall from '@/pages/VideoCall';
 import Profile from '@/pages/Profile';
 import TutorDetail from '@/pages/TutorDetail';
+import Tutor from '@/pages/Tutor';
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
@@ -20,6 +21,7 @@ const MainStackRouter = () => {
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="Tutor" component={Tutor} />
       <Stack.Screen name="CourseDetail" component={CourseDetail} />
       <Stack.Screen name="CourseTopic" component={CourseTopic} />
       <Stack.Screen name="VideoCall" component={VideoCall} />

@@ -20,6 +20,9 @@ import Props from '@/types/type';
 import {colors} from '@/constants';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {login, resetPassword} from '@/store';
+import * as authService from '@/services/authService';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {isEmail, isPassword} from '@/utils';
 
 const SignIn = () => {
   const navigation = useNavigation<Props>();
@@ -70,53 +73,48 @@ const SignIn = () => {
     password: string,
     confirmPassword?: string,
   ) => {
-    const isEmail = String(email)
-      .trim()
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      );
-    const isMatch = String(password).match(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$/,
-    );
+    const isValidEmail = isEmail(email);
+    const isValidPassword = isPassword(password);
     let isSamePassword = true;
     if (confirmPassword) {
       isSamePassword = password === confirmPassword;
     }
 
-    return !!isEmail && !!isMatch && isSamePassword;
+    return !!isValidEmail && !!isValidPassword && isSamePassword;
   };
 
-  const handleSubmit = () => {
-    const isExisting = state.users.find((item: any) => {
-      return String(item.email) === user.email.trim().toLowerCase();
+  const handleSubmit = async () => {
+    const res = await authService.login({
+      email: String(user.email).trim().toLowerCase(),
+      password: user.password,
     });
-    if (isExisting) {
-      if (isExisting.password === user.password) {
-        setUser({
-          email: '',
-          password: '',
-        });
-        const payload = {
+
+    if (res.success) {
+      await EncryptedStorage.setItem(
+        'user_session',
+        JSON.stringify({
           email: user.email,
           password: user.password,
-        };
+          accessToken: res.data.tokens.access.token,
+          refreshToken: res.data.tokens.refresh.token,
+        }),
+      );
 
-        dispatch(login(payload));
-        navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
-      } else {
-        setNotification({
-          type: 'error',
-          message: 'Mật khẩu không đúng. Hãy thử lại!',
-        });
-      }
+      const payload = res.data;
+      dispatch(login(payload));
+      navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+      setUser({
+        email: '',
+        password: '',
+      });
     } else {
       setNotification({
         type: 'error',
-        message: 'Email không tồn tại. Vui lòng đăng ký!',
+        message: res.message,
       });
     }
   };
+
   const handleResetPassword = () => {
     const isExisting = state.users.find((item: any) => {
       return String(item.email) === resetInfo.email.trim().toLowerCase();

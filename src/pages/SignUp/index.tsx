@@ -1,13 +1,5 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  TouchableHighlight,
-} from 'react-native';
+import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Entypo from 'react-native-vector-icons/Entypo';
 
 import React, {useCallback, useEffect, useState} from 'react';
 import styles from './styles';
@@ -17,12 +9,14 @@ import Header from '@/components/Header';
 import StackProps from '@/types/type';
 import BackButton from '@/components/BackButton';
 import {useGlobalContext, useTranslations} from '@/hooks';
-import {addUser} from '@/store';
+import {isEmail, isPassword} from '@/utils';
+import * as AuthService from '@/services/authService';
+import axios from 'axios';
 
 const SignUp = () => {
   const navigation = useNavigation<StackProps>();
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
+
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -42,43 +36,38 @@ const SignUp = () => {
   }, []);
 
   const validate = () => {
-    const isEmail = String(user.email)
-      .trim()
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      );
-    const isMatch = String(user.password).match(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,32}$/,
-    );
-    return !!isEmail && !!isMatch;
+    // return isEmail(user.email) && isPassword(user.password);
+    return true;
   };
 
-  const handleSubmit = () => {
-    const isExisting = state.users.find((item: any) => {
-      return String(item.email) === user.email.trim().toLowerCase();
-    });
-    if (!isExisting) {
-      const payload = {
-        email: user.email.toLowerCase().trim(),
-        password: user.password,
-      };
+  const handleSubmit = async () => {
+    // const res = await AuthService.register({
+    //   email: String(user.email).trim().toLowerCase(),
+    //   password: user.password,
+    // });
 
-      dispatch(addUser(payload));
-      setNotification({
-        type: 'success',
-        message: 'Đăng ký thành công',
-      });
-      setUser({
-        email: '',
-        password: '',
-      });
-    } else {
-      setNotification({
-        type: 'error',
-        message: 'Email đã tồn tại',
-      });
-    }
+    const verifyAccountRes = await AuthService.verifyAccount({
+      token:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWUzMDJhMi0zY2Y5LTQ0ZWItOGQxNS04M2VjYzE2NWIzMGMiLCJpYXQiOjE3MDE3NzQzNTAsImV4cCI6MTcwMTg2MDc1MCwidHlwZSI6ImFjY2VzcyJ9.6oGsCFCMVb82ydXQrpq9eD406gt0GM-CNMxeZvpb3bo',
+    });
+    console.log('verifyAccountRes', verifyAccountRes);
+
+    // console.log('res', res.data);
+    // if (res.success) {
+    //   setNotification({
+    //     type: 'success',
+    //     message: 'Đăng ký thành công',
+    //   });
+    //   setUser({
+    //     email: '',
+    //     password: '',
+    //   });
+    // } else {
+    //   setNotification({
+    //     type: 'error',
+    //     message: res.message,
+    //   });
+    // }
   };
 
   useEffect(() => {
@@ -96,13 +85,13 @@ const SignUp = () => {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
+      className="bg-white"
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={[0]}>
       <Header backIcon={<BackButton />} />
       <View style={styles.inner}>
         <Image source={images.banner} style={styles.banner} />
-        <View style={styles.body}>
+        <View className="px-6">
           <Text style={styles.heading}>{t('signup.longTitle')}</Text>
           <Text style={styles.des}>{t('signup.description')}</Text>
           <FormGroup
@@ -133,7 +122,9 @@ const SignUp = () => {
             style={[styles.loginBtn, !validate() && styles.disable]}
             disabled={!validate()}
             onPress={() => handleSubmit()}>
-            <Text style={styles.loginBtnText}>{t('signup.title')}</Text>
+            <Text className="text-white text-base font-medium">
+              {t('signup.title')}
+            </Text>
           </TouchableOpacity>
           <Text style={styles.signupText}>
             {t('signup.other')}{' '}
