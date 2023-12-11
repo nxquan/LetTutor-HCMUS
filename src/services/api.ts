@@ -41,3 +41,19 @@ export const post = async (url: string, body: any, config = {}) => {
     };
   }
 };
+
+export const put = async (url: string, body: any, config = {}) => {
+  try {
+    const res: any = await instance.put(url, body, config);
+    return {
+      success: true,
+      data: res.data,
+    };
+  } catch (error: any) {
+    const {data} = error.response;
+    return {
+      success: false,
+      message: data.message,
+    };
+  }
+};

@@ -37,6 +37,8 @@ import {useNavigation} from '@react-navigation/native';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {addApplication} from '@/store';
 import DrawerButton from '@/components/DrawerButton';
+import * as tutorService from '@/services/tutorService';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const BecomeTutor = () => {
   const [generalInfo, setGeneralInfo] = useState({
@@ -50,11 +52,11 @@ const BecomeTutor = () => {
     birthday: '',
   });
   const [cv, setCV] = useState({
-    hobbies: '',
-    qualification: '',
+    interests: '',
+    education: '',
     experience: '',
-    oldExperience: '',
-    certificate: [],
+    profession: '',
+    certificates: [],
   });
   const [languages, setLanguages] = useState<any[]>([]);
   const [teaching, setTeaching] = useState({
@@ -183,16 +185,26 @@ const BecomeTutor = () => {
     });
   };
 
-  const handleSubmitApplication = () => {
-    const payload = {
-      id: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
-      generalInfo,
-      cv,
+  const handleSubmitApplication = async () => {
+    const data: any = {
+      avatar: undefined,
+      name: generalInfo.fullName,
+      country: generalInfo.country.key,
+      birthday: generalInfo.birthday,
+      ...cv,
+      certificateMapping: cv.certificates,
       teaching,
       languages,
       video,
     };
-    dispatch(addApplication(payload));
+    delete data.certificates;
+
+    const session = await EncryptedStorage.getItem('user_session');
+    const res = await tutorService.becomeTutor(data, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+      },
+    });
   };
 
   const radioButtons = useMemo(
@@ -501,7 +513,7 @@ const BecomeTutor = () => {
                 </Text>
                 <TextInput
                   onChangeText={text => {
-                    handleChangeCV('qualification', text);
+                    handleChangeCV('education', text);
                   }}
                   multiline={true}
                   numberOfLines={8}
@@ -513,7 +525,7 @@ const BecomeTutor = () => {
                     borderRadius: 6,
                     borderColor: colors.grey300,
                   }}>
-                  {cv.qualification}
+                  {cv.education}
                 </TextInput>
               </View>
               <View>
@@ -541,7 +553,7 @@ const BecomeTutor = () => {
                   {t('becomeTutor.previousProfession')}
                 </Text>
                 <TextInput
-                  onChangeText={text => handleChangeCV('oldExperience', text)}
+                  onChangeText={text => handleChangeCV('profession', text)}
                   multiline={true}
                   numberOfLines={8}
                   textAlignVertical="top"
@@ -551,13 +563,61 @@ const BecomeTutor = () => {
                     borderRadius: 6,
                     borderColor: colors.grey300,
                   }}>
-                  {cv.oldExperience}
+                  {cv.profession}
                 </TextInput>
               </View>
               <View>
                 <Text className="text-base mb-2 mt-4 text-black">
                   {t('becomeTutor.certificate')}
                 </Text>
+
+                <View style={styles.bookContainer}>
+                  <Text
+                    style={[
+                      styles.text,
+                      {fontWeight: '500', color: colors.black, marginBottom: 8},
+                    ]}>
+                    {t('schedule.latestBook')}
+                  </Text>
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.tableCol, {width: '30%'}]}>
+                      {t('schedule.name')}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCol,
+                        {width: '40%', backgroundColor: colors.white},
+                      ]}>
+                      Sample.pdf
+                    </Text>
+                    <Text style={[styles.tableCol, {width: '18%'}]}>
+                      {t('schedule.page')}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCol,
+                        {width: '12%', backgroundColor: colors.white},
+                      ]}>
+                      0
+                    </Text>
+                  </View>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableCol, {width: '30%'}]}>
+                      {t('schedule.description')}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCol,
+                        {
+                          width: '70%',
+                          backgroundColor: colors.white,
+                          lineHeight: 20,
+                        },
+                      ]}>
+                      Sample.pdfDescriptionDescriptionDescriptionDescriptionDescription
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
 

@@ -13,20 +13,23 @@ import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {toggleFavoriteTutor} from '@/store';
 import RenderRating from '@/components/RenderRating';
+import * as tutorService from '@/services/tutorService';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type Props = {
   data: any;
+  onAddFavorite: (tutorId: string) => void;
 };
 
 const TutorItem = (props: Props) => {
-  const {data} = props;
+  const {data, onAddFavorite} = props;
   const navigation = useNavigation<StackProps>();
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
   const [country, setCountry] = useState({
     flag: undefined,
     name: '',
   });
+
   const renderSpecialties = () => {
     const _specialties = String(data?.specialties).split(',');
     const specialties: any = [];
@@ -91,6 +94,24 @@ const TutorItem = (props: Props) => {
     getCountryFromCode(data?.country);
   }, [data]);
 
+  const handleAddFavorite = async () => {
+    const session: any = await EncryptedStorage.getItem('user_session');
+
+    const res = await tutorService.addFavoriteTutor(
+      {
+        tutorId: data?.id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      },
+    );
+    if (res.success) {
+      onAddFavorite(data?.id);
+    }
+  };
+
   return (
     <View style={styles.wrapper}>
       <View
@@ -145,10 +166,7 @@ const TutorItem = (props: Props) => {
 
         <TouchableOpacity
           onPress={() => {
-            const payload: any = {
-              tutorId: data?.id,
-            };
-            dispatch(toggleFavoriteTutor(payload));
+            handleAddFavorite();
           }}>
           {data?.isFavoriteTutor ? (
             <AntDesign name="heart" size={24} color={colors.heart} />

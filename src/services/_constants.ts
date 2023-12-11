@@ -7,4 +7,7 @@ export const AUTH = {
 
 export const TUTOR = {
   GET_TUTORS: 'tutor/more',
+  SEARCH_TUTORS: 'tutor/search',
+  ADD_FAVORITE: 'user/manageFavoriteTutor',
+  BECOME_TUTOR: 'tutor/register',
 };

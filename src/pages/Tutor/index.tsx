@@ -34,6 +34,7 @@ import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
 import {convertMinutesToHours, convertSecondsToMinutes} from '@/utils';
 import * as tutorService from '@/services/tutorService';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import BEPagination from '@/components/BEPagination';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -82,7 +83,10 @@ const Tutor = () => {
   const [timeType, setTimeType] = useState('start');
 
   const [tutors, setTutors] = useState<any[]>([]);
-  const [currentTutors, setCurrentTutors] = useState([]);
+  const [page, setPage] = useState({
+    currentPage: 1,
+    totalItems: 0,
+  });
   const [learningHourTotal, setLearningHourTotal] = useState(0);
   const [upcomingLesson, setUpcomingLesson] = useState<any>({
     startedAtTimeStamp: 1701107316859,
@@ -204,10 +208,6 @@ const Tutor = () => {
     });
   };
 
-  const onChangeTutorList = (data: any) => {
-    setCurrentTutors(data);
-  };
-
   const renderNationalities = () => {
     let items: [] = filters.nationalities;
     return items.map((item: any, index: number) => {
@@ -247,103 +247,165 @@ const Tutor = () => {
     });
   };
 
-  // useEffect(() => {
-  //   scrollRef.current &&
-  //     scrollRef.current?.scrollTo({
-  //       y: 0, //680
-  //       animated: true,
-  //     });
-  // }, [currentTutors]);
+  const onChangePage = useCallback((page: number) => {
+    setPage((prev: any) => ({
+      ...prev,
+      currentPage: page,
+    }));
+  }, []);
+
+  const handleAddFavorite = (tutorId: string) => {
+    setTutors((prev: any) => {
+      const _state = [...prev];
+      const tutorItem = _state.find((item: any) => item.id === tutorId);
+      if (tutorItem) {
+        tutorItem.isFavoriteTutor = !tutorItem.isFavoriteTutor;
+      }
+      return _state;
+    });
+  };
 
   useEffect(() => {
-    const handleSearch = () => {
-      let _rawData: any[] = state.tutors;
-      //Sorting by favorite & rating
-      const favoriteTutors: any[] = _rawData.filter(
-        (item: any) => item.isFavoriteTutor,
-      );
-      favoriteTutors.sort((a, b) => a.rating - b.rating);
+    scrollRef.current &&
+      scrollRef.current?.scrollTo({
+        y: 0, //680
+        animated: true,
+      });
+  }, [page.currentPage]);
 
-      const unfavoriteTutors = _rawData.filter(
-        (item: any) => !item.isFavoriteTutor,
-      );
-      unfavoriteTutors.sort((a, b) => a.rating - b.rating);
-      _rawData = [...favoriteTutors, ...unfavoriteTutors];
+  useEffect(() => {
+    const fetchForSearchingTutors = async () => {
+      let session: any;
+      try {
+        session = await EncryptedStorage.getItem('user_session');
+      } catch (error) {
+        throw error;
+      }
+      const _filters: any = {
+        date: filters.date,
+        specialties:
+          filters.specialty.key == 'all' ? [] : [filters.specialty.key],
+        nationality: {},
+        tutoringTimeAvailable: [null, null],
+      };
 
-      //Find by filters
-      const conditions: {
-        name?: string;
-        specialtyKey?: string;
-        isNative?: boolean;
-        isForeign?: boolean;
-        isVietnamese?: boolean;
-      } = {};
-      if (filters.tutorName.length > 0) {
-        conditions.name = filters.tutorName;
+      const isVietNamese = filters.nationalities.some(
+        (item: any) => item.key === 'vietnamese-tutor',
+      );
+      if (isVietNamese) {
+        _filters.nationality.isVietNamese = true;
       }
 
-      if (filters.specialty) {
-        conditions.specialtyKey = filters.specialty.key;
+      const isNative = filters.nationalities.some(
+        (item: any) => item.key === 'native-english-tutor',
+      );
+      if (isNative) {
+        _filters.nationality.isNative = true;
       }
 
-      if (Object.keys(filters.nationalities).length > 0) {
-        conditions.isNative = filters?.nationalities.some(
-          (item: any) => item.key === 'native-english-tutor',
-        );
-        conditions.isForeign = !!filters?.nationalities.some(
+      if (
+        filters.nationalities.length === nationalities.length ||
+        filters.nationalities.length === 0
+      ) {
+        _filters.nationality = {};
+      } else {
+        const isForeignTutor = filters.nationalities.some(
           (item: any) => item.key === 'foreign-tutor',
         );
-        conditions.isVietnamese = !!filters?.nationalities.some(
-          (item: any) => item.key === 'vietnamese-tutor',
-        );
-      }
-      _rawData = _rawData.filter(item => {
-        const result: boolean[] = [];
-        if (conditions.name) {
-          result.push(String(item.name).includes(conditions.name));
-        } else if (conditions.specialtyKey) {
-          if (conditions.specialtyKey !== 'all') {
-            result.push(
-              String(item.specialties).includes(conditions.specialtyKey),
-            );
+        if (isForeignTutor) {
+          if (isVietNamese) {
+            _filters.nationality = {
+              isNative: false,
+            };
+          } else if (isNative) {
+            _filters.nationality = {
+              isVietNamese: false,
+            };
+          } else {
+            _filters.nationality = {
+              isVietNamese: false,
+              isNative: false,
+            };
           }
         }
-        if (conditions.isNative) {
-          result.push(item.isNative === conditions?.isNative);
-        }
-        if (conditions.isForeign) {
-          result.push(item.country !== 'VN');
-        }
-        if (conditions.isVietnamese) {
-          result.push(item.country === 'VN');
-        }
-        return result.every(item => item);
-      });
-      setTutors(_rawData);
-    };
+      }
 
-    handleSearch();
-  }, [filters]);
+      if (_filters.date != null) {
+        if (!!filters.startTime && !!filters.endTime) {
+          _filters.tutoringTimeAvailable = [
+            filters.startTime.getTime(),
+            filters.endTime.getTime(),
+          ];
+        } else if (!!filters.startTime) {
+          const currentDate = new Date();
+          _filters.tutoringTimeAvailable = [
+            filters.startTime.getTime(),
+            new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth() - 1,
+              currentDate.getDate(),
+              23,
+              59,
+              0,
+            ).getTime(),
+          ];
+        } else if (filters.endTime) {
+          const currentDate = new Date();
+          _filters.tutoringTimeAvailable = [
+            new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth() - 1,
+              currentDate.getDate(),
+              0,
+              0,
+              0,
+            ).getTime(),
+            filters.endTime.getTime(),
+          ];
+        }
+      }
+      try {
+        const res = await tutorService.searchTutors(
+          {
+            search: filters.tutorName,
+            filters: _filters,
+            perPage: 12,
+            page: page.currentPage,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+            },
+          },
+        );
+        if (res.success) {
+          let rawData = res.data.rows;
+          const favoriteTutors: any[] = rawData.filter(
+            (item: any) => item.isFavoriteTutor === true,
+          );
+          favoriteTutors.sort((a, b) => b.rating - a.rating);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const session: any = await EncryptedStorage.getItem('user_session');
-
-      const res = await tutorService.getTutorByPage({
-        params: {
-          perPage: 9999999,
-          page: 1,
-        },
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-        },
-      });
-      if (res.success) {
-        setTutors(res.data.tutors.rows);
+          const unfavoriteTutors = rawData.filter(
+            (item: any) => !item.isFavoriteTutor,
+          );
+          unfavoriteTutors.sort((a: any, b: any) => b.rating - a.rating);
+          rawData = [...favoriteTutors, ...unfavoriteTutors];
+          setTutors(rawData);
+          setPage((prev: any) => {
+            return {
+              ...prev,
+              totalItems: res.data.count,
+            };
+          });
+        } else {
+          console.error('error', res);
+        }
+      } catch (error) {
+        throw error;
       }
     };
-    fetch();
-  }, []);
+    fetchForSearchingTutors();
+  }, [filters, page.currentPage]);
 
   // useEffect(() => {
   //   const total = state.bookings.reduce((acc: number, booking: any) => {
@@ -505,7 +567,8 @@ const Tutor = () => {
             <TouchableOpacity
               onPress={() => navigation.navigate('VideoCall')}
               activeOpacity={0.8}
-              className="flex-row items-center bg-white rounded-full px-3 py-1.5">
+              //</View>className="flex-row items-center bg-white rounded-full px-3 py-1.5"
+            >
               <Feather name="youtube" size={24} color={colors.primary} />
               <Text
                 style={{marginLeft: 6, color: colors.primary, fontSize: 14}}>
@@ -745,9 +808,15 @@ const Tutor = () => {
             {t('tutor.recommendedTutor')}
           </Text>
           <View style={styles.tutorList}>
-            {currentTutors.length > 0 ? (
-              currentTutors.map((tutorItem: any) => {
-                return <TutorItem data={tutorItem} key={tutorItem?.id} />;
+            {tutors.length > 0 ? (
+              tutors.map((tutorItem: any) => {
+                return (
+                  <TutorItem
+                    data={tutorItem}
+                    key={tutorItem?.id}
+                    onAddFavorite={handleAddFavorite}
+                  />
+                );
               })
             ) : (
               <Text
@@ -762,10 +831,11 @@ const Tutor = () => {
               </Text>
             )}
           </View>
-          <Pagination
-            ITEMS_PER_PAGE={20}
-            data={tutors}
-            onChangeDataInPage={onChangeTutorList}
+          <BEPagination
+            ITEMS_PER_PAGE={12}
+            totalItems={page.totalItems}
+            currentPage={page.currentPage}
+            onChangePage={onChangePage}
           />
         </View>
       </View>

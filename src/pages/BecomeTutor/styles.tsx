@@ -23,6 +23,27 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
+  bookContainer: {
+    paddingHorizontal: 20,
+    marginVertical: 16,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    width: '100%',
+  },
+  tableRow: {
+    flexDirection: 'row',
+  },
+  tableCol: {
+    fontSize: 14,
+    color: colors.text,
+    backgroundColor: colors.grey200,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    textAlign: 'left',
+    borderWidth: 0.5,
+    borderColor: colors.grey300,
+  },
 });
 
 export default styles;

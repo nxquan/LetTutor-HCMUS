@@ -18,16 +18,14 @@ import Profile from '@/pages/Profile';
 import BecomeTutor from '@/pages/BecomeTutor';
 import Schedule from '@/pages/Schedule';
 import History from '@/pages/History';
-import {Message} from './Message';
 
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <GlobalProvider>
-        {/* <EventProvider>
+        <EventProvider>
           <MainStackRouter />
-        </EventProvider> */}
-        <Message />
+        </EventProvider>
       </GlobalProvider>
     </NavigationContainer>
   );
