@@ -45,12 +45,14 @@ export const post = async (url: string, body: any, config = {}) => {
 export const put = async (url: string, body: any, config = {}) => {
   try {
     const res: any = await instance.put(url, body, config);
+    console.log('resPUT', res);
     return {
       success: true,
       data: res.data,
     };
   } catch (error: any) {
     const {data} = error.response;
+    console.log('errorPUT', error);
     return {
       success: false,
       message: data.message,

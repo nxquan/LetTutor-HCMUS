@@ -163,7 +163,8 @@
     "trick5": "5. Brand yourself and have fun!",
     "noteForVideo": "Note: We only support uploading video file that is less than 64 MB in size.",
     "chooseVideo": "Choose video",
-    "finishSubmission": "You have done all the steps \nPlease, wait for the operator's approval"
+    "finishSubmission": "You have done all the steps \nPlease, wait for the operator's approval",
+    "addCertificate": "Add new certificate"
   },
   "profile": {
     "account": "Account",

@@ -14,5 +14,5 @@ export const addFavoriteTutor = (data = {}, config = {}) => {
 };
 
 export const becomeTutor = (data = {}, config = {}) => {
-  return put(TUTOR.BECOME_TUTOR, data, config);
+  return post(TUTOR.BECOME_TUTOR, data, config);
 };

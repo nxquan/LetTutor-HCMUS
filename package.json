@@ -26,6 +26,7 @@
     "react-native": "0.72.6",
     "react-native-blob-util": "^0.19.2",
     "react-native-document-picker": "^9.0.1",
+    "react-native-dropdown-select-list": "^2.0.5",
     "react-native-encrypted-storage": "^4.0.3",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-linear-gradient": "^2.8.3",
@@ -38,7 +39,8 @@
     "react-native-screens": "^3.27.0",
     "react-native-svg": "^13.14.0",
     "react-native-vector-icons": "^10.0.1",
-    "react-native-video": "^5.0.2"
+    "react-native-video": "^5.0.2",
+    "toastify-react-native": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

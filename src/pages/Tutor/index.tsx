@@ -567,8 +567,7 @@ const Tutor = () => {
             <TouchableOpacity
               onPress={() => navigation.navigate('VideoCall')}
               activeOpacity={0.8}
-              //</View>className="flex-row items-center bg-white rounded-full px-3 py-1.5"
-            >
+              className="flex-row items-center bg-white rounded-full px-3 py-1.5">
               <Feather name="youtube" size={24} color={colors.primary} />
               <Text
                 style={{marginLeft: 6, color: colors.primary, fontSize: 14}}>

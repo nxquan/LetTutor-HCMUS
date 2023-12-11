@@ -6,6 +6,8 @@ import {
   Pressable,
   TouchableWithoutFeedback,
   TextInput,
+  TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import Header from '@/components/Header';
@@ -15,6 +17,7 @@ import DropdownMenu from '@/components/DropdownMenu';
 import styles from './styles';
 import {colors} from '@/constants';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker, {
@@ -24,8 +27,7 @@ import RadioGroup, {RadioButton} from 'react-native-radio-buttons-group';
 import CheckBox from '@react-native-community/checkbox';
 import {LEARN_TOPICS, TEST_PREPARATIONS, CATEGORIES} from '@/store/mock-data';
 import Button from '@/components/Button';
-import {formatDate} from '@/utils';
-const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
+import {formatDate, formatTime} from '@/utils';
 import CustomVideo from '@/components/CustomVideo';
 import DocumentPicker, {
   isCancel,
@@ -39,6 +41,50 @@ import {addApplication} from '@/store';
 import DrawerButton from '@/components/DrawerButton';
 import * as tutorService from '@/services/tutorService';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import ModalPopper from '@/components/ModalPopper';
+import ToastManager, {Toast} from 'toastify-react-native';
+import {toastConfig} from '@/config';
+
+const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
+const CERTIFICATE_TYPES = [
+  {
+    id: 8,
+    key: 'toeic',
+    name: 'TOEIC',
+    createdAt: '2021-09-05T15:12:34.907Z',
+    updatedAt: '2021-09-05T15:12:34.907Z',
+  },
+  {
+    id: 6,
+    key: 'ielts',
+    name: 'IELTS',
+    createdAt: '2021-09-05T15:12:34.907Z',
+    updatedAt: '2021-09-05T15:12:34.907Z',
+  },
+  {
+    id: 7,
+    key: 'toefl',
+    name: 'TOEFL',
+    createdAt: '2021-09-05T15:12:34.907Z',
+    updatedAt: '2021-09-05T15:12:34.907Z',
+  },
+  {
+    id: 9,
+    key: 'university-certificate',
+    name: 'The University Certificate',
+    createdAt: '2021-09-05T15:12:34.907Z',
+    updatedAt: '2021-09-05T15:12:34.907Z',
+  },
+  {
+    id: 10,
+    key: 'other',
+    name: 'Other',
+    createdAt: '2021-09-05T15:12:34.907Z',
+    updatedAt: '2021-09-05T15:12:34.907Z',
+  },
+];
+
+const width = Dimensions.get('window').width;
 
 const BecomeTutor = () => {
   const [generalInfo, setGeneralInfo] = useState({
@@ -49,9 +95,15 @@ const BecomeTutor = () => {
       key: '',
       id: '',
     },
-    birthday: '',
+    birthday: undefined,
   });
-  const [cv, setCV] = useState({
+  const [currentCertificate, setCurrentCertificate] = useState({
+    certificateFileName: '',
+    certificateType: '',
+    key: '',
+    file: undefined,
+  });
+  const [cv, setCV] = useState<any>({
     interests: '',
     education: '',
     experience: '',
@@ -63,7 +115,7 @@ const BecomeTutor = () => {
     intro: '',
     skill: {
       id: 1,
-      label: 'Người mới bắt đầu',
+      label: 'beginner',
     },
     specialties: [],
   });
@@ -78,6 +130,8 @@ const BecomeTutor = () => {
   const [tab, setTab] = useState(1);
   const [isOpenCountryModal, setIsOpenCountryModal] = useState(false);
   const [isOpenLanguageMenu, setIsOpenLanguageMenu] = useState(false);
+  const [isOpenCertificateMenu, setIsOpenCertificateMenu] = useState(false);
+  const [isOpenModalCertificate, setIsOpenModalCertificate] = useState(false);
   const [countries, setCountries] = useState<any[]>([]);
   const [languageForMenu, setLanguageForMenu] = useState<any[]>([]);
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
@@ -137,15 +191,12 @@ const BecomeTutor = () => {
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
+    setIsShowDatePicker(false);
     if (type == 'set') {
       setGeneralInfo((prev: any) => {
         const currentDate = selectedDate;
-        return {...prev, birthday: currentDate?.toDateString()};
+        return {...prev, birthday: currentDate};
       });
-
-      setIsShowDatePicker(false);
-    } else {
-      setIsShowDatePicker(false);
     }
   };
 
@@ -186,25 +237,64 @@ const BecomeTutor = () => {
   };
 
   const handleSubmitApplication = async () => {
-    const data: any = {
-      avatar: undefined,
-      name: generalInfo.fullName,
-      country: generalInfo.country.key,
-      birthday: generalInfo.birthday,
-      ...cv,
-      certificateMapping: cv.certificates,
-      teaching,
-      languages,
-      video,
-    };
-    delete data.certificates;
+    const formData = new FormData();
+    formData.append('video', {
+      uri: video.uri,
+      type: video.type,
+      name: video.name,
+    });
 
-    const session = await EncryptedStorage.getItem('user_session');
-    const res = await tutorService.becomeTutor(data, {
+    formData.append('avatar', 'undefined');
+    formData.append('name', generalInfo.fullName);
+    formData.append('country', generalInfo.country.key);
+    formData.append(
+      'birthday',
+      !!generalInfo.birthday ? formatDate(new Date(generalInfo.birthday)) : '',
+    );
+    formData.append('interests', cv.interests);
+    formData.append('education', cv.education);
+    formData.append('experience', cv.experience);
+    formData.append('profession', cv.profession);
+
+    formData.append('bio', teaching.intro);
+    formData.append('targetStudent', teaching.skill.label);
+    formData.append('languages', languages.map(lang => lang.key).join(','));
+    formData.append(
+      'specialties',
+      teaching.specialties.map((spec: any) => spec.key).join(','),
+    );
+    formData.append('price', cv.certificates.length * 50000);
+
+    const certificateMapping = cv.certificates.map((cert: any) => {
+      return {
+        certificateType: cert.certificateType,
+        certificateFileName: cert.certificateFileName,
+      };
+    });
+
+    formData.append('certificateMapping', JSON.stringify(certificateMapping));
+
+    cv.certificates.forEach((cert: any) => {
+      formData.append('certificate', {
+        uri: cert.file.uri,
+        type: cert.file.type,
+        name: cert.file.name,
+      });
+    });
+
+    const session: any = await EncryptedStorage.getItem('user_session');
+    const res = await tutorService.becomeTutor(formData, {
       headers: {
         Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        'Content-Type': 'multipart/form-data',
       },
     });
+
+    if (res.success) {
+      Toast.success(res.message);
+    } else {
+      Toast.error(res.message, 'top');
+    }
   };
 
   const radioButtons = useMemo(
@@ -256,16 +346,16 @@ const BecomeTutor = () => {
       return temp;
     });
 
-    const application = state.applications.find(
-      (app: any) => app.id === 'f569c202-7bbf-4620-af77-ecc1419a6b28',
-    );
-    if (application) {
-      setGeneralInfo(application.generalInfo);
-      setCV(application.cv);
-      setTeaching(application.teaching);
-      setLanguages(application.languages);
-      setVideo(application.video);
-    }
+    // const application = state.applications.find(
+    //   (app: any) => app.id === 'f569c202-7bbf-4620-af77-ecc1419a6b28',
+    // );
+    // if (application) {
+    //   setGeneralInfo(application.generalInfo);
+    //   setCV(application.cv);
+    //   setTeaching(application.teaching);
+    //   setLanguages(application.languages);
+    //   setVideo(application.video);
+    // }
   }, []);
 
   const handleError = (err: unknown) => {
@@ -434,7 +524,7 @@ const BecomeTutor = () => {
               <Text className="text-base mb-1 text-black mt-2.5">
                 {t('birthday')}
               </Text>
-              <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
+              <Pressable onPress={() => setIsShowDatePicker(true)}>
                 <View
                   className="py-2.5 mt-1 flex-row justify-between items-center w-full"
                   style={[
@@ -444,7 +534,7 @@ const BecomeTutor = () => {
                     },
                   ]}>
                   <Text className="text-black py-0.5">
-                    {generalInfo.birthday != ''
+                    {!!generalInfo.birthday
                       ? formatDate(new Date(generalInfo.birthday))
                       : t('enterBirthday')}
                   </Text>
@@ -462,16 +552,18 @@ const BecomeTutor = () => {
                       style={{marginLeft: 20}}
                     />
                   </TouchableWithoutFeedback>
-                  {isShowDatePicker && (
-                    <DateTimePicker
-                      mode="date"
-                      display="calendar"
-                      value={new Date()}
-                      onChange={onChangeDate}
-                    />
-                  )}
                 </View>
               </Pressable>
+              {isShowDatePicker && (
+                <DateTimePicker
+                  mode="date"
+                  display="calendar"
+                  value={
+                    !!generalInfo.birthday ? generalInfo.birthday : new Date()
+                  }
+                  onChange={onChangeDate}
+                />
+              )}
             </View>
 
             <View className="px-2.5">
@@ -492,7 +584,7 @@ const BecomeTutor = () => {
                 </Text>
                 <TextInput
                   onChangeText={text => {
-                    handleChangeCV('hobbies', text);
+                    handleChangeCV('interests', text);
                   }}
                   multiline={true}
                   numberOfLines={8}
@@ -504,7 +596,7 @@ const BecomeTutor = () => {
                     borderRadius: 6,
                     borderColor: colors.grey300,
                   }}>
-                  {cv.hobbies}
+                  {cv.interests}
                 </TextInput>
               </View>
               <View>
@@ -570,53 +662,92 @@ const BecomeTutor = () => {
                 <Text className="text-base mb-2 mt-4 text-black">
                   {t('becomeTutor.certificate')}
                 </Text>
-
-                <View style={styles.bookContainer}>
-                  <Text
-                    style={[
-                      styles.text,
-                      {fontWeight: '500', color: colors.black, marginBottom: 8},
-                    ]}>
-                    {t('schedule.latestBook')}
-                  </Text>
+                <View className="mb-4">
+                  <Button
+                    title={t('becomeTutor.addCertificate')}
+                    onPress={() => setIsOpenModalCertificate(true)}
+                    style={{
+                      color: colors.primary,
+                      borderWidth: 1,
+                      borderColor: colors.primary,
+                      fontWeight: '500',
+                      paddingHorizontal: 20,
+                      maxWidth: '50%',
+                      flexGrow: 0,
+                      marginBottom: 8,
+                    }}
+                  />
                   <View style={styles.tableHeader}>
-                    <Text style={[styles.tableCol, {width: '30%'}]}>
-                      {t('schedule.name')}
+                    <Text
+                      style={[
+                        styles.tableCol,
+                        {width: '40%', fontWeight: '500'},
+                      ]}>
+                      Certificate Type
                     </Text>
                     <Text
                       style={[
                         styles.tableCol,
-                        {width: '40%', backgroundColor: colors.white},
+                        {width: '40%', fontWeight: '500'},
                       ]}>
-                      Sample.pdf
-                    </Text>
-                    <Text style={[styles.tableCol, {width: '18%'}]}>
-                      {t('schedule.page')}
+                      Certificate
                     </Text>
                     <Text
                       style={[
                         styles.tableCol,
-                        {width: '12%', backgroundColor: colors.white},
+                        {width: '20%', fontWeight: '500'},
                       ]}>
-                      0
+                      Action
                     </Text>
                   </View>
-                  <View style={styles.tableRow}>
-                    <Text style={[styles.tableCol, {width: '30%'}]}>
-                      {t('schedule.description')}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.tableCol,
-                        {
-                          width: '70%',
-                          backgroundColor: colors.white,
-                          lineHeight: 20,
-                        },
-                      ]}>
-                      Sample.pdfDescriptionDescriptionDescriptionDescriptionDescription
-                    </Text>
-                  </View>
+                  {cv.certificates.length > 0 &&
+                    cv.certificates.map((cert: any, index: number) => (
+                      <View style={styles.tableRow} key={index}>
+                        <Text
+                          style={[
+                            styles.tableCol,
+                            {width: '40%', backgroundColor: colors.white},
+                          ]}>
+                          {cert.certificateType}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.tableCol,
+                            {
+                              width: '40%',
+                              backgroundColor: colors.white,
+                            },
+                          ]}>
+                          {cert.certificateFileName}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setCV((prev: any) => {
+                              return {
+                                ...prev,
+                                certificates: prev.certificates.filter(
+                                  (cert: any, i: number) => i !== index,
+                                ),
+                              };
+                            });
+                          }}
+                          style={[
+                            styles.tableCol,
+                            {
+                              width: '20%',
+                              backgroundColor: colors.white,
+                            },
+                          ]}>
+                          <Text className="text-center">
+                            <Feather
+                              name="trash"
+                              size={20}
+                              color={colors.error}
+                            />
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
                 </View>
               </View>
             </View>
@@ -750,9 +881,11 @@ const BecomeTutor = () => {
                   </View>
                 );
               })}
-              <Text className="text-base text-red-500">
-                {t('becomeTutor.warning')}
-              </Text>
+              {teaching.specialties.length == 0 && (
+                <Text className="text-base text-red-500">
+                  {t('becomeTutor.warning')}
+                </Text>
+              )}
             </View>
             <Button
               title={t('next')}
@@ -854,7 +987,7 @@ const BecomeTutor = () => {
                 title={t('finish')}
                 onPress={() => {
                   handleSubmitApplication();
-                  setTab(3);
+                  // setTab(3);
                 }}
                 style={{
                   backgroundColor: colors.primary,
@@ -887,6 +1020,156 @@ const BecomeTutor = () => {
           />
         </View>
       )}
+
+      <ModalPopper visible={isOpenModalCertificate} transparent={true}>
+        <View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignContent: 'center',
+            }}>
+            <Text
+              style={{color: colors.black, fontSize: 16, fontWeight: '500'}}>
+              Add certificate
+            </Text>
+            <TouchableOpacity onPress={() => setIsOpenModalCertificate(false)}>
+              <AntDesign name="close" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginVertical: 16,
+              height: 1,
+              backgroundColor: colors.grey300,
+            }}
+          />
+
+          <DropdownMenu
+            isOpen={isOpenCertificateMenu}
+            data={CERTIFICATE_TYPES}
+            onChangeOpen={setIsOpenCertificateMenu}
+            onChangeSelected={(item: any) => {
+              setCurrentCertificate({
+                key: item?.key,
+                certificateType: item?.name,
+                certificateFileName: '',
+                file: undefined,
+              });
+            }}
+            selectedItem={{
+              key: currentCertificate.key,
+            }}
+            style={{zIndex: 1}}>
+            <Pressable
+              className="py-2.5 mb-2.5"
+              onPress={() => setIsOpenCertificateMenu(!isOpenCertificateMenu)}
+              style={styles.dropdownMenuBtn}>
+              <Text style={{fontSize: 14, color: colors.text}}>
+                {currentCertificate.certificateType === ''
+                  ? 'Select certificate type'
+                  : currentCertificate.certificateType}
+              </Text>
+              {isOpenCertificateMenu ? (
+                <Entypo name="chevron-small-down" size={24} color="black" />
+              ) : (
+                <Entypo name="chevron-small-right" size={24} color="black" />
+              )}
+            </Pressable>
+          </DropdownMenu>
+          <View>
+            <Pressable
+              className="flex-row p-2"
+              style={{
+                borderWidth: 1,
+                borderColor: colors.grey500,
+                borderRadius: 6,
+              }}
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pickSingle({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'cachesDirectory',
+                  });
+                  setCurrentCertificate((prev: any) => {
+                    return {
+                      ...prev,
+                      certificateFileName: pickerResult.name,
+                      file: pickerResult,
+                    };
+                  });
+                } catch (e) {
+                  handleError(e);
+                }
+              }}>
+              <Feather name="upload" size={20} color={colors.grey500} />
+              <Text className="text-base ml-1" style={{color: colors.grey500}}>
+                Click to upload
+              </Text>
+            </Pressable>
+            <Text className="text-base mt-1" style={{color: colors.grey500}}>
+              {currentCertificate.certificateFileName}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'flex-end',
+                marginTop: 16,
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentCertificate({
+                    certificateFileName: '',
+                    certificateType: '',
+                    key: '',
+                    file: undefined,
+                  });
+                  setIsOpenModalCertificate(false);
+                }}
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingVertical: 10,
+                  paddingHorizontal: 16,
+                  borderWidth: 1,
+                  borderColor: 'rgba(0,0,0,0.1)',
+                  borderRadius: 6,
+                  zIndex: -1,
+                }}>
+                <Text style={{fontSize: 14, color: colors.text}}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setCV((prev: any) => {
+                    return {
+                      ...prev,
+                      certificates: [...prev.certificates, currentCertificate],
+                    };
+                  });
+                  setCurrentCertificate({
+                    certificateFileName: '',
+                    certificateType: '',
+                    key: '',
+                    file: undefined,
+                  });
+                  setIsOpenModalCertificate(false);
+                }}
+                style={{
+                  backgroundColor: colors.primary,
+                  paddingVertical: 10,
+                  paddingHorizontal: 16,
+                  borderRadius: 6,
+                  marginLeft: 16,
+                  zIndex: -1,
+                }}>
+                <Text style={{color: colors.white}}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ModalPopper>
+
+      <ToastManager {...toastConfig} width={width - 24} />
     </ScrollView>
   );
 };

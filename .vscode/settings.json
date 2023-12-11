@@ -6,5 +6,8 @@
   "prettier.endOfLine": "lf",
   "[typescriptreact,typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
   }
 }

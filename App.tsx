@@ -25,6 +25,7 @@ function App(): React.JSX.Element {
       <GlobalProvider>
         <EventProvider>
           <MainStackRouter />
+          {/* <BecomeTutor /> */}
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>
