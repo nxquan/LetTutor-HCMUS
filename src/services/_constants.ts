@@ -7,6 +7,8 @@ export const AUTH = {
 
 export const TUTOR = {
   GET_TUTORS: 'tutor/more',
+  GET_TUTOR_INFO: (tutorId: string) => `tutor/${tutorId}`,
+  GET_FEEDBACK: (tutorId: string) => `feedback/v2/${tutorId}`,
   SEARCH_TUTORS: 'tutor/search',
   ADD_FAVORITE: 'user/manageFavoriteTutor',
   BECOME_TUTOR: 'tutor/register',

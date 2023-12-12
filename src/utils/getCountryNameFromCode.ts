@@ -1,17 +1,13 @@
-const countryNames: any = {
-  VN: 'Vietnam',
-  US: 'United States',
-  CA: 'Canada',
-  PH: 'Philippines',
-  // Add more country code mappings as needed
-};
-
-function getCountryNameFromCode(countryCode: string) {
-  if (!countryCode || !countryNames.hasOwnProperty(countryCode)) {
-    return 'Unknown';
+const getCountryNameFromCode = async (code: string) => {
+  const res = await fetch(`https://restcountries.com/v3.1/alpha/${code}`);
+  const data = await res.json();
+  if (data) {
+    return {
+      name: data?.[0]?.name?.common,
+      flag: data?.[0]?.flags?.png,
+    };
   }
-
-  return countryNames[countryCode];
-}
+  return undefined;
+};
 
 export default getCountryNameFromCode;

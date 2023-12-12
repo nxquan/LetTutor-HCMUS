@@ -198,7 +198,7 @@ const TutorItem = (props: Props) => {
       </Text>
       <TouchableOpacity
         style={styles.bookBtn}
-        onPress={() => navigation.navigate('TutorDetail')}>
+        onPress={() => navigation.navigate('TutorDetail', {tutorId: data.id})}>
         <Image source={images.scheduleIcon} />
         <Text
           style={{

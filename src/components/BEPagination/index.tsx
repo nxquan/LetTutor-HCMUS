@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -62,7 +62,7 @@ const BEPagination = (props: Props) => {
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <ScrollView contentContainerStyle={[styles.container, style]} horizontal>
       <PaginationItem
         disabled={state.currentPage === 1}
         onPress={() => onChangePage(state.currentPage - 1)}
@@ -90,7 +90,7 @@ const BEPagination = (props: Props) => {
           />
         }
       />
-    </View>
+    </ScrollView>
   );
 };
 

@@ -10,7 +10,7 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
@@ -19,7 +19,7 @@ import {useRoute} from '@react-navigation/native';
 
 import styles from './styles';
 import Header from '@/components/Header';
-import {images} from '@/assets';
+import {images, languageImages} from '@/assets';
 import {colors} from '@/constants';
 import InfoPart from './components/InfoPart';
 import ButtonItem from '@/components/Button';
@@ -31,7 +31,7 @@ import CustomVideo from '@/components/CustomVideo';
 import ModalPopper from '@/components/ModalPopper';
 
 import {useGlobalContext, useTranslations} from '@/hooks';
-import {LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
+import {CATEGORIES, LEARN_TOPICS, TEST_PREPARATIONS} from '@/store/mock-data';
 import {addBooking, toggleFavoriteTutor} from '@/store';
 
 import {
@@ -42,7 +42,8 @@ import {
 } from '@/utils';
 
 import ReviewList from '@/components/ReviewList';
-
+import * as tutorService from '@/services/tutorService';
+import EncryptedStorage from 'react-native-encrypted-storage';
 const timers = [
   '00:00 - 00:25',
   '00:30 - 00:55',
@@ -100,6 +101,7 @@ const REPORTS = [
   'Inappropriate profile photo',
 ];
 
+const LANGUAGES = CATEGORIES[0].categories;
 const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
 type DetailTutor = {
   experience: string;
@@ -131,6 +133,10 @@ const TutorDetail = () => {
     bio: '',
     User: {},
   });
+  const [country, setCountry] = useState({
+    flag: undefined,
+    name: '',
+  });
 
   const [isOpenReport, setIsOpenReport] = useState(false);
   const [isOpenBookingModal, setIsOpenBookingModal] = useState(false);
@@ -140,6 +146,10 @@ const TutorDetail = () => {
   const [reports, setReports] = useState<number[]>([]);
 
   const [feedbacks, setFeedbacks] = useState([]);
+  const [page, setPage] = useState({
+    currentPage: 1,
+    totalItems: 0,
+  });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [schedules, setSchedules] = useState<{distance: number; data: Date[]}>(
     () => {
@@ -180,24 +190,71 @@ const TutorDetail = () => {
     }
     return result;
   };
+  const onChangePage = useCallback((page: number) => {
+    setPage((prev: any) => ({
+      ...prev,
+      currentPage: page,
+    }));
+  }, []);
 
   useEffect(() => {
-    const tutorId = '4d54d3d7-d2a9-42e5-97a2-5ed38af5789a'; //route.params?.tutorId ;
-    const detailItem = state.tutorDetails.find(
-      (item: any) => item?.userId === tutorId,
-    );
+    const getTutorInfoById = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const tutorId = route.params?.tutorId;
+      const res = await tutorService.getTutorInfoById({
+        params: {
+          tutorId: tutorId,
+        },
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
 
-    const tutor = state.tutors.find((item: any) => item?.id === tutorId);
-    detailItem.User = tutor;
+      if (res.success) {
+        setTutorDetail(res.data);
+        const _country: any = await getCountryNameFromCode(
+          res.data?.User?.country,
+        );
+        setCountry(_country);
+      } else {
+        console.log(res.message);
+        // const _bookings = extractBookings(tutorId);
+      }
+      // setBookings(_bookings);
+      // setFeedbacks(_feedbacks);
+    };
 
-    const _feedbacks = state.feedbacks.filter(
-      (item: any) => item.secondId === tutorId,
-    );
-    const _bookings = extractBookings(tutorId);
-    setBookings(_bookings);
-    setTutorDetail(detailItem);
-    setFeedbacks(_feedbacks);
-  }, [state]);
+    getTutorInfoById();
+  }, [route.params?.tutorId]);
+
+  useEffect(() => {
+    const getFeedback = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const tutorId = route.params?.tutorId;
+      const feedbackRes = await tutorService.getFeedbackByTutorId(tutorId, {
+        params: {
+          perPage: 12,
+          page: page.currentPage,
+        },
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
+
+      if (feedbackRes.success) {
+        const {data} = feedbackRes.data;
+        setFeedbacks(data.rows);
+        setPage((prev: any) => {
+          return {
+            ...prev,
+            totalItems: data.count,
+          };
+        });
+      }
+    };
+
+    getFeedback();
+  }, [route.params?.tutorId, page.currentPage]);
 
   const renderItem = (items: any[]) => {
     return items.map((item, index) => {
@@ -224,6 +281,13 @@ const TutorDetail = () => {
 
     return _specialties.map(key => {
       return SPECIALTIES.find(item => item.key === key)?.name;
+    });
+  };
+  const getLanguagesName = (languages: string) => {
+    const _languages = languages.split(',');
+
+    return _languages.map(key => {
+      return LANGUAGES.find(item => item.key === key)?.description;
     });
   };
 
@@ -379,6 +443,7 @@ const TutorDetail = () => {
   };
   return (
     <ScrollView
+      nestedScrollEnabled={true}
       style={styles.container}
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={isFullscreen ? [] : [0]}>
@@ -413,13 +478,12 @@ const TutorDetail = () => {
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Image
-                  source={{
-                    uri: `https://flagsapi.com/${tutorDetail?.User?.country}/flat/64.png`,
-                  }}
+                  src={country.flag}
+                  source={languageImages.vietNam}
                   style={{width: 20, height: 15}}
                 />
                 <Text style={{fontSize: 14, color: colors.text, marginLeft: 6}}>
-                  {getCountryNameFromCode(tutorDetail?.User?.country)}
+                  {country.name}
                 </Text>
               </View>
             </View>
@@ -500,7 +564,7 @@ const TutorDetail = () => {
           </InfoPart>
           <InfoPart title={t('tutorDetail.languages')}>
             <View style={{flexDirection: 'row'}}>
-              {renderItem(String(tutorDetail?.languages).split(', '))}
+              {renderItem(getLanguagesName(String(tutorDetail?.languages)))}
             </View>
           </InfoPart>
           <InfoPart title={t('tutorDetail.specialties')}>
@@ -519,7 +583,12 @@ const TutorDetail = () => {
             </Text>
           </InfoPart>
           <InfoPart title={t('tutorDetail.othersReview')}>
-            <ReviewList data={feedbacks} />
+            <ReviewList
+              data={feedbacks}
+              totalItems={page.totalItems}
+              currentPage={page.currentPage}
+              onChangePage={onChangePage}
+            />
           </InfoPart>
         </View>
 
