@@ -62,7 +62,10 @@ const BEPagination = (props: Props) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, style]} horizontal>
+    <ScrollView
+      contentContainerStyle={[styles.container, style]}
+      horizontal
+      style={{alignSelf: 'flex-end'}}>
       <PaginationItem
         disabled={state.currentPage === 1}
         onPress={() => onChangePage(state.currentPage - 1)}

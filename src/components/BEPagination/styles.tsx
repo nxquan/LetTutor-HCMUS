@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 28,
     marginLeft: -8,
-    alignSelf: 'flex-end',
   },
   paginationItem: {
     borderRadius: 6,

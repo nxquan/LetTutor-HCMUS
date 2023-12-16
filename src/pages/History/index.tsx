@@ -1,11 +1,10 @@
-import {View, Text, Image, ScrollView, Dimensions, Modal} from 'react-native';
+import {View, Text, Image, ScrollView, Dimensions} from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
 
 import Header from '@/components/Header';
 import styles from './styles';
 import {images} from '@/assets';
 import {colors} from '@/constants';
-import Pagination from '@/components/Pagination';
 import HistoryItem from './components/HistoryItem';
 import DrawerButton from '@/components/DrawerButton';
 import {useGlobalContext, useTranslations} from '@/hooks';
@@ -13,12 +12,14 @@ import Button from '@/components/Button';
 import BEPagination from '@/components/BEPagination';
 import * as bookingService from '@/services/bookingService';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import ToastManager, {Toast} from 'toastify-react-native';
+import ToastManager from 'toastify-react-native';
 import {toastConfig} from '@/config';
+import {useNavigation} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const History = () => {
   const {t} = useTranslations();
+  const navigation: any = useNavigation();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState({
@@ -97,7 +98,9 @@ const History = () => {
             </Text>
             <Button
               title="Book a lesson"
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate('Tutor');
+              }}
               style={{
                 color: colors.white,
                 fontWeight: '500',

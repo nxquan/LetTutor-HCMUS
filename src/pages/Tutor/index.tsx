@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   TextInput,
   Dimensions,
@@ -9,32 +8,26 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import LinearGradient from 'react-native-linear-gradient';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 import styles from './styles';
 import Header from '@/components/Header';
 import {colors} from '@/constants';
 import Button from '@/components/Button';
 import TutorItem from './components/TutorItem';
-import Pagination from '@/components/Pagination';
 import DropdownMenu from '@/components/DropdownMenu';
-import StackProps from '@/types/type';
-import {useNavigation} from '@react-navigation/native';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext, useTranslations} from '@/hooks';
+import {useTranslations} from '@/hooks';
 import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
-import {convertMinutesToHours, convertSecondsToMinutes} from '@/utils';
 import * as tutorService from '@/services/tutorService';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import BEPagination from '@/components/BEPagination';
+import UpComingLesson from './components/UpComingLesson';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -73,8 +66,6 @@ const defaultSpecialty = {
 };
 
 const Tutor = () => {
-  const navigation = useNavigation<StackProps>();
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
 
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
@@ -87,29 +78,6 @@ const Tutor = () => {
     currentPage: 1,
     totalItems: 0,
   });
-  const [learningHourTotal, setLearningHourTotal] = useState(0);
-  const [upcomingLesson, setUpcomingLesson] = useState<any>({
-    startedAtTimeStamp: 1701107316859,
-    createdAtTimeStamp: 1685608409920,
-    updatedAtTimeStamp: 1685608409920,
-    id: 3,
-    userId: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
-    courseId: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
-    status: 'INIT',
-    startedAt: '2023-06-01T08:33:29.919Z',
-    createdAt: '2023-06-01T08:33:29.920Z',
-    updatedAt: '2023-06-01T08:33:29.920Z',
-    course: {
-      id: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
-      name: 'English Conversation 101',
-      description: 'Approachable lessons for absolute beginners',
-    },
-  });
-
-  const [remainingTimeForUpcomingLesson, setRemainingTimeForUpcomingLesson] =
-    useState<number>(0);
-
-  const [teachingTime, setTeachingTime] = useState<number>(0);
 
   const scrollRef: any = useRef();
   const tutorRef: any = useRef();
@@ -407,123 +375,6 @@ const Tutor = () => {
     fetchForSearchingTutors();
   }, [filters, page.currentPage]);
 
-  // useEffect(() => {
-  //   const total = state.bookings.reduce((acc: number, booking: any) => {
-  //     const {scheduleDetailInfo} = booking;
-  //     const startTime =
-  //       scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-  //     if (startTime < Date.now() - 25 * 60) {
-  //       return acc + 25;
-  //     }
-  //     return acc;
-  //   }, 0);
-  //   setLearningHourTotal(total);
-
-  //   let isTeaching = false;
-  //   const nearestBooking = state.bookings.reduce(
-  //     (acc: any, booking: any) => {
-  //       const {scheduleDetailInfo} = booking;
-  //       const startTime =
-  //         scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-  //       const endTime =
-  //         scheduleDetailInfo.endPeriodTimestamp - 7 * 60 * 60 * 1000;
-
-  //       const now = Date.now();
-  //       if (startTime < now && now < endTime) {
-  //         isTeaching = true;
-  //         return booking;
-  //       }
-
-  //       if (isTeaching == false) {
-  //         if (startTime >= Date.now()) {
-  //           if (
-  //             scheduleDetailInfo.startPeriodTimestamp <
-  //             acc.scheduleDetailInfo.startPeriodTimestamp
-  //           ) {
-  //             return booking;
-  //           } else {
-  //             return acc;
-  //           }
-  //         }
-  //         return acc;
-  //       }
-  //     },
-  //     {
-  //       scheduleDetailInfo: {
-  //         startPeriodTimestamp: 9999999999999999,
-  //         endPeriodTimestamp: 9999999999999999,
-  //         updatedAt: '2023-11-26T12:04:53.163Z',
-  //         scheduleInfo: {
-  //           startTimestamp: 9999999999999999,
-  //           endTimestamp: 9999999999999999,
-  //         },
-  //       },
-  //     },
-  //   );
-
-  //   setUpcomingLesson(() => {
-  //     let status = 'INIT';
-  //     const {scheduleDetailInfo} = nearestBooking;
-  //     const startTime =
-  //       scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-  //     if (startTime <= Date.now()) {
-  //       status = 'IN_PROGRESS';
-  //       setRemainingTimeForUpcomingLesson(0);
-  //       setTeachingTime(Math.floor((Date.now() - startTime) / 1000));
-  //     } else {
-  //       setRemainingTimeForUpcomingLesson(
-  //         Math.floor((startTime - Date.now()) / 1000),
-  //       );
-  //     }
-
-  //     return {
-  //       startedAtTimeStamp: scheduleDetailInfo.startPeriodTimestamp,
-  //       createdAtTimeStamp: 1685608409920,
-  //       updatedAtTimeStamp: 1685608409920,
-  //       id: 3,
-  //       userId: 'f569c202-7bbf-4620-af77-ecc1419a6b28',
-  //       courseId: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
-  //       status,
-  //       startedAt: '2023-06-01T08:33:29.919Z',
-  //       createdAt: '2023-06-01T08:33:29.920Z',
-  //       updatedAt: '2023-06-01T08:33:29.920Z',
-  //       course: {
-  //         id: '7a16f617-6a59-42b0-8dcc-d8e2aa1d178f',
-  //         name: 'English Conversation 101',
-  //         description: 'Approachable lessons for absolute beginners',
-  //       },
-  //     };
-  //   });
-  // }, [state]);
-
-  // useEffect(() => {
-  //   const timerId = setInterval(() => {
-  //     setRemainingTimeForUpcomingLesson(prev => {
-  //       if (prev == 0) {
-  //         setUpcomingLesson((prevUp: any) => ({
-  //           ...prevUp,
-  //           status: 'TEACHING',
-  //         }));
-
-  //         clearInterval(timerId);
-  //         return 0;
-  //       }
-  //       return prev - 1;
-  //     });
-  //   }, 1000);
-
-  //   return () => clearInterval(timerId);
-  // }, []);
-
-  // useEffect(() => {
-  //   if (remainingTimeForUpcomingLesson === 0) {
-  //     const timerId = setInterval(() => {
-  //       setTeachingTime(prev => prev + 1);
-  //     }, 1000);
-  //     return () => clearInterval(timerId);
-  //   }
-  // }, [remainingTimeForUpcomingLesson]);
-
   return (
     <ScrollView
       ref={scrollRef}
@@ -532,62 +383,7 @@ const Tutor = () => {
       style={{backgroundColor: colors.white}}>
       <Header drawerBtn={<DrawerButton />} />
       {/* Notification */}
-      <LinearGradient
-        start={{x: 0.1, y: 0}}
-        end={{x: 0.75, y: 1.0}}
-        style={styles.notiContainer}
-        colors={['rgb(12, 61, 223)', 'rgb(5, 23, 157)']}>
-        <View>
-          <Text style={styles.notiHeading}>{t('tutor.upcoming')}</Text>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
-            <View style={{flex: 1}}>
-              <Text style={styles.notiDateText}>
-                {
-                  new Date(
-                    upcomingLesson.startedAtTimeStamp - 7 * 60 * 60 * 1000,
-                  )
-                    .toString()
-                    .split('GMT')[0]
-                }
-              </Text>
-              {upcomingLesson.status == 'INIT' ? (
-                <Text style={styles.notiRemainTimeText}>
-                  ({t('tutor.startIn')}{' '}
-                  {convertSecondsToMinutes(remainingTimeForUpcomingLesson)})
-                </Text>
-              ) : (
-                <Text
-                  style={[styles.notiRemainTimeText, {color: colors.success}]}>
-                  ({t('tutor.teachingIn')}{' '}
-                  {convertSecondsToMinutes(teachingTime)})
-                </Text>
-              )}
-            </View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('VideoCall')}
-              activeOpacity={0.8}
-              className="flex-row items-center bg-white rounded-full px-3 py-1.5">
-              <Feather name="youtube" size={24} color={colors.primary} />
-              <Text
-                style={{marginLeft: 6, color: colors.primary, fontSize: 14}}>
-                {t('tutor.enterUpcomingText')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{
-              color: colors.white,
-              textAlign: 'center',
-              fontSize: 16,
-              fontWeight: '500',
-              marginTop: 12,
-            }}>
-            {t('tutor.totalTime')} {convertMinutesToHours(learningHourTotal)}
-          </Text>
-        </View>
-      </LinearGradient>
-
+      <UpComingLesson />
       {/* Tutor Container */}
       <View style={styles.tutorContainer}>
         <Text

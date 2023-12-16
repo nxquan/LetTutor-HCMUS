@@ -1,50 +1,57 @@
 import {View, Text, Image, ScrollView} from 'react-native';
 import React, {useState, useEffect} from 'react';
-import Header from '@/components/Header';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useNavigation} from '@react-navigation/native';
+
 import styles from './styles';
 import {images} from '@/assets';
 import {colors} from '@/constants';
+import Header from '@/components/Header';
 import ScheduleItem from './components/ScheduleItem';
-import Pagination from '@/components/Pagination';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext, useTranslations} from '@/hooks';
+import Button from '@/components/Button';
+import BEPagination from '@/components/BEPagination';
+import {useTranslations} from '@/hooks';
+import * as bookingService from '@/services/bookingService';
 
 const Schedule = () => {
-  const [state, dispatch] = useGlobalContext();
+  const navigation: any = useNavigation();
   const {t} = useTranslations();
   const [schedules, setSchedules] = useState<any[]>([]);
-  const [currentSchedules, setCurrentSchedules] = useState<any[]>([]);
+  const [page, setPage] = useState({
+    current: 1,
+    total: 0,
+  });
 
-  const onChangeDataInPage = (data: any) => {
-    setCurrentSchedules(data);
+  const onChangePage = (page: number) => {
+    setPage((prev: any) => ({...prev, current: page}));
   };
 
   useEffect(() => {
-    setSchedules(() => {
-      const bookings = state.bookings;
-      const result: any[] = [];
-
-      bookings.forEach((item: any) => {
-        if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
-          const startLessonDate =
-            item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-          if (!item.isDeleted && startLessonDate - Date.now() >= 0) {
-            result.push({
-              ...item,
-            });
-          }
-        }
+    const getHistory = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const res = await bookingService.getHistoryOfBooking({
+        params: {
+          page: page.current,
+          perPage: 20,
+          inFuture: 1,
+          orderBy: 'meeting',
+          sortBy: 'asc',
+        },
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
       });
 
-      result.sort(
-        (a, b) =>
-          a.scheduleDetailInfo.startPeriodTimestamp -
-          b.scheduleDetailInfo.startPeriodTimestamp,
-      );
+      if (res.success) {
+        const {data} = res.data;
+        setSchedules(data.rows);
+        setPage((prev: any) => ({...prev, total: data.count}));
+      }
+    };
 
-      return result;
-    });
-  }, [state]);
+    getHistory();
+  }, [page.current]);
 
   return (
     <ScrollView style={styles.container} stickyHeaderIndices={[0]}>
@@ -121,17 +128,41 @@ const Schedule = () => {
       </View>
 
       <View style={styles.scheduleList}>
-        {currentSchedules.length > 0 &&
-          currentSchedules.map((item, index) => {
+        {schedules.length > 0 ? (
+          schedules.map((item, index) => {
             return <ScheduleItem data={item} key={index} />;
-          })}
+          })
+        ) : (
+          <View className="self-center mt-10 items-center">
+            <Image source={images.noData} style={{height: 150}} />
+            <Text className="font-normal text-center text-base text-gray-600">
+              Empty data
+            </Text>
+            <Button
+              title="Book a lesson"
+              onPress={() => {
+                navigation.navigate('Tutor');
+              }}
+              style={{
+                color: colors.white,
+                fontWeight: '500',
+                backgroundColor: colors.primary,
+                marginTop: 16,
+                paddingHorizontal: 20,
+              }}
+            />
+          </View>
+        )}
       </View>
-      <Pagination
-        data={schedules}
-        ITEMS_PER_PAGE={5}
-        style={{paddingHorizontal: 20}}
-        onChangeDataInPage={onChangeDataInPage}
-      />
+      {schedules.length > 0 && (
+        <BEPagination
+          ITEMS_PER_PAGE={20}
+          totalItems={page.total}
+          currentPage={page.current}
+          style={{paddingHorizontal: 20}}
+          onChangePage={onChangePage}
+        />
+      )}
     </ScrollView>
   );
 };

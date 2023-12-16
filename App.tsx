@@ -17,7 +17,6 @@ import Courses from '@/pages/Courses';
 import Profile from '@/pages/Profile';
 import BecomeTutor from '@/pages/BecomeTutor';
 import Schedule from '@/pages/Schedule';
-import History from '@/pages/History';
 
 function App(): React.JSX.Element {
   return (
@@ -25,7 +24,6 @@ function App(): React.JSX.Element {
       <GlobalProvider>
         <EventProvider>
           <MainStackRouter />
-          {/* <BecomeTutor /> */}
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>

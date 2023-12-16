@@ -5,6 +5,10 @@ export const getHistoryOfBooking = (config = {}) => {
   return get(BOOKING.GET_BOOKING, config);
 };
 
+export const getNextBookings = (config = {}) => {
+  return get(BOOKING.GET_NEXT_BOOKING, config);
+};
+
 export const addFeedback = (data = {}, config = {}) => {
   return post(BOOKING.CREATE_FEEDBACK, data, config);
 };

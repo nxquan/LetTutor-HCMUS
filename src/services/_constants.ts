@@ -16,10 +16,15 @@ export const TUTOR = {
 
 export const BOOKING = {
   GET_BOOKING: '/booking/list/student',
+  GET_NEXT_BOOKING: '/booking/next',
   CREATE_FEEDBACK: '/user/feedbackTutor',
 };
 
 export const REPORT = {
   GET_REASON: '/lesson-report/reason',
   POST_REPORT: '/lesson-report/save-report',
+};
+
+export const CALL = {
+  GET_TOTAL: '/call/total',
 };
