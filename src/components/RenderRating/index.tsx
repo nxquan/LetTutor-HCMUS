@@ -1,14 +1,17 @@
 import {colors} from '@/constants';
-import {View} from 'react-native';
+import React from 'react';
+import {TouchableOpacity, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 type Props = {
   rating: number;
   size?: number;
+  interactive?: boolean;
+  onChangeRating?: (rating: number) => void;
 };
 
 function RenderRating(props: Props) {
-  const {rating, size} = props;
+  const {rating, size, interactive, onChangeRating} = props;
 
   const render = () => {
     const _rating: number = Math.floor(rating);
@@ -21,13 +24,17 @@ function RenderRating(props: Props) {
     const stars: any = [];
     for (let i = 1; i <= _rating; i++) {
       stars.push(
-        <FontAwesome
+        <TouchableOpacity
           key={i}
-          name="star"
-          size={size}
-          color={colors.yellow}
-          style={{marginLeft: 6}}
-        />,
+          disabled={!interactive}
+          onPress={() => onChangeRating && onChangeRating(i)}>
+          <FontAwesome
+            name="star"
+            size={size}
+            color={colors.yellow}
+            style={{marginLeft: 6}}
+          />
+        </TouchableOpacity>,
       );
     }
     if (_rating < 5) {
@@ -35,13 +42,17 @@ function RenderRating(props: Props) {
         const _name =
           i === _rating + 1 && isHalfStar ? 'star-half-empty' : 'star-o';
         stars.push(
-          <FontAwesome
+          <TouchableOpacity
             key={i}
-            name={_name}
-            size={size}
-            color={colors.yellow}
-            style={{marginLeft: 6}}
-          />,
+            disabled={!interactive}
+            onPress={() => onChangeRating && onChangeRating(i)}>
+            <FontAwesome
+              name={_name}
+              size={size}
+              color={colors.yellow}
+              style={{marginLeft: 6}}
+            />
+          </TouchableOpacity>,
         );
       }
     }

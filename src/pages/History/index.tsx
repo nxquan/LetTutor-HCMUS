@@ -1,5 +1,5 @@
-import {View, Text, Image, ScrollView} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import {View, Text, Image, ScrollView, Dimensions, Modal} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
 
 import Header from '@/components/Header';
 import styles from './styles';
@@ -10,45 +10,55 @@ import HistoryItem from './components/HistoryItem';
 import DrawerButton from '@/components/DrawerButton';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import Button from '@/components/Button';
+import BEPagination from '@/components/BEPagination';
+import * as bookingService from '@/services/bookingService';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import ToastManager, {Toast} from 'toastify-react-native';
+import {toastConfig} from '@/config';
+
+const width = Dimensions.get('window').width;
 const History = () => {
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
   const [schedules, setSchedules] = useState<any[]>([]);
-  const [currentSchedules, setCurrentSchedules] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [page, setPage] = useState({
+    current: 1,
+    total: 0,
+  });
 
-  const onChangeDataInPage = (data: any) => {
-    setCurrentSchedules(data);
+  const onChangePage = (page: number) => {
+    setPage((prev: any) => ({...prev, current: page}));
   };
 
   useEffect(() => {
-    setSchedules(() => {
-      const bookings = state.bookings;
-      const result: any[] = [];
-
-      bookings.forEach((item: any) => {
-        if (item.userId === 'f569c202-7bbf-4620-af77-ecc1419a6b28') {
-          const startLessonDate =
-            item.scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000;
-          if (!item.isDeleted && startLessonDate - Date.now() < 0) {
-            result.push({
-              ...item,
-            });
-          }
-        }
-        // result.push({
-        //   ...item,
-        // });
+    const getHistory = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const res = await bookingService.getHistoryOfBooking({
+        params: {
+          page: page.current,
+          perPage: 20,
+          inFuture: 0,
+          orderBy: 'meeting',
+          sortBy: 'desc',
+        },
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
       });
 
-      result.sort(
-        (a, b) =>
-          a.scheduleDetailInfo.startPeriodTimestamp -
-          b.scheduleDetailInfo.startPeriodTimestamp,
-      );
+      if (res.success) {
+        const {data} = res.data;
+        setSchedules(data.rows);
+        setPage((prev: any) => ({...prev, total: data.count}));
+      }
+    };
 
-      return result;
-    });
-  }, [state]);
+    getHistory();
+  }, [page.current, refreshing]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(!refreshing);
+  }, []);
 
   return (
     <ScrollView
@@ -56,6 +66,7 @@ const History = () => {
       stickyHeaderIndices={[0]}
       showsVerticalScrollIndicator={false}>
       <Header drawerBtn={<DrawerButton />} />
+
       <View style={styles.intro}>
         <Image source={images.history} style={{width: 120, height: 120}} />
         <View>
@@ -72,9 +83,11 @@ const History = () => {
       </View>
 
       <View style={styles.historyList}>
-        {currentSchedules.length > 0 ? (
-          currentSchedules.map((item, index) => {
-            return <HistoryItem data={item} key={index} />;
+        {schedules.length > 0 ? (
+          schedules.map((item, index) => {
+            return (
+              <HistoryItem data={item} key={index} onRefresh={onRefresh} />
+            );
           })
         ) : (
           <View className="self-center mt-10 items-center">
@@ -97,13 +110,15 @@ const History = () => {
         )}
       </View>
       {schedules.length > 0 && (
-        <Pagination
-          data={schedules}
-          ITEMS_PER_PAGE={5}
+        <BEPagination
+          ITEMS_PER_PAGE={20}
+          totalItems={page.total}
+          currentPage={page.current}
           style={{paddingHorizontal: 20}}
-          onChangeDataInPage={onChangeDataInPage}
+          onChangePage={onChangePage}
         />
       )}
+      <ToastManager {...toastConfig} width={width - 24} />
     </ScrollView>
   );
 };

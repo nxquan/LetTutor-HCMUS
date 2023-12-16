@@ -1,39 +1,55 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useLayoutEffect, useState} from 'react';
 import styles from './styles';
 import {colors} from '@/constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {images} from '@/assets';
-import {getCountryNameFromCode} from '@/utils';
+import {images, languageImages} from '@/assets';
+import {getCountryNameFromCode, getDateAgo} from '@/utils';
 import {useTranslations} from '@/hooks';
 type Props = {
   children: any;
   data: any;
+  history?: boolean;
 };
 
 const Lesson = (props: Props) => {
-  const {children, data} = props;
+  const {children, data, history} = props;
   const {scheduleDetailInfo} = data;
   const {scheduleInfo} = scheduleDetailInfo;
   const {t} = useTranslations();
+  const [country, setCountry] = useState<any>({
+    flag: undefined,
+    name: '',
+  });
+
+  useLayoutEffect(() => {
+    const getCountry = async () => {
+      const res: any = await getCountryNameFromCode(
+        scheduleInfo.tutorInfo.country,
+      );
+      setCountry(res);
+    };
+    getCountry();
+  }, [data]);
 
   return (
     <View style={styles.container}>
       <View style={styles.infoLesson}>
         <View>
           <Text style={styles.meetDate}>
-            {new Date(
-              scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000,
-            ).toDateString()}
+            {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
           </Text>
           <Text style={{fontSize: 14, color: colors.text}}>
-            1 {t('lesson')}
+            {history === true
+              ? getDateAgo(scheduleDetailInfo?.startPeriodTimestamp, Date.now())
+              : t('lesson')}
           </Text>
         </View>
         <View style={styles.info}>
           <Image
-            source={{uri: scheduleInfo.tutorInfo.avatar}}
+            source={images.defaultAvatar}
+            src={scheduleInfo?.tutorInfo?.avatar}
             style={styles.avatar}
           />
           <View>
@@ -47,14 +63,11 @@ const Lesson = (props: Props) => {
                 marginVertical: 4,
               }}>
               <Image
-                source={{
-                  uri: `https://flagsapi.com/${scheduleInfo.tutorInfo.country}/flat/64.png`,
-                }}
+                source={languageImages.vietNam}
+                src={country.flag}
                 style={{width: 24, height: 16, marginRight: 4}}
               />
-              <Text className="text-sm text-gray-700">
-                {getCountryNameFromCode(scheduleInfo.tutorInfo.country)}
-              </Text>
+              <Text className="text-sm text-gray-700">{country.name}</Text>
             </View>
             <TouchableOpacity onPress={() => {}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>

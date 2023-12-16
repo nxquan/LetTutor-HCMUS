@@ -5,132 +5,304 @@ import {
   TextInput,
   Image,
   Pressable,
+  Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Lesson from '@/components/Lesson';
 import styles from './styles';
 import ModalPopper from '@/components/ModalPopper';
 import {colors} from '@/constants';
-import {images} from '@/assets';
 import DropdownMenu from '@/components/DropdownMenu';
 import {useTranslations} from '@/hooks';
-
-const reasons = [
-  {
-    id: 1,
-    title: 'Tutor was late',
-    key: 'wasLate',
-  },
-  {
-    id: 2,
-    title: 'Tutor was absent',
-    key: 'wasAbsent',
-  },
-  {
-    id: 3,
-    title: 'Network unstable',
-    key: 'networkUnstable',
-  },
-  {
-    id: 4,
-    title: 'Other',
-    key: 'other',
-  },
-];
+import {padNumber} from '@/utils';
+import RenderRating from '@/components/RenderRating';
+import {images} from '@/assets';
+import * as bookingService from '@/services/bookingService';
+import * as lessonReportService from '@/services/lessonReportService';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {Toast} from 'toastify-react-native';
 
 type Props = {
   data: any;
+  onRefresh: () => void;
 };
+
 const HistoryItem = (props: Props) => {
-  const {data} = props;
+  const {data, onRefresh} = props;
   const {scheduleDetailInfo} = data;
   const {scheduleInfo} = scheduleDetailInfo;
   const {t} = useTranslations();
 
+  const [reasons, setReasons] = useState<any>([]);
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenReview, setIsOpenReview] = useState(true);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState<null | string>(null);
 
-  const [reason, setReason] = useState({
-    type: 'Choose a reason',
-    notes: '',
+  const [currentRating, setCurrentRating] = useState<any>({
+    id: '',
+    rating: 1,
+    content: '',
+  });
+
+  const [currentReport, setCurrentReport] = useState<any>({
+    reasonId: -1,
+    note: '',
+    bookingId: '',
   });
 
   const onChangeSelected = (item: any) => {
-    setReason((prev: any) => {
+    setCurrentReport((prev: any) => {
       return {
         ...prev,
-        type: item.key,
+        reasonId: item.id,
       };
     });
   };
 
+  const onChangeRating = (rating: number) => {
+    setCurrentRating((prev: any) => {
+      return {
+        ...prev,
+        rating,
+      };
+    });
+  };
+
+  const handleChangeFeedback = async () => {
+    const session: any = await EncryptedStorage.getItem('user_session');
+    if (currentRating.id === '') {
+      const res = await bookingService.addFeedback(
+        {
+          content: currentRating.content,
+          rating: currentRating.rating,
+          bookingId: data?.id,
+          userId: scheduleInfo.tutorInfo.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+          },
+        },
+      );
+      if (res.success) {
+        Toast.success('Add feedback successfully');
+      } else {
+        Toast.success(res.message);
+      }
+    } else {
+      const res = await bookingService.editFeedback(
+        {
+          content: currentRating.content,
+          rating: currentRating.rating,
+          id: currentRating.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+          },
+        },
+      );
+      if (res.success) {
+        Toast.success('Edit feedback successfully');
+      } else {
+        Toast.success(res.message);
+      }
+    }
+    onRefresh();
+    setCurrentRating({id: '', rating: 1, content: ''});
+  };
+
+  const handleReport = async () => {
+    const session: any = await EncryptedStorage.getItem('user_session');
+    const res = await lessonReportService.createReport(
+      {
+        bookingId: currentReport.bookingId,
+        note: currentReport.note,
+        reasonId: currentReport.reasonId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      },
+    );
+
+    if (res.success) {
+      Toast.success('Add report successfully');
+    } else {
+      Toast.success(res.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchReasons = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const res = await lessonReportService.getReasons({
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
+      if (res.success) {
+        const _reason = res.data.rows.map((item: any) => {
+          return {
+            id: item.id,
+            title: item.reason,
+            key: item.reason,
+          };
+        });
+        setReasons(_reason);
+      }
+    };
+
+    fetchReasons();
+  }, []);
+
   return (
-    <Lesson data={data}>
+    <Lesson data={data} history={true}>
       <View style={styles.requestHeader}>
         <Text style={styles.timeText}>
-          {t('history.lessonTime')} {scheduleDetailInfo.startPeriod} -{' '}
-          {scheduleDetailInfo.endPeriod}
+          {t('history.lessonTime')}{' '}
+          {padNumber(
+            new Date(scheduleDetailInfo.startPeriodTimestamp).getHours(),
+          )}
+          :
+          {padNumber(
+            new Date(scheduleDetailInfo.startPeriodTimestamp).getMinutes(),
+          )}{' '}
+          -{' '}
+          {padNumber(
+            new Date(scheduleDetailInfo.endPeriodTimestamp).getHours(),
+          )}
+          :
+          {padNumber(
+            new Date(scheduleDetailInfo.endPeriodTimestamp).getMinutes(),
+          )}
         </Text>
       </View>
       <View style={styles.lessonComment}>
-        <TouchableOpacity
-          style={styles.lessonBar}
-          onPress={() => setIsOpenRequest(!isOpenRequest)}>
-          <Text style={{fontSize: 14, color: colors.black}}>
-            {t('schedule.requestForLesson')}
-          </Text>
-          {!isOpenRequest ? (
-            <Entypo name="chevron-small-right" size={24} color="black" />
-          ) : (
-            <Entypo name="chevron-small-down" size={24} color="black" />
-          )}
-        </TouchableOpacity>
-        {isOpenRequest && (
+        {data?.studentRequest ? (
+          <>
+            <TouchableOpacity
+              style={styles.lessonBar}
+              onPress={() => setIsOpenRequest(!isOpenRequest)}>
+              <Text style={{fontSize: 14, color: colors.black}}>
+                {t('schedule.requestForLesson')}
+              </Text>
+              {!isOpenRequest ? (
+                <Entypo name="chevron-small-right" size={24} color="black" />
+              ) : (
+                <Entypo name="chevron-small-down" size={24} color="black" />
+              )}
+            </TouchableOpacity>
+            {isOpenRequest && (
+              <View style={{marginTop: 8, paddingHorizontal: 12}}>
+                <Text style={styles.commentText}>{data?.studentRequest}</Text>
+              </View>
+            )}
+          </>
+        ) : (
           <View style={{marginTop: 8, paddingHorizontal: 12}}>
-            <Text style={styles.commentText}>{t('schedule.request')}</Text>
+            <Text style={styles.commentText}>No request for lesson</Text>
           </View>
         )}
       </View>
       <View style={styles.lessonComment}>
-        <TouchableOpacity
-          style={styles.lessonBar}
-          onPress={() => setIsOpenReview(!isOpenReview)}>
-          <Text style={{fontSize: 14, color: colors.black}}>
-            {t('history.reviewFromTutor')}
-          </Text>
-          {!isOpenReview ? (
-            <Entypo name="chevron-small-right" size={24} color="black" />
-          ) : (
-            <Entypo name="chevron-small-down" size={24} color="black" />
-          )}
-        </TouchableOpacity>
-        {isOpenReview && (
+        {data?.tutorReview ? (
+          <>
+            <TouchableOpacity
+              style={styles.lessonBar}
+              onPress={() => setIsOpenReview(!isOpenReview)}>
+              <Text style={{fontSize: 14, color: colors.black}}>
+                {t('history.reviewFromTutor')}
+              </Text>
+              {!isOpenReview ? (
+                <Entypo name="chevron-small-right" size={24} color="black" />
+              ) : (
+                <Entypo name="chevron-small-down" size={24} color="black" />
+              )}
+            </TouchableOpacity>
+            {isOpenReview && (
+              <View style={{marginTop: 8, paddingHorizontal: 12}}>
+                <Text style={styles.commentText}>{data?.tutorReview}</Text>
+              </View>
+            )}
+          </>
+        ) : (
           <View style={{marginTop: 8, paddingHorizontal: 12}}>
-            <Text style={styles.commentText}>{t('history.review')}</Text>
+            <Text style={styles.commentText}>Tutor haven't reviewed yet</Text>
           </View>
         )}
       </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingTop: 12,
-        }}>
-        <TouchableOpacity onPress={() => setIsOpenModal('rating')}>
-          <Text style={styles.actionBtn}>{t('rating')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setIsOpenModal('report');
-          }}>
-          <Text style={styles.actionBtn}>{t('report')}</Text>
-        </TouchableOpacity>
+      <View>
+        {data?.feedbacks.length > 0 ? (
+          <View>
+            {data?.feedbacks.map((feedback: any, index: number) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: 12,
+                  }}>
+                  <View className="flex-row items-center">
+                    <Text className="text-black text-md">Rating: </Text>
+                    <RenderRating size={14} rating={feedback?.rating} />
+                  </View>
+                  <View className="flex-row items-center">
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsOpenModal('rating');
+                        setCurrentRating({
+                          id: feedback.id,
+                          rating: feedback.rating,
+                          content: feedback.content,
+                        });
+                      }}
+                      className="mr-4">
+                      <Text style={styles.actionBtn}>Edit</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsOpenModal('report');
+                        setCurrentReport((prev: any) => {
+                          return {
+                            ...prev,
+                            bookingId: feedback.bookingId,
+                          };
+                        });
+                      }}>
+                      <Text style={styles.actionBtn}>{t('report')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: 12,
+            }}>
+            <TouchableOpacity onPress={() => setIsOpenModal('rating')}>
+              <Text style={styles.actionBtn}>{t('rating')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setIsOpenModal('report');
+              }}>
+              <Text style={styles.actionBtn}>{t('report')}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <ModalPopper visible={!!isOpenModal} transparent={true}>
@@ -142,9 +314,13 @@ const HistoryItem = (props: Props) => {
           </TouchableOpacity>
           <View style={styles.modalInfo}>
             <Image
-              source={{uri: scheduleInfo.tutorInfo.avatar}}
+              source={images.defaultAvatar}
+              src={scheduleInfo?.tutorInfo?.avatar}
               style={styles.avatar}
             />
+            <Text className="text-xl text-black font-semibold mx-1">
+              {data?.scheduleDetailInfo?.scheduleInfo?.tutorInfo?.name}
+            </Text>
             <Text
               style={{
                 fontSize: 14,
@@ -155,7 +331,23 @@ const HistoryItem = (props: Props) => {
             </Text>
             <Text
               style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
-              Thu, 26 Oct 23
+              {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
+              ,{' '}
+              {padNumber(
+                new Date(scheduleDetailInfo.startPeriodTimestamp).getHours(),
+              )}
+              :
+              {padNumber(
+                new Date(scheduleDetailInfo.startPeriodTimestamp).getMinutes(),
+              )}{' '}
+              -{' '}
+              {padNumber(
+                new Date(scheduleDetailInfo.endPeriodTimestamp).getHours(),
+              )}
+              :
+              {padNumber(
+                new Date(scheduleDetailInfo.endPeriodTimestamp).getMinutes(),
+              )}
             </Text>
           </View>
           <View
@@ -189,7 +381,11 @@ const HistoryItem = (props: Props) => {
                 isOpen={isOpenMenu}
                 onChangeOpen={setIsOpenMenu}
                 data={reasons}
-                selectedItem={{key: reason.type}}
+                selectedItem={{
+                  key: reasons.find(
+                    (item: any) => item.id === currentReport.reasonId,
+                  ).key,
+                }}
                 onChangeSelected={onChangeSelected}>
                 <Pressable onPress={() => setIsOpenMenu(!isOpenMenu)}>
                   <View
@@ -203,7 +399,11 @@ const HistoryItem = (props: Props) => {
                         textAlign: 'center',
                         color: colors.text,
                       }}>
-                      {t(reason.type)}
+                      {
+                        reasons.find(
+                          (item: any) => item.id === currentReport.reasonId,
+                        ).title
+                      }
                     </Text>
                     {isOpenMenu ? (
                       <Entypo
@@ -227,6 +427,10 @@ const HistoryItem = (props: Props) => {
                 textAlignVertical="top"
                 placeholder={t('history.additionalNote')}
                 onBlur={() => {}}
+                value={currentReport.note}
+                onChangeText={t =>
+                  setCurrentReport((prev: any) => ({...prev, note: t}))
+                }
                 style={{
                   textAlign: 'left',
                   paddingHorizontal: 8,
@@ -249,6 +453,11 @@ const HistoryItem = (props: Props) => {
                 <TouchableOpacity
                   onPress={() => {
                     setIsOpenModal(null);
+                    setCurrentReport({
+                      note: '',
+                      bookingId: '',
+                      reasonId: -1,
+                    });
                   }}
                   style={{
                     justifyContent: 'center',
@@ -263,6 +472,7 @@ const HistoryItem = (props: Props) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
+                    handleReport();
                     setIsOpenModal(null);
                   }}
                   style={{
@@ -303,32 +513,19 @@ const HistoryItem = (props: Props) => {
                   justifyContent: 'center',
                   marginVertical: 4,
                 }}>
-                <AntDesign name="star" size={20} color={colors.yellow} />
-                <AntDesign
-                  name="star"
-                  size={20}
-                  color={colors.yellow}
-                  style={{marginHorizontal: 4}}
+                <RenderRating
+                  size={28}
+                  rating={currentRating.rating}
+                  interactive={true}
+                  onChangeRating={onChangeRating}
                 />
-                <AntDesign
-                  name="star"
-                  size={20}
-                  color={colors.yellow}
-                  style={{marginHorizontal: 4}}
-                />
-                <AntDesign
-                  name="star"
-                  size={20}
-                  color={colors.yellow}
-                  style={{marginHorizontal: 4}}
-                />
-                <AntDesign name="staro" size={20} color={colors.yellow} />
               </View>
               <TextInput
                 multiline={true}
                 numberOfLines={8}
                 textAlignVertical="top"
                 placeholder={t('history.contentReview')}
+                placeholderTextColor={colors.grey500}
                 onBlur={() => {}}
                 style={{
                   textAlign: 'left',
@@ -339,8 +536,13 @@ const HistoryItem = (props: Props) => {
                   borderRadius: 6,
                   marginTop: 16,
                   zIndex: -1,
-                  fontSize: 14,
+                  fontSize: 15,
+                  color: 'black',
                 }}
+                value={currentRating.content}
+                onChangeText={t =>
+                  setCurrentRating((prev: any) => ({...prev, content: t}))
+                }
               />
 
               <View
@@ -366,6 +568,10 @@ const HistoryItem = (props: Props) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
+                    if (isOpenModal === 'rating') {
+                      handleChangeFeedback();
+                    } else if (isOpenModal === 'report') {
+                    }
                     setIsOpenModal(null);
                   }}
                   style={{

@@ -93,10 +93,11 @@ const SignIn = () => {
       await EncryptedStorage.setItem(
         'user_session',
         JSON.stringify({
-          email: user.email,
-          password: user.password,
+          user: res.data.user,
           accessToken: res.data.tokens.access.token,
+          accessExpires: res.data.tokens.access.expires,
           refreshToken: res.data.tokens.refresh.token,
+          refreshExpires: res.data.tokens.refresh.expires,
         }),
       );
 

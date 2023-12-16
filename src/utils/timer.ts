@@ -84,3 +84,21 @@ export const convertSecondsToMinutes = (seconds: number) => {
     minutes >= 10 ? minutes : '0' + minutes
   } : ${remainingSeconds >= 10 ? remainingSeconds : '0' + remainingSeconds}`;
 };
+
+export const padNumber = (number: number) => {
+  return number < 10 ? '0' + number : number;
+};
+
+export const getDateAgo = (date1: number, date2: number) => {
+  const diff = date2 - date1;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days < 7) {
+    return days + ' days ago';
+  } else if (days >= 7 && days < 30) {
+    return Math.floor(days / 7) + ' weeks ago';
+  } else if (days < 365) {
+    return Math.floor(days / 30) + ' months ago';
+  } else if (days > 365) {
+    return Math.floor(days / 365) + ' years ago';
+  }
+};
