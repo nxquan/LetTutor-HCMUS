@@ -384,7 +384,7 @@ const HistoryItem = (props: Props) => {
                 selectedItem={{
                   key: reasons.find(
                     (item: any) => item.id === currentReport.reasonId,
-                  ).key,
+                  )?.key,
                 }}
                 onChangeSelected={onChangeSelected}>
                 <Pressable onPress={() => setIsOpenMenu(!isOpenMenu)}>
@@ -402,7 +402,7 @@ const HistoryItem = (props: Props) => {
                       {
                         reasons.find(
                           (item: any) => item.id === currentReport.reasonId,
-                        ).title
+                        )?.title
                       }
                     </Text>
                     {isOpenMenu ? (

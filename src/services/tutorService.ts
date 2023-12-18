@@ -1,9 +1,10 @@
 import {AUTH, TUTOR} from './_constants';
 import {get, post, put} from './api';
 
-// export const getTutorByPage = (config = {}) => {
-//   return get(TUTOR.GET_TUTORS, config);
-// };
+export const getTutorByPage = (config = {}) => {
+  return get(TUTOR.GET_TUTORS, config);
+};
+
 export const getTutorInfoById = (config: any = {}) => {
   return get(TUTOR.GET_TUTOR_INFO(config?.params?.tutorId), config);
 };

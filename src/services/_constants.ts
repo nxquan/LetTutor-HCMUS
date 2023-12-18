@@ -2,11 +2,13 @@ export const AUTH = {
   REGISTER: '/auth/register',
   LOGIN: '/auth/login',
   VERIFY_ACCOUNT: (token: string) => `/auth/verifyAccount?token=${token}`,
+  CHANGE_PASSWORD: '/auth/change-password',
   FORGOT_PASSWORD: '/user/forgotPassword',
 };
 
 export const USER = {
   GET_INFO: '/user/info',
+  UPLOAD_AVATAR: '/user/uploadAvatar',
 };
 
 export const TUTOR = {

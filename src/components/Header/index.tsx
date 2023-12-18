@@ -78,7 +78,7 @@ function Header(props: Props) {
   useEffect(() => {
     const language = languages.find(l => l.key === state.language);
     setCurrentLanguage(language);
-  }, [state]);
+  }, [state.language]);
 
   return (
     <View style={[styles.nav, style]}>
@@ -97,7 +97,7 @@ function Header(props: Props) {
           onChangeOpen={setIsOpenLanguageMenu}
           onChangeSelected={onChangeLanguage}
           selectedItem={currentLanguage}
-          styleMenu={{width: 160, left: -120}}>
+          styleMenu={{width: 160}}>
           <Pressable onPress={() => setIsOpenLanguageMenu(!isOpenLanguageMenu)}>
             <View style={styles.languageBtn}>
               <Image

@@ -3,7 +3,13 @@ import React from 'react';
 import ReviewItem from '../ReviewItem';
 import BEPagination from '../BEPagination';
 
-const ReviewList = (props: any) => {
+type Props = {
+  data: any;
+  totalItems: number;
+  currentPage: number;
+  onChangePage: (page: number) => void;
+};
+const ReviewList = (props: Props) => {
   const {data, totalItems, currentPage, onChangePage} = props;
 
   const renderReviews = (reviews: any[]) => {
@@ -19,7 +25,7 @@ const ReviewList = (props: any) => {
       }}>
       {renderReviews(data)}
       <BEPagination
-        ITEMS_PER_PAGE={12}
+        ITEMS_PER_PAGE={12} //Default 12
         totalItems={totalItems}
         currentPage={currentPage}
         onChangePage={onChangePage}

@@ -7,39 +7,40 @@ import {
   Pressable,
   ScrollView,
   TextInput,
+  Dimensions,
 } from 'react-native';
-import React, {useCallback, useState, useEffect} from 'react';
+import React, {useCallback, useState, useEffect, useMemo} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import styles from './styles';
-import {images} from '@/assets';
 import FormGroup from '@/components/FormGroup';
 import {colors} from '@/constants';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import DocumentPicker, {
-  DirectoryPickerResponse,
-  DocumentPickerResponse,
   isCancel,
   isInProgress,
-  types,
 } from 'react-native-document-picker';
 
 import DropdownMenu from '@/components/DropdownMenu';
-import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
+import {LEARN_TOPICS} from '@/store/mock-data';
 import Header from '@/components/Header';
 import Button from '@/components/Button';
 import {formatDate} from '@/utils';
-import {useGlobalContext, useTranslations} from '@/hooks';
-import {changePassword, changeProfile} from '@/store';
+import {useTranslations} from '@/hooks';
 import ModalPopper from '@/components/ModalPopper';
-import ReviewList from '@/components/ReviewList';
 import DrawerButton from '@/components/DrawerButton';
+import ReviewModal from './components/ReviewInner';
+import ChangePasswordInner from './components/ChangePasswordInner';
+import ToastManager, {Toast} from 'toastify-react-native';
+import {toastConfig} from '@/config';
 
+import * as userService from '@/services/userService';
+import * as utilService from '@/services/utilService';
 const LEVELS = [
   {
     id: 1,
@@ -55,7 +56,7 @@ const LEVELS = [
   {
     id: 3,
     title: 'A2 (Pre-Intermediate)',
-    key: 'PREV_INTERMEDIATE',
+    key: 'PRE_INTERMEDIATE',
   },
   {
     id: 4,
@@ -77,58 +78,36 @@ const LEVELS = [
     title: 'C2 (Proficiency)',
     key: 'PROFICIENCY',
   },
-  {
-    id: 8,
-    title: 'Upper A1 (High Beginner)',
-    key: 'HIGH_BEGINNER',
-  },
-  {
-    id: 9,
-    title: 'A2 (Pre-Intermediate)',
-    key: 'PREV_INTERMEDIATE',
-  },
 ];
 
-const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
-
+const width = Dimensions.get('window').width;
 const Profile = () => {
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
   const [isOpenSpecialtyMenu, setIsOpenSpecialtyMenu] = useState(false);
   const [isOpenPasswordModal, setIsOpenPasswordModal] = useState(false);
   const [isOpenReviewModal, setIsOpenReviewModal] = useState(false);
+  const [isOpenUploadModal, setIsOpenUploadModal] = useState(false);
   const [countries, setCountries] = useState<any[]>([]);
   const [isOpenCountryModal, setIsOpenCountryModal] = useState(false);
-
-  const [feedbacks, setFeedbacks] = useState([]);
   const [profile, setProfile] = useState<any>(undefined);
-  const [passwordState, setPasswordState] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
   const [isChange, setIsChange] = useState(false);
-  const [avatar, setAvatar] = React.useState<any>();
+  const [avatar, setAvatar] = React.useState<any>({
+    fileCopyUri: '',
+    isChange: false,
+  });
   const [curName, setCurName] = useState('');
-  useEffect(() => {
-    if (avatar) {
-      onChangeProfile('avatar', avatar?.[0]?.fileCopyUri);
-    }
-  }, [avatar]);
+  const [specialties, setSpecialties] = useState<any[]>([]);
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
+    setIsShowDatePicker(false);
     if (type == 'set') {
       setProfile((prev: any) => {
         const currentDate = selectedDate;
         return {...prev, birthday: currentDate?.toDateString()};
       });
-
-      setIsShowDatePicker(false);
-    } else {
-      setIsShowDatePicker(false);
     }
   };
 
@@ -159,13 +138,6 @@ const Profile = () => {
     });
     setIsChange(true);
   }, []);
-
-  const onChangePasswordState = (key: string, value: string) => {
-    setPasswordState((prev: any) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
 
   const renderSpecialties = () => {
     if (profile?.testPreparations || profile?.learnTopics) {
@@ -224,31 +196,60 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    const userId = 'f569c202-7bbf-4620-af77-ecc1419a6b28';
-
-    const user = state.userInfos.find((item: any) => item?.id === userId);
-    if (user) {
-      setProfile({
-        ...user,
-        country: {
-          name: '',
-          region: '',
-          key: '',
-          id: '',
-        },
-      });
-      setCurName(user.name);
+  const handleError = (err: unknown) => {
+    if (isCancel(err)) {
+    } else if (isInProgress(err)) {
+      console.warn(
+        'multiple pickers were opened, only the first will be considered',
+      );
+    } else {
+      throw err;
     }
+  };
 
-    const feedbacks = state.feedbacks.filter(
-      (item: any) => item?.secondId === '4d54d3d7-d2a9-42e5-97a2-5ed38af5789a',
-    );
-    setFeedbacks(feedbacks);
-  }, [state]);
+  const renderDrawerButton: JSX.Element = useMemo(() => {
+    return <DrawerButton />;
+  }, []);
 
-  const handleSubmit = () => {
-    dispatch(changeProfile(profile));
+  const handleChangeProfile = async () => {
+    const payload = {
+      name: profile?.name,
+      birthday: profile?.birthday,
+      country: profile?.country?.key ? profile?.country?.key : profile?.country,
+      level: profile?.level,
+      phone: profile?.phone,
+      studySchedule: profile?.studySchedule,
+      learnTopics: profile.learnTopics.map((item: any) => item.id),
+      testPreparations: profile.testPreparations.map((item: any) => item.id),
+    };
+    const res = await userService.updateUserInfo(payload);
+    if (res.success) {
+      const {user} = res.data;
+      setProfile(user);
+      setIsChange(false);
+      setCurName(profile.name);
+      Toast.success('Update profile successfully');
+    } else {
+      Toast.error('Update profile failed', 'top');
+    }
+  };
+
+  const handleUploadAvatar = async () => {
+    var data = new FormData();
+    data.append('avatar', {
+      uri: avatar.fileCopyUri,
+      name: avatar.name,
+      type: avatar.type,
+    });
+    const res = await userService.uploadUserAvatar(data);
+    if (res.success) {
+      setProfile((prev: any) => ({...prev, avatar: res.data.avatar}));
+      setAvatar({fileCopyUri: res.data.avatar, isChange: false});
+      Toast.success('Upload avatar successfully');
+    } else {
+      Toast.error('Upload avatar failed', 'top');
+    }
+    setIsOpenUploadModal(false);
   };
 
   useEffect(() => {
@@ -268,44 +269,44 @@ const Profile = () => {
         _countries.sort((a, b) => a.key.localeCompare(b.key));
         setCountries(_countries);
       });
+
+    const fetchInfo = async () => {
+      const res = await userService.getUserInfo();
+      if (res.success) {
+        const {user} = res.data;
+        setProfile(user);
+        setAvatar({fileCopyUri: user.avatar, isChange: false});
+        setCurName(user.name);
+      }
+    };
+
+    const fetchSpecialties = async () => {
+      const learnTopics = await utilService.getLearnTopics();
+      const testPreparations = await utilService.getTestPreparations();
+
+      const _specialties: any[] = [
+        ...learnTopics.data.map((item: any) => ({
+          ...item,
+          parentType: 'learnTopics',
+        })),
+        ...testPreparations.data.map((item: any) => ({
+          ...item,
+          parentType: 'testPreparations',
+        })),
+      ];
+
+      setSpecialties(_specialties);
+    };
+    fetchInfo();
+    fetchSpecialties();
   }, []);
 
-  const handleChangePassword = () => {
-    console.log(
-      'email:',
-      state.currentUser.email,
-      'currentPassword:',
-      passwordState.currentPassword,
-      'newPassword:',
-      passwordState.newPassword,
-    );
-    const payload = {
-      email: state.currentUser.email.toLowerCase(),
-      currentPassword: passwordState.currentPassword,
-      newPassword: passwordState.newPassword,
-    };
-    dispatch(changePassword(payload));
-    setIsOpenPasswordModal(false);
-  };
-
-  const handleError = (err: unknown) => {
-    if (isCancel(err)) {
-    } else if (isInProgress(err)) {
-      console.warn(
-        'multiple pickers were opened, only the first will be considered',
-      );
-    } else {
-      throw err;
-    }
-  };
-
-  console.log('users', state.users);
   return (
     <ScrollView
       className="bg-white"
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={[0]}>
-      <Header drawerBtn={<DrawerButton />} />
+      <Header drawerBtn={renderDrawerButton} />
       <View
         style={styles.inner}
         className="border border-gray-300 rounded-md mx-4 my-8">
@@ -329,15 +330,7 @@ const Profile = () => {
             />
             <TouchableOpacity
               onPress={async () => {
-                try {
-                  const pickerResult = await DocumentPicker.pickSingle({
-                    presentationStyle: 'fullScreen',
-                    copyTo: 'cachesDirectory',
-                  });
-                  setAvatar([pickerResult]);
-                } catch (e) {
-                  handleError(e);
-                }
+                setIsOpenUploadModal(true);
               }}
               className="bg-blue-500 rounded-full flex justify-center items-center"
               style={{
@@ -345,12 +338,12 @@ const Profile = () => {
                 height: 36,
                 position: 'absolute',
                 top: '65%',
-                right: 5,
+                right: 0,
               }}>
               <FontAwesome5 name="pen" size={20} color={colors.white} />
             </TouchableOpacity>
           </View>
-          <Text className="font-bold text-blue-500 text-2xl text-center mt-1">
+          <Text className="font-medium text-blue-500 text-3xl text-center mt-2">
             {curName}
           </Text>
           <Text className="text-base text-grey-500 mt-1">
@@ -397,15 +390,20 @@ const Profile = () => {
             data={countries}
             onChangeOpen={setIsOpenCountryModal}
             onChangeSelected={onChangeProfile}
-            selectedItem={profile?.country}
+            selectedItem={{key: profile?.country}}
             typeOfMenu="country"
-            style={{zIndex: 1}}>
+            style={{zIndex: 4}}>
             <Pressable
               className="py-2.5 mb-2.5"
               onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
               style={styles.dropdownMenuBtn}>
               <Text style={{fontSize: 14, color: colors.text}}>
-                {profile?.country?.name || t('tutor.selectNationalities')}
+                {countries.find((country: any) => {
+                  if (profile?.country?.key) {
+                    return country.key === profile?.country?.key;
+                  }
+                  return country.key === profile?.country;
+                })?.name || t('tutor.selectNationalities')}
               </Text>
               {isOpenCountryModal ? (
                 <Entypo name="chevron-small-down" size={24} color="black" />
@@ -417,13 +415,18 @@ const Profile = () => {
 
           <FormGroup
             required
+            editable={false}
             title={t('profile.phoneNumber')}
             type="phone"
             field="phone"
             value={profile?.phone}
             onChange={onChangeProfile}
           />
-
+          {profile?.isPhoneActivated && (
+            <Text className="px-2 py-1 bg-green-50 rounded text-green-600 border border-green-500 self-end">
+              Verified
+            </Text>
+          )}
           <Text className="text-base font-normal text-gray-800">
             <Text className="text-red-500">* </Text>
             {t('birthday')}
@@ -508,11 +511,12 @@ const Profile = () => {
           </Text>
           <DropdownMenu
             isOpen={isOpenSpecialtyMenu}
-            data={SPECIALTIES}
+            data={specialties}
             onChangeOpen={setIsOpenSpecialtyMenu}
             onChangeSelected={onChangeProfile}
             selectedItem={null}
             typeOfMenu="learnTopics"
+            useKey={true}
             style={{zIndex: 2}}>
             <Pressable
               onPress={() => setIsOpenSpecialtyMenu(!isOpenSpecialtyMenu)}
@@ -567,7 +571,7 @@ const Profile = () => {
 
           <Button
             title={t('profile.saveChanges')}
-            onPress={isChange ? handleSubmit : undefined}
+            onPress={isChange ? handleChangeProfile : undefined}
             style={{
               backgroundColor: colors.primary,
               color: colors.white,
@@ -577,101 +581,113 @@ const Profile = () => {
           />
         </View>
       </View>
-      <ModalPopper visible={isOpenPasswordModal} transparent={true}>
-        <View style={{width: '100%'}}>
-          <View className="flex-row justify-between items-center">
-            <Text className="text-black text-base font-semibold">
-              {t('signin.changePassword')}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setIsOpenPasswordModal(false);
-              }}>
-              <AntDesign name="close" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View className="h-px mt-4 bg-gray-300" />
-          <View className="w-full pt-3">
-            <FormGroup
-              required
-              title={t('curPassword')}
-              type="password"
-              field="currentPassword"
-              value={passwordState.currentPassword}
-              onChange={onChangePasswordState}
-            />
-            <FormGroup
-              required
-              title={t('newPassword')}
-              type="password"
-              field="newPassword"
-              value={passwordState.newPassword}
-              onChange={onChangePasswordState}
-            />
 
-            <FormGroup
-              required
-              title={t('newPassword')}
-              type="password"
-              value={passwordState.confirmPassword}
-              field="confirmPassword"
-              onChange={onChangePasswordState}
-              duplicateValue={passwordState.newPassword}
-            />
-            <View className="flex-row self-end mt-4">
-              <Button
-                title="Cancel"
-                onPress={() => {
-                  setIsOpenPasswordModal(false);
-                }}
-                style={{
-                  borderColor: colors.primary,
-                  color: colors.primary,
-                }}
-              />
-              <Button
-                title="Save"
-                onPress={() => {
-                  handleChangePassword();
-                }}
-                leftIcon={
-                  <Feather
-                    name="chevrons-right"
-                    size={20}
-                    color={colors.white}
-                  />
-                }
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.white,
-                  marginLeft: 16,
-                }}
-              />
-            </View>
-          </View>
-        </View>
+      <ModalPopper visible={isOpenPasswordModal} transparent={true}>
+        <ChangePasswordInner toggleModal={setIsOpenPasswordModal} />
       </ModalPopper>
 
       <ModalPopper visible={isOpenReviewModal} transparent={true}>
-        <View style={{width: '100%'}}>
-          <View className="flex-row justify-between items-center">
-            <Text className="text-black text-base font-semibold">
-              {t('tutorDetail.othersReview')}
-            </Text>
+        <ReviewModal toggleModal={setIsOpenReviewModal} tutorId={profile?.id} />
+      </ModalPopper>
 
+      <ModalPopper visible={isOpenUploadModal} transparent={true}>
+        <View style={{width: '100%'}}>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-black text-lg font-semibold">
+              Upload avatar
+            </Text>
             <TouchableOpacity
               onPress={() => {
-                setIsOpenReviewModal(false);
+                setIsOpenUploadModal(false);
               }}>
               <AntDesign name="close" size={24} color="black" />
             </TouchableOpacity>
           </View>
-          <View className="h-px mt-4 bg-gray-300" />
-          <View className="w-full pt-3">
-            <ReviewList data={feedbacks} ITEMS_PER_PAGE={6} />
+          <View
+            style={{
+              marginVertical: 16,
+              height: 1,
+              backgroundColor: colors.grey300,
+            }}
+          />
+
+          <View
+            style={{width: 200, height: 200, marginVertical: 20}}
+            className="self-center">
+            <Image
+              className="self-center rounded-full"
+              resizeMode="cover"
+              resizeMethod="auto"
+              src={avatar?.fileCopyUri}
+              source={{
+                uri:
+                  avatar?.fileCopyUri ||
+                  'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
+              }}
+              style={{
+                width: 160,
+                height: 160,
+                borderWidth: 1,
+                borderColor: 'rgba(0,0,0,0.1)',
+              }}
+            />
+            <TouchableOpacity
+              onPress={async () => {
+                try {
+                  const pickerResult = await DocumentPicker.pickSingle({
+                    presentationStyle: 'fullScreen',
+                    copyTo: 'documentDirectory',
+                    type: [DocumentPicker.types.images],
+                    mode: 'import',
+                  });
+                  setAvatar({...pickerResult, isChange: true});
+                } catch (e) {
+                  handleError(e);
+                }
+              }}
+              className="bg-blue-500 rounded-full flex justify-center items-center"
+              style={{
+                width: 36,
+                height: 36,
+                position: 'absolute',
+                top: '60%',
+                right: 20,
+              }}>
+              <FontAwesome5 name="pen" size={20} color={colors.white} />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'flex-end',
+              marginTop: 16,
+            }}>
+            <Button
+              title="Cancel"
+              onPress={() => {
+                setIsOpenUploadModal(false);
+              }}
+              style={{
+                borderColor: colors.primary,
+                color: colors.primary,
+              }}
+            />
+            <Button
+              title="Upload"
+              onPress={avatar?.isChange ? handleUploadAvatar : undefined}
+              leftIcon={
+                <Feather name="chevrons-right" size={20} color={colors.white} />
+              }
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.white,
+                marginLeft: 16,
+              }}
+            />
           </View>
         </View>
       </ModalPopper>
+      <ToastManager {...toastConfig} width={width - 24} />
     </ScrollView>
   );
 };
