@@ -1,4 +1,8 @@
 import axios from 'axios';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
+export const JSON_HEADER = {'Content-Type': 'application/json'};
+export const FORM_DATA_HEADER = {'Content-Type': 'multipart/form-data'};
 
 export const instance = axios.create({
   baseURL: 'https://sandbox.api.lettutor.com',
@@ -6,9 +10,32 @@ export const instance = axios.create({
   responseType: 'json',
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
+    ...JSON_HEADER,
   },
 });
+
+instance.interceptors.request.use(
+  async config => {
+    const token: any = await EncryptedStorage.getItem('user_session');
+    if (token) {
+      if (config.data instanceof FormData) {
+        // eslint-disable-next-line no-param-reassign
+        const headers: any = {
+          ...FORM_DATA_HEADER,
+        };
+        config.headers = {
+          ...headers,
+        };
+      }
+      config.headers.Authorization = `Bearer ${JSON.parse(token).accessToken}`;
+    } else {
+      delete config.headers.Authorization;
+    }
+
+    return config;
+  },
+  error => Promise.reject(error),
+);
 
 export const get = async (url: string, config = {}) => {
   try {

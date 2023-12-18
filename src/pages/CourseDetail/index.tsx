@@ -11,13 +11,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import styles from './styles';
 import Header from '@/components/Header';
-import {images} from '@/assets';
 import {colors} from '@/constants';
-import {DrawerActions, useNavigation, useRoute} from '@react-navigation/native';
-import StackProps, {DrawerProps} from '@/types/type';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {DrawerProps} from '@/types/type';
 import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
-import {useGlobalContext, useTranslations} from '@/hooks';
+import {useTranslations} from '@/hooks';
+import * as courseService from '@/services/courseService';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const levels = [
   {
@@ -71,23 +72,24 @@ const CourseDetail = (props: any) => {
   const {} = props;
 
   const {t} = useTranslations();
-  const [state, dispatch] = useGlobalContext();
   const navigation = useNavigation<DrawerProps>();
   const route: any = useRoute();
   const [course, setCourse] = useState<any>({});
 
   useEffect(() => {
-    const _course = state.courses.find(
-      (item: any) => item.id === route.params?.courseId,
-    );
-    const topics = _course?.topics.sort(
-      (a: any, b: any) => a.orderCourse - b.orderCourse,
-    );
-
-    setCourse({
-      ..._course,
-      topics,
-    });
+    const fetchCourseById = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const res = await courseService.getCourseById(route.params?.courseId, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
+      if (res.success) {
+        const {data} = res.data;
+        setCourse(data);
+      }
+    };
+    fetchCourseById();
   }, [route.params?.courseId]);
 
   const getLevelName = (level: number) => {
@@ -223,33 +225,42 @@ const CourseDetail = (props: any) => {
               })}
             </View>
           </View>
-
-          <View style={styles.detailContent}>
-            <View style={styles.detailHeading}>
-              <Text style={styles.heading}>
-                {t('courseDetail.suggestedTutors')}
-              </Text>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.detailItem}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <AntDesign name="link" size={18} color={colors.primary} />
-                <Text style={[styles.detailItemHeading]}>Keegan</Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('TutorDetail')}>
-                  <Text
-                    style={{
-                      color: colors.primary,
-                      fontSize: 14,
-                      fontWeight: '400',
-                      marginLeft: 6,
-                    }}>
-                    More info
-                  </Text>
-                </TouchableOpacity>
+          {course?.users?.length > 0 && (
+            <View style={styles.detailContent}>
+              <View style={styles.detailHeading}>
+                <Text style={styles.heading}>
+                  {t('courseDetail.suggestedTutors')}
+                </Text>
+                <View style={styles.line} />
+              </View>
+              <View style={styles.detailItem}>
+                {course.users.map((user: any) => {
+                  return (
+                    <View key={user.id} className="flex-row items-center">
+                      <AntDesign name="link" size={18} color={colors.primary} />
+                      <Text style={[styles.detailItemHeading, {fontSize: 18}]}>
+                        {user.name}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('TutorDetail', {tutorId: user.id})
+                        }>
+                        <Text
+                          style={{
+                            color: colors.primary,
+                            fontSize: 14,
+                            fontWeight: '400',
+                            marginLeft: 6,
+                          }}>
+                          More info
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
               </View>
             </View>
-          </View>
+          )}
         </View>
       </View>
     </ScrollView>

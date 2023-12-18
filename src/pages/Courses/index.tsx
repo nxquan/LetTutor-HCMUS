@@ -9,10 +9,11 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 import Header from '@/components/Header';
 import styles from './styles';
@@ -21,8 +22,8 @@ import {colors} from '@/constants';
 import DropdownMenu from '@/components/DropdownMenu';
 import CourseItem from './components/CourseItem';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext, useTranslations} from '@/hooks';
-
+import {useTranslations} from '@/hooks';
+import * as courseService from '@/services/courseService';
 const levels = [
   {
     id: 0,
@@ -71,79 +72,6 @@ const levels = [
   },
 ];
 
-const categories = [
-  {
-    id: 1,
-    title: 'For studying abroad',
-    key: '',
-  },
-  {
-    id: 2,
-    title: 'English for Traveling',
-    key: '',
-  },
-  {
-    id: 3,
-    title: 'Conversational English',
-    key: '',
-  },
-  {
-    id: 4,
-    title: 'English for Beginners',
-    key: '',
-  },
-  {
-    id: 5,
-    title: 'Business English',
-    key: '',
-  },
-  {
-    id: 6,
-    title: 'STARTERS',
-    key: '',
-  },
-  {
-    id: 7,
-    title: 'English for kids',
-    key: '',
-  },
-  {
-    id: 8,
-    title: 'PET',
-    key: '',
-  },
-  {
-    id: 9,
-    title: 'KET',
-    key: '',
-  },
-  {
-    id: 10,
-    title: 'MOVERS',
-    key: '',
-  },
-  {
-    id: 11,
-    title: 'FLYERS',
-    key: '',
-  },
-  {
-    id: 12,
-    title: 'TOEFL',
-    key: '',
-  },
-  {
-    id: 13,
-    title: 'TOEIC',
-    key: '',
-  },
-  {
-    id: 14,
-    title: 'IELTS',
-    key: '',
-  },
-];
-
 type SearchState = {
   levels: [];
   categories: [];
@@ -165,12 +93,13 @@ const sorts = [
 ];
 
 const Courses = () => {
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
   const [isOpenCategoriesMenu, setIsOpenCategoriesMenu] = useState(false);
   const [isOpenSortMenu, setIsOpenSortMenu] = useState(false);
   const [tab, setTab] = useState('course');
+  const [courses, setCourses] = useState<any>([]);
+  const [categories, setCategories] = useState<any>([]);
 
   const [searchValue, setSearchValue] = useState<SearchState>({
     levels: [],
@@ -245,23 +174,22 @@ const Courses = () => {
   };
 
   const renderCourses = () => {
-    const categories = state.courseCategories;
-    const result: any[] = [];
+    const components: any[] = [];
     categories.forEach((category: any) => {
-      const courses = state.courses.filter((course: any) => {
+      const _courses = courses.filter((course: any) => {
         const isMatch = course?.categories.find(
           (item: any) => item?.key === category.key,
         );
         return !!isMatch;
       });
 
-      if (courses.length > 0) {
-        result.push(
+      if (_courses.length > 0) {
+        components.push(
           <View style={styles.courseSection} key={category.id}>
             <Text style={styles.courseHeading}>{category.title}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.courseList}>
-                {courses.map((item: any) => (
+                {_courses.map((item: any) => (
                   <CourseItem key={item.id} data={item} />
                 ))}
               </View>
@@ -271,8 +199,38 @@ const Courses = () => {
       }
     });
 
-    return result;
+    return components;
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const resContentCategories = await courseService.getContentCategories({
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
+      if (resContentCategories.success) {
+        setCategories(resContentCategories.data.rows);
+      }
+
+      const resCourses = await courseService.getCourses({
+        params: {
+          page: 1,
+          size: 100,
+        },
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
+
+      if (resCourses.success) {
+        const {data} = resCourses.data;
+        setCourses(data.rows);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <ScrollView
@@ -435,57 +393,7 @@ const Courses = () => {
         </TouchableOpacity>
       </View>
       {tab === 'course' && (
-        <View style={{marginBottom: 32}}>
-          {/* <View style={styles.courseSection}>
-            <Text style={styles.courseHeading}>English For Traveling</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.courseList}>
-                <CourseItem src={images.courseItem1} />
-                <CourseItem src={images.courseItem1} />
-                <CourseItem src={images.courseItem1} />
-                <CourseItem src={images.courseItem1} />
-                <CourseItem src={images.courseItem1} />
-              </View>
-            </ScrollView>
-          </View>
-          <View style={styles.courseSection}>
-            <Text style={styles.courseHeading}>English For Beginners</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.courseList}>
-                <CourseItem src={images.courseItem2} />
-                <CourseItem src={images.courseItem2} />
-                <CourseItem src={images.courseItem2} />
-                <CourseItem src={images.courseItem2} />
-                <CourseItem src={images.courseItem2} />
-              </View>
-            </ScrollView>
-          </View>
-          <View style={styles.courseSection}>
-            <Text style={styles.courseHeading}>Business English</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.courseList}>
-                <CourseItem src={images.courseItem3} />
-                <CourseItem src={images.courseItem3} />
-                <CourseItem src={images.courseItem3} />
-                <CourseItem src={images.courseItem3} />
-                <CourseItem src={images.courseItem3} />
-              </View>
-            </ScrollView>
-          </View>
-          <View style={styles.courseSection}>
-            <Text style={styles.courseHeading}>English For Kid</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.courseList}>
-                <CourseItem src={images.courseItem4} />
-                <CourseItem src={images.courseItem4} />
-                <CourseItem src={images.courseItem4} />
-                <CourseItem src={images.courseItem4} />
-                <CourseItem src={images.courseItem4} />
-              </View>
-            </ScrollView>
-          </View> */}
-          {renderCourses()}
-        </View>
+        <View style={{marginBottom: 32}}>{renderCourses()}</View>
       )}
     </ScrollView>
   );

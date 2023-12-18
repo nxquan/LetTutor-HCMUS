@@ -132,7 +132,6 @@ const Tutor = () => {
   const onChangeNationality = useCallback((item: any) => {
     if (!filters.nationalities.includes(item)) {
       setFilters((prev: any) => {
-        console.log('prev', prev);
         return {
           ...prev,
           nationalities: [...prev.nationalities, item],

@@ -163,7 +163,9 @@ const UpComingLesson = () => {
         </View>
       ) : (
         <View>
-          <Text style={styles.notiHeading}>You have no upcoming lesson.</Text>
+          <Text style={[styles.notiHeading, {paddingVertical: 40}]}>
+            You have no upcoming lesson.
+          </Text>
         </View>
       )}
 

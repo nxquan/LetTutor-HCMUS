@@ -5,6 +5,10 @@ export const AUTH = {
   FORGOT_PASSWORD: '/user/forgotPassword',
 };
 
+export const USER = {
+  GET_INFO: '/user/info',
+};
+
 export const TUTOR = {
   GET_TUTORS: 'tutor/more',
   GET_TUTOR_INFO: (tutorId: string) => `/tutor/${tutorId}`,
@@ -27,4 +31,15 @@ export const REPORT = {
 
 export const CALL = {
   GET_TOTAL: '/call/total',
+};
+
+export const COURSE = {
+  GET_COURSES: '/course',
+  GET_COURSE_BY_ID: (courseId: string) => `/course/${courseId}`,
+  GET_CONTENT_CATEGORY: '/content-category',
+};
+
+export const UTILS = {
+  GET_TEST_PREPARATION: '/test-preparation',
+  GET_LEARN_TOPIC: '/learn-topic',
 };

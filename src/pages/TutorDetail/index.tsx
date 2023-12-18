@@ -221,7 +221,6 @@ const TutorDetail = () => {
         // const _bookings = extractBookings(tutorId);
       }
       // setBookings(_bookings);
-      // setFeedbacks(_feedbacks);
     };
 
     getTutorInfoById();
