@@ -9,6 +9,10 @@ export const getNextBookings = (config = {}) => {
   return get(BOOKING.GET_NEXT_BOOKING, config);
 };
 
+export const placeBooking = (data = {}, config = {}) => {
+  return post(BOOKING.PLACE_BOOKING, data, config);
+};
+
 export const addFeedback = (data = {}, config = {}) => {
   return post(BOOKING.CREATE_FEEDBACK, data, config);
 };

@@ -41,33 +41,26 @@ const SignUp = () => {
   };
 
   const handleSubmit = async () => {
-    // const res = await AuthService.register({
-    //   email: String(user.email).trim().toLowerCase(),
-    //   password: user.password,
-    // });
-
-    const verifyAccountRes = await AuthService.verifyAccount({
-      token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWUzMDJhMi0zY2Y5LTQ0ZWItOGQxNS04M2VjYzE2NWIzMGMiLCJpYXQiOjE3MDE3NzQzNTAsImV4cCI6MTcwMTg2MDc1MCwidHlwZSI6ImFjY2VzcyJ9.6oGsCFCMVb82ydXQrpq9eD406gt0GM-CNMxeZvpb3bo',
+    const res = await AuthService.register({
+      email: String(user.email).trim().toLowerCase(),
+      password: user.password,
     });
-    console.log('verifyAccountRes', verifyAccountRes);
 
-    // console.log('res', res.data);
-    // if (res.success) {
-    //   setNotification({
-    //     type: 'success',
-    //     message: 'Đăng ký thành công',
-    //   });
-    //   setUser({
-    //     email: '',
-    //     password: '',
-    //   });
-    // } else {
-    //   setNotification({
-    //     type: 'error',
-    //     message: res.message,
-    //   });
-    // }
+    if (res.success) {
+      setNotification({
+        type: 'success',
+        message: 'Đăng ký thành công. Đã gửi email kích hoạt tài khoản!',
+      });
+      setUser({
+        email: '',
+        password: '',
+      });
+    } else {
+      setNotification({
+        type: 'error',
+        message: res.message,
+      });
+    }
   };
 
   useEffect(() => {
@@ -78,7 +71,7 @@ const SignUp = () => {
           message: '',
           type: '',
         });
-      }, 10000);
+      }, 15000);
     }
     return () => clearTimeout(timerId);
   }, [notification]);

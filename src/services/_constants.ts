@@ -24,6 +24,7 @@ export const BOOKING = {
   GET_BOOKING: '/booking/list/student',
   GET_NEXT_BOOKING: '/booking/next',
   CREATE_FEEDBACK: '/user/feedbackTutor',
+  PLACE_BOOKING: '/booking',
 };
 
 export const REPORT = {
@@ -41,7 +42,11 @@ export const COURSE = {
   GET_CONTENT_CATEGORY: '/content-category',
 };
 
+export const SCHEDULE = {
+  GET_SCHEDULES: '/schedule',
+};
 export const UTILS = {
   GET_TEST_PREPARATION: '/test-preparation',
   GET_LEARN_TOPIC: '/learn-topic',
+  REPORT_TUTOR: '/report',
 };

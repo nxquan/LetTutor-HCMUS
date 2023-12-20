@@ -47,7 +47,11 @@ const UpComingLesson = () => {
       if (resNextBookings.success) {
         const {data} = resNextBookings.data;
         if (data.length > 0) {
-          const nearestLesson = data[0];
+          const nearestLesson = data.find((item: any) => {
+            const {scheduleDetailInfo} = item;
+            return scheduleDetailInfo.startPeriodTimestamp >= Date.now();
+          });
+
           setUpcomingLesson({
             ...nearestLesson,
             status: 'INIT',

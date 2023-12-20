@@ -153,7 +153,7 @@ const SignIn = () => {
           message: '',
           type: '',
         });
-      }, 10000);
+      }, 15000);
     }
     return () => clearTimeout(timerId);
   }, [notification]);
