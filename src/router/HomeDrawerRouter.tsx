@@ -228,6 +228,14 @@ const HomeDrawerRouter = () => {
           ),
         }}
       />
+      <Drawer.Screen
+        name="TutorDetail"
+        component={TutorDetail}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
     </Drawer.Navigator>
   );
 };

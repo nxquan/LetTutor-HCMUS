@@ -1,4 +1,11 @@
-import {View, Text, Image, ScrollView, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
 
 import Header from '@/components/Header';
@@ -7,11 +14,10 @@ import {images} from '@/assets';
 import {colors} from '@/constants';
 import HistoryItem from './components/HistoryItem';
 import DrawerButton from '@/components/DrawerButton';
-import {useGlobalContext, useTranslations} from '@/hooks';
+import {useTranslations} from '@/hooks';
 import Button from '@/components/Button';
 import BEPagination from '@/components/BEPagination';
 import * as bookingService from '@/services/bookingService';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import ToastManager from 'toastify-react-native';
 import {toastConfig} from '@/config';
 import {useNavigation} from '@react-navigation/native';
@@ -20,6 +26,8 @@ const width = Dimensions.get('window').width;
 const History = () => {
   const {t} = useTranslations();
   const navigation: any = useNavigation();
+  const [loading, setLoading] = useState(false);
+
   const [schedules, setSchedules] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState({
@@ -33,7 +41,7 @@ const History = () => {
 
   useEffect(() => {
     const getHistory = async () => {
-      const session: any = await EncryptedStorage.getItem('user_session');
+      setLoading(true);
       const res = await bookingService.getHistoryOfBooking({
         params: {
           page: page.current,
@@ -42,9 +50,6 @@ const History = () => {
           orderBy: 'meeting',
           sortBy: 'desc',
         },
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-        },
       });
 
       if (res.success) {
@@ -52,6 +57,7 @@ const History = () => {
         setSchedules(data.rows);
         setPage((prev: any) => ({...prev, total: data.count}));
       }
+      setLoading(false);
     };
 
     getHistory();
@@ -84,7 +90,16 @@ const History = () => {
       </View>
 
       <View style={styles.historyList}>
-        {schedules.length > 0 ? (
+        {loading ? (
+          <View className="self-center justify-center">
+            <ActivityIndicator
+              className="mb-2 mt-5"
+              size="large"
+              color={colors.primary}
+            />
+            <Text className="text-base font-normal">Loading...</Text>
+          </View>
+        ) : schedules.length > 0 ? (
           schedules.map((item, index) => {
             return (
               <HistoryItem data={item} key={index} onRefresh={onRefresh} />
@@ -112,7 +127,7 @@ const History = () => {
           </View>
         )}
       </View>
-      {schedules.length > 0 && (
+      {schedules.length > 0 && !loading && (
         <BEPagination
           ITEMS_PER_PAGE={20}
           totalItems={page.total}

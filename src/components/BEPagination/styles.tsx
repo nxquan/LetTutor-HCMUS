@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     height: 32,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   activeContainer: {
     borderColor: colors.primary,

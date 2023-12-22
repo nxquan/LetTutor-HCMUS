@@ -30,6 +30,7 @@ export default StyleSheet.create({
     borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   disable: {
     opacity: 0.7,

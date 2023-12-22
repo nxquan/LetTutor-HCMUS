@@ -12,6 +12,7 @@ type Props = {
   totalItems: number;
   currentPage: number;
   onChangePage: (page: number) => void;
+  loading?: any;
 };
 
 type BEPaginationProps = {
@@ -26,6 +27,7 @@ const BEPagination = (props: Props) => {
     currentPage,
     totalItems: _totalItems,
     onChangePage,
+    loading,
   } = props;
   const [state, setState] = useState<BEPaginationProps>({
     totalItems: 0,
@@ -49,7 +51,8 @@ const BEPagination = (props: Props) => {
       paginationItems.push(
         <PaginationItem
           key={i}
-          title={i}
+          title={String(i)}
+          loading={i === state.currentPage ? loading : false}
           active={i === state.currentPage}
           onPress={() => {
             onChangePage(i);

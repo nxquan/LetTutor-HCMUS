@@ -1,4 +1,11 @@
-import {View, Text, ScrollView, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 import React, {useCallback, useEffect, useState} from 'react';
@@ -12,11 +19,12 @@ import {useGlobalContext, useTranslations} from '@/hooks';
 import {isEmail, isPassword} from '@/utils';
 import * as AuthService from '@/services/authService';
 import axios from 'axios';
+import {colors} from '@/constants';
 
 const SignUp = () => {
   const navigation = useNavigation<StackProps>();
   const {t} = useTranslations();
-
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -36,11 +44,11 @@ const SignUp = () => {
   }, []);
 
   const validate = () => {
-    // return isEmail(user.email) && isPassword(user.password);
-    return true;
+    return isEmail(user.email) && isPassword(user.password);
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const res = await AuthService.register({
       email: String(user.email).trim().toLowerCase(),
       password: user.password,
@@ -61,6 +69,7 @@ const SignUp = () => {
         message: res.message,
       });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -115,6 +124,13 @@ const SignUp = () => {
             style={[styles.loginBtn, !validate() && styles.disable]}
             disabled={!validate()}
             onPress={() => handleSubmit()}>
+            {loading && (
+              <ActivityIndicator
+                className="mr-4"
+                size="small"
+                color={colors.white}
+              />
+            )}
             <Text className="text-white text-base font-medium">
               {t('signup.title')}
             </Text>

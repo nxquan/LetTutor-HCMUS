@@ -6,6 +6,8 @@ import {
   Dimensions,
   ScrollView,
   Pressable,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -72,6 +74,7 @@ const Tutor = () => {
   const [isShowTimePicker, setIsShowTimePicker] = useState(false);
   const [isOpenNationality, setIsOpenNationality] = useState(false);
   const [timeType, setTimeType] = useState('start');
+  const [loading, setLoading] = useState(true);
 
   const [tutors, setTutors] = useState<any[]>([]);
   const [page, setPage] = useState({
@@ -372,6 +375,8 @@ const Tutor = () => {
       }
     };
     fetchForSearchingTutors();
+    console.log('set false loading');
+    setLoading(false);
   }, [filters, page.currentPage]);
 
   return (
@@ -633,6 +638,21 @@ const Tutor = () => {
           />
         </View>
       </View>
+      <Modal
+        visible={loading}
+        transparent={true}
+        style={{backgroundColor: 'red', flex: 1}}>
+        <View
+          className="flex-1 justify-center items-center"
+          style={{backgroundColor: 'white'}}>
+          <ActivityIndicator
+            className="mr-4"
+            size="large"
+            color={colors.primary}
+          />
+          <Text className="text-base font-bold mt-4">Loading...</Text>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };

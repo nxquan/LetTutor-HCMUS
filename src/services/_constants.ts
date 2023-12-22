@@ -40,6 +40,7 @@ export const COURSE = {
   GET_COURSES: '/course',
   GET_COURSE_BY_ID: (courseId: string) => `/course/${courseId}`,
   GET_CONTENT_CATEGORY: '/content-category',
+  GET_EBOOKS: '/e-book',
 };
 
 export const SCHEDULE = {

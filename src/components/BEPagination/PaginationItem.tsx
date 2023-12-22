@@ -1,9 +1,19 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import React from 'react';
 import styles from './styles';
+import {colors} from '@/constants';
 
-const PaginationItem = (props: any) => {
-  const {title, icon, active, disabled, onPress} = props;
+type Props = {
+  title?: string;
+  icon?: React.JSX.Element;
+  active?: boolean;
+  disabled?: boolean;
+  onPress?: any;
+  loading?: any;
+};
+
+const PaginationItem = (props: Props) => {
+  const {title, icon, active, disabled, onPress, loading} = props;
   let Component: any = TouchableOpacity;
   let _props: {disabled?: boolean; onPress?: any; style?: any} = {
     disabled: !!disabled,
@@ -16,16 +26,20 @@ const PaginationItem = (props: any) => {
     delete _props.onPress;
   }
 
-  return (
-    <Component {..._props}>
-      {icon}
-      {!!title && (
-        <Text style={[styles.title, active && styles.activeTitle]}>
-          {title}
-        </Text>
-      )}
-    </Component>
-  );
+  const renderChild = () => {
+    if (loading) {
+      return <ActivityIndicator size="small" color={colors.primary} />;
+    } else {
+      if (!!title) {
+        return (
+          <Text style={[styles.title, active && styles.activeTitle]}>
+            {title}
+          </Text>
+        );
+      } else return icon;
+    }
+  };
+  return <Component {..._props}>{renderChild()}</Component>;
 };
 
 export default PaginationItem;

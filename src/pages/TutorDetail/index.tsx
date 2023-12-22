@@ -6,6 +6,8 @@ import {
   StatusBar,
   TouchableOpacity,
   Dimensions,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -44,6 +46,7 @@ const width = Dimensions.get('window').width;
 const TutorDetail = () => {
   const route: any = useRoute();
   const {t} = useTranslations();
+  const [loadingPagination, setLoadingPagination] = useState(false);
 
   const [tutorDetail, setTutorDetail] = useState<any>({
     rating: 0,
@@ -154,15 +157,12 @@ const TutorDetail = () => {
 
   useEffect(() => {
     const getFeedback = async () => {
-      const session: any = await EncryptedStorage.getItem('user_session');
+      setLoadingPagination(true);
       const tutorId = route.params?.tutorId;
       const feedbackRes = await tutorService.getFeedbackByTutorId(tutorId, {
         params: {
           perPage: 12,
           page: page.currentPage,
-        },
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
         },
       });
 
@@ -175,6 +175,7 @@ const TutorDetail = () => {
             totalItems: data.count,
           };
         });
+        setLoadingPagination(false);
       }
     };
 
@@ -192,12 +193,8 @@ const TutorDetail = () => {
         <View style={styles.info}>
           <View style={{flexDirection: 'row', paddingHorizontal: 10}}>
             <Image
-              defaultSource={images.defaultAvatar}
-              source={{
-                uri:
-                  tutorDetail.User?.avatar ||
-                  'https://api.app.lettutor.com/avatar/54334d4d-fb16-417d-bf4c-28845f2c29e0avatar1666581400098.jpg',
-              }}
+              src={tutorDetail.User?.avatar}
+              source={images.defaultAvatar}
               style={styles.avatar}
             />
             <View>
@@ -324,6 +321,7 @@ const TutorDetail = () => {
               totalItems={page.totalItems}
               currentPage={page.currentPage}
               onChangePage={onChangePage}
+              loading={loadingPagination}
             />
           </InfoPart>
         </View>

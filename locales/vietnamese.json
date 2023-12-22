@@ -28,6 +28,7 @@
   "message": "Nhắn tin",
   "submit": "Nộp",
   "confirm": "Xác nhận",
+  "sendResetLink": "Xác nhận",
   "back": "Quay lại",
   "next": "Tiếp theo",
   "later": "Bỏ qua",
@@ -45,7 +46,7 @@
     "continueWith": "Hoặc tiếp tục với",
     "other": "Chưa có tài khoản?",
     "resetPassword": "Đặt lại mật khẩu",
-    "enterEmail": "Nhập email để lấy mã code thay đổi mật khẩu",
+    "enterEmail": "Vui lòng nhập email để tìm kiếm tài khoản của bạn.",
     "changePassword": "Thay đổi mật khẩu",
     "code": "Mã Code",
     "inputCode": "Nhập mã code"

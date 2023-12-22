@@ -13,6 +13,10 @@ export const changePassword = (data = {}) => {
   return post(AUTH.CHANGE_PASSWORD, data);
 };
 
+export const forgotPassword = (data = {}) => {
+  return post(AUTH.FORGOT_PASSWORD, data);
+};
+
 export const verifyAccount = (params: any = {}) => {
   return get(AUTH.VERIFY_ACCOUNT(params.token));
 };

@@ -4,6 +4,11 @@ import {get} from './api';
 export const getCourses = async (config = {}) => {
   return get(COURSE.GET_COURSES, config);
 };
+
+export const getEbooks = async (config = {}) => {
+  return get(COURSE.GET_EBOOKS, config);
+};
+
 export const getCourseById = async (courseId: string, config = {}) => {
   return get(COURSE.GET_COURSE_BY_ID(courseId), config);
 };

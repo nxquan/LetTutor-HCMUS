@@ -6,7 +6,6 @@ export default StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: colors.white,
   },
-  inner: {},
   banner: {
     width: 300,
     height: 300,
@@ -41,8 +40,9 @@ export default StyleSheet.create({
     backgroundColor: colors.primary,
     paddingVertical: 10,
     borderRadius: 6,
-    justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   loginBtnText: {
     color: colors.white,

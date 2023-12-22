@@ -32,6 +32,7 @@
   "message": "Message",
   "submit": "Submit",
   "confirm": "Confirm",
+  "sendResetLink": "Send reset link",
   "back": "Back",
   "next": "Next",
   "later": "Later",
@@ -48,8 +49,8 @@
     "forgotPassword": "Forgot Password?",
     "continueWith": "Or continue with",
     "other": "Not a member yet?",
-    "resetPassword": "Reset Password?",
-    "enterEmail": "Please enter your email address to get the code.",
+    "resetPassword": "Reset Password",
+    "enterEmail": "Please enter your email address to search for your account.",
     "changePassword": "Change password",
     "code": "Code",
     "inputCode": "Enter your code"

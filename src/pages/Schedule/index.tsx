@@ -1,4 +1,4 @@
-import {View, Text, Image, ScrollView} from 'react-native';
+import {View, Text, Image, ScrollView, ActivityIndicator} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -18,6 +18,7 @@ const Schedule = () => {
   const navigation: any = useNavigation();
   const {t} = useTranslations();
   const [schedules, setSchedules] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
     total: 0,
@@ -29,7 +30,7 @@ const Schedule = () => {
 
   useEffect(() => {
     const getHistory = async () => {
-      const session: any = await EncryptedStorage.getItem('user_session');
+      setLoading(true);
       const res = await bookingService.getHistoryOfBooking({
         params: {
           page: page.current,
@@ -38,9 +39,6 @@ const Schedule = () => {
           orderBy: 'meeting',
           sortBy: 'asc',
         },
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-        },
       });
 
       if (res.success) {
@@ -48,6 +46,7 @@ const Schedule = () => {
         setSchedules(data.rows);
         setPage((prev: any) => ({...prev, total: data.count}));
       }
+      setLoading(false);
     };
 
     getHistory();
@@ -128,7 +127,16 @@ const Schedule = () => {
       </View>
 
       <View style={styles.scheduleList}>
-        {schedules.length > 0 ? (
+        {loading ? (
+          <View className="self-center justify-center">
+            <ActivityIndicator
+              className="mb-2 mt-5"
+              size="large"
+              color={colors.primary}
+            />
+            <Text className="text-base font-normal">Loading...</Text>
+          </View>
+        ) : schedules.length > 0 ? (
           schedules.map((item, index) => {
             return <ScheduleItem data={item} key={index} />;
           })
@@ -154,7 +162,8 @@ const Schedule = () => {
           </View>
         )}
       </View>
-      {schedules.length > 0 && (
+
+      {schedules.length > 0 && !loading && (
         <BEPagination
           ITEMS_PER_PAGE={20}
           totalItems={page.total}

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import styles from './styles';
@@ -19,7 +20,7 @@ import {useNavigation} from '@react-navigation/native';
 import Props from '@/types/type';
 import {colors} from '@/constants';
 import {useGlobalContext, useTranslations} from '@/hooks';
-import {login, resetPassword} from '@/store';
+import {login} from '@/store';
 import * as authService from '@/services/authService';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {isEmail, isPassword} from '@/utils';
@@ -28,6 +29,7 @@ const SignIn = () => {
   const navigation = useNavigation<Props>();
   const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [user, setUser] = useState({
@@ -37,9 +39,6 @@ const SignIn = () => {
 
   const [resetInfo, setResetInfo] = useState({
     email: '',
-    code: '',
-    password: '',
-    confirmPassword: '',
   });
 
   const [notification, setNotification] = useState({
@@ -84,6 +83,7 @@ const SignIn = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const res = await authService.login({
       email: String(user.email).trim().toLowerCase(),
       password: user.password,
@@ -114,28 +114,23 @@ const SignIn = () => {
         message: res.message,
       });
     }
+    setLoading(false);
   };
 
-  const handleResetPassword = () => {
-    const isExisting = state.users.find((item: any) => {
-      return String(item.email) === resetInfo.email.trim().toLowerCase();
+  const handleForgotPassword = async () => {
+    setLoading(true);
+    const res = await authService.forgotPassword({
+      email: resetInfo.email,
     });
-    if (isExisting) {
-      //Check code here!
+    if (res.success) {
       setResetInfo({
         email: '',
-        code: '',
-        password: '',
-        confirmPassword: '',
       });
-      const payload = {
-        email: resetInfo.email,
-        password: resetInfo.password,
-      };
-      dispatch(resetPassword(payload));
+
       setNotification({
         type: 'success',
-        message: 'Đổi mật khẩu thành công!',
+        message:
+          'Kiểm tra hộp thư đến trong email để đặt lại mật khẩu của bạn.!',
       });
     } else {
       setNotification({
@@ -143,6 +138,7 @@ const SignIn = () => {
         message: 'Email không tồn tại. Vui lòng đăng ký trước!',
       });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -165,7 +161,7 @@ const SignIn = () => {
       stickyHeaderIndices={[0]}>
       <Header />
       {!isForgotPassword ? (
-        <View style={styles.inner}>
+        <View>
           <Image source={images.banner} style={styles.banner} />
           <View style={styles.body}>
             <Text style={styles.heading}>{t('signin.longTitle')}</Text>
@@ -207,6 +203,13 @@ const SignIn = () => {
               ]}
               disabled={!validate(user.email, user.password)}
               onPress={() => handleSubmit()}>
+              {loading && (
+                <ActivityIndicator
+                  className="mr-4"
+                  size="small"
+                  color={colors.white}
+                />
+              )}
               <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
             </TouchableOpacity>
 
@@ -236,16 +239,15 @@ const SignIn = () => {
           </View>
         </View>
       ) : (
-        <View style={styles.inner}>
-          <View
-            style={[styles.body, {height: Dimensions.get('window').height}]}>
+        <View style={{height: Dimensions.get('window').height - 56}}>
+          <View style={[styles.body]}>
             <Text style={[styles.heading, {marginTop: 24}]}>
               {t('signin.resetPassword')}
             </Text>
             <Text
               style={[
                 styles.des,
-                {textAlign: 'left', paddingHorizontal: 0, marginBottom: 8},
+                {fontWeight: '400', paddingHorizontal: 0, marginBottom: 8},
               ]}>
               <Text style={{color: colors.error}}>*</Text>{' '}
               {t('signin.enterEmail')}
@@ -256,62 +258,6 @@ const SignIn = () => {
               placeholder="Example@email.com"
               field="email"
               value={resetInfo.email}
-              onChange={onChangeDataOfResetPassword}
-            />
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 6,
-              }}>
-              <Text style={{color: colors.black, fontWeight: '500'}}>
-                {t('time')}: <Text style={{color: colors.error}}>60s</Text>
-              </Text>
-              <TouchableOpacity>
-                <Text
-                  style={{
-                    color: colors.primary,
-                    fontSize: 15,
-                    fontWeight: '500',
-                  }}>
-                  {t('send')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text
-              style={[
-                styles.des,
-                {textAlign: 'left', paddingHorizontal: 0, marginBottom: 8},
-              ]}>
-              <Text style={{color: colors.error}}>*</Text>{' '}
-              {t('signin.changePassword')}
-            </Text>
-
-            <FormGroup
-              title={t('signin.code')}
-              placeholder={t('signin.inputCode')}
-              type="number"
-              field="code"
-              value={resetInfo.code}
-              onChange={onChangeDataOfResetPassword}
-            />
-
-            <FormGroup
-              title={t('newPassword')}
-              type="password"
-              field="password"
-              value={resetInfo.password}
-              onChange={onChangeDataOfResetPassword}
-            />
-
-            <FormGroup
-              title={t('confirmPassword')}
-              type="password"
-              field="confirmPassword"
-              duplicateValue={resetInfo.password}
-              value={resetInfo.confirmPassword}
               onChange={onChangeDataOfResetPassword}
             />
             {notification.message.length > 0 && (
@@ -326,21 +272,18 @@ const SignIn = () => {
             <TouchableOpacity
               style={[
                 styles.loginBtn,
-                !validate(
-                  resetInfo.email,
-                  resetInfo.password,
-                  resetInfo.confirmPassword,
-                ) && styles.disable,
+                !isEmail(resetInfo.email) && styles.disable,
               ]}
-              disabled={
-                !validate(
-                  resetInfo.email,
-                  resetInfo.password,
-                  resetInfo.confirmPassword,
-                )
-              }
-              onPress={() => handleResetPassword()}>
-              <Text style={styles.loginBtnText}>{t('confirm')}</Text>
+              disabled={!isEmail(resetInfo.email)}
+              onPress={() => handleForgotPassword()}>
+              {loading && (
+                <ActivityIndicator
+                  className="mr-4"
+                  size="small"
+                  color={colors.white}
+                />
+              )}
+              <Text style={styles.loginBtnText}>{t('sendResetLink')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {

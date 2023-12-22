@@ -17,13 +17,16 @@ import Courses from '@/pages/Courses';
 import Profile from '@/pages/Profile';
 import BecomeTutor from '@/pages/BecomeTutor';
 import Schedule from '@/pages/Schedule';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <GlobalProvider>
         <EventProvider>
-          <MainStackRouter />
+          <GestureHandlerRootView style={{flex: 1}}>
+            <MainStackRouter />
+          </GestureHandlerRootView>
         </EventProvider>
       </GlobalProvider>
     </NavigationContainer>

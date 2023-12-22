@@ -8,9 +8,10 @@ type Props = {
   totalItems: number;
   currentPage: number;
   onChangePage: (page: number) => void;
+  loading?: boolean;
 };
 const ReviewList = (props: Props) => {
-  const {data, totalItems, currentPage, onChangePage} = props;
+  const {data, totalItems, currentPage, onChangePage, loading} = props;
 
   const renderReviews = (reviews: any[]) => {
     return reviews.map(review => {
@@ -29,6 +30,7 @@ const ReviewList = (props: Props) => {
         totalItems={totalItems}
         currentPage={currentPage}
         onChangePage={onChangePage}
+        loading={loading}
       />
     </View>
   );
