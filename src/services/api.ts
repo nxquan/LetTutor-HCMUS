@@ -3,9 +3,10 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 
 export const JSON_HEADER = {'Content-Type': 'application/json'};
 export const FORM_DATA_HEADER = {'Content-Type': 'multipart/form-data'};
+import {REACT_APP_DEV_API_URL} from '@env';
 
 export const instance = axios.create({
-  baseURL: 'https://sandbox.api.lettutor.com',
+  baseURL: REACT_APP_DEV_API_URL,
   timeout: 5000,
   responseType: 'json',
   headers: {

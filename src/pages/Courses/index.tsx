@@ -263,11 +263,30 @@ const Courses = () => {
       setCategories(resContentCategories.data.rows);
     }
 
+    const params: any = {
+      page: 1,
+      size: 100,
+    };
+
+    if (!!searchValue.sortByLevel?.key) {
+      params.order = ['level'];
+      params.orderBy = [searchValue.sortByLevel.key];
+    }
+
+    if (!!searchValue.courseName) {
+      params.q = searchValue.courseName;
+    }
+
+    if (searchValue.categories.length > 0) {
+      params.categoryId = searchValue.categories.map((item: any) => item.id);
+    }
+
+    if (searchValue.levels.length > 0) {
+      params.level = searchValue.levels.map((item: any) => item.id);
+    }
+
     const resCourses = await courseService.getCourses({
-      params: {
-        page: 1,
-        size: 100,
-      },
+      params: params,
     });
 
     if (resCourses.success) {

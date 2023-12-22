@@ -238,7 +238,7 @@ const Tutor = () => {
   useEffect(() => {
     scrollRef.current &&
       scrollRef.current?.scrollTo({
-        y: 0, //680
+        y: 0,
         animated: true,
       });
   }, [page.currentPage]);
@@ -335,6 +335,7 @@ const Tutor = () => {
         }
       }
       try {
+        setLoading(true);
         const res = await tutorService.searchTutors(
           {
             search: filters.tutorName,
@@ -367,6 +368,7 @@ const Tutor = () => {
               totalItems: res.data.count,
             };
           });
+          setLoading(false);
         } else {
           console.error('error', res);
         }
@@ -375,8 +377,6 @@ const Tutor = () => {
       }
     };
     fetchForSearchingTutors();
-    console.log('set false loading');
-    setLoading(false);
   }, [filters, page.currentPage]);
 
   return (
@@ -386,9 +386,7 @@ const Tutor = () => {
       showsVerticalScrollIndicator={false}
       style={{backgroundColor: colors.white}}>
       <Header drawerBtn={<DrawerButton />} />
-      {/* Notification */}
       <UpComingLesson />
-      {/* Tutor Container */}
       <View style={styles.tutorContainer}>
         <Text
           style={{
@@ -641,10 +639,10 @@ const Tutor = () => {
       <Modal
         visible={loading}
         transparent={true}
-        style={{backgroundColor: 'red', flex: 1}}>
+        style={{backgroundColor: 'rgba(0,0,0,0.5)', flex: 1}}>
         <View
           className="flex-1 justify-center items-center"
-          style={{backgroundColor: 'white'}}>
+          style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
           <ActivityIndicator
             className="mr-4"
             size="large"

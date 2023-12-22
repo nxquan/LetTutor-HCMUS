@@ -12,7 +12,6 @@ import Tutor from '@/pages/Tutor';
 import Schedule from '@/pages/Schedule';
 import History from '@/pages/History';
 import Courses from '@/pages/Courses';
-import CourseTopic from '@/pages/CourseTopic';
 import TutorDetail from '@/pages/TutorDetail';
 import {
   BecomeTutorIcon,
@@ -20,18 +19,17 @@ import {
   HistoryIcon,
   LogoutIcon,
   MyCourseIcon,
-  RecurringScheduleIcon,
   ScheduleIcon,
   TutorIcon,
 } from '@/assets/icons';
 
-import {images} from '@/assets';
 import CourseDetail from '@/pages/CourseDetail';
 import {colors} from '@/constants';
 import {useGlobalContext} from '@/hooks';
 import {logout} from '@/store';
 import BecomeTutor from '@/pages/BecomeTutor';
 import Profile from '@/pages/Profile';
+import MyCourse from '@/pages/MyCourse';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
@@ -189,8 +187,8 @@ const HomeDrawerRouter = () => {
         }}
       />
       <Drawer.Screen
-        name="CourseTopic"
-        component={CourseTopic}
+        name="MyCourse"
+        component={MyCourse}
         options={{
           drawerLabel: 'My Course',
           title: 'My Course',

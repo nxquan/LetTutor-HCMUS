@@ -1,7 +1,6 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import Feather from 'react-native-vector-icons/Feather';
 
 import styles from './styles';
@@ -25,46 +24,62 @@ const UpComingLesson = () => {
   const [remainingTimeForUpcomingLesson, setRemainingTimeForUpcomingLesson] =
     useState<number>(0);
   const [teachingTime, setTeachingTime] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUpComingLesson = async () => {
-      let session: any = await EncryptedStorage.getItem('user_session');
-
-      const res = await utilService.getMinuteTotal({
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-        },
-      });
+      setLoading(true);
+      const res = await utilService.getMinuteTotal();
       if (res.success) {
         setHourTotal(res.data.total);
       }
 
-      const resNextBookings = await bookingService.getNextBookings({
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-        },
-      });
+      const resNextBookings = await bookingService.getNextBookings();
       if (resNextBookings.success) {
         const {data} = resNextBookings.data;
         if (data.length > 0) {
-          const nearestLesson = data.find((item: any) => {
+          let nearestLesson = data[0];
+          data.forEach((item: any) => {
             const {scheduleDetailInfo} = item;
-            return scheduleDetailInfo.startPeriodTimestamp >= Date.now();
+            if (
+              scheduleDetailInfo.endPeriodTimestamp <=
+                nearestLesson.scheduleDetailInfo.endPeriodTimestamp &&
+              scheduleDetailInfo.startPeriodTimestamp >=
+                Date.now() - 25 * 60 * 1000
+            ) {
+              nearestLesson = item;
+            }
           });
+
+          if (
+            Date.now() >= nearestLesson.scheduleDetailInfo.startPeriodTimestamp
+          ) {
+            nearestLesson.status = 'TEACHING';
+            setRemainingTimeForUpcomingLesson(0);
+            setTeachingTime(
+              Math.floor(
+                (Date.now() -
+                  nearestLesson.scheduleDetailInfo.startPeriodTimestamp) /
+                  1000,
+              ),
+            );
+          } else {
+            nearestLesson.status = 'INIT';
+            setRemainingTimeForUpcomingLesson(
+              Math.floor(
+                (nearestLesson.scheduleDetailInfo.startPeriodTimestamp -
+                  Date.now()) /
+                  1000,
+              ),
+            );
+          }
 
           setUpcomingLesson({
             ...nearestLesson,
-            status: 'INIT',
           });
-          setRemainingTimeForUpcomingLesson(
-            Math.floor(
-              (nearestLesson.scheduleDetailInfo.startPeriodTimestamp -
-                Date.now()) /
-                1000,
-            ),
-          );
         }
       }
+      setLoading(false);
     };
 
     fetchUpComingLesson();
@@ -99,7 +114,9 @@ const UpComingLesson = () => {
       end={{x: 0.75, y: 1.0}}
       style={styles.notiContainer}
       colors={['rgb(12, 61, 223)', 'rgb(5, 23, 157)']}>
-      {upcomingLesson ? (
+      {loading ? (
+        <ActivityIndicator className="mr-4" size="large" color={colors.white} />
+      ) : upcomingLesson ? (
         <View>
           <Text style={styles.notiHeading}>{t('tutor.upcoming')}</Text>
           <View
@@ -148,7 +165,7 @@ const UpComingLesson = () => {
               ) : (
                 <Text
                   style={[styles.notiRemainTimeText, {color: colors.success}]}>
-                  ({t('tutor.teachingIn')}{' '}
+                  ({t('tutor.classTime')}{' '}
                   {convertSecondsToMinutes(teachingTime)})
                 </Text>
               )}
