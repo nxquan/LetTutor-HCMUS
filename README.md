@@ -14,7 +14,7 @@ Link: https://youtu.be/9VFV5svS4dk
 
 ## Link youtube milestone 3:
 
-Link: https://youtu.be/LGsL-ak0LfU
+Link: https://youtu.be/P6DdZsus9Qk
 
 ## Getting Started
 
