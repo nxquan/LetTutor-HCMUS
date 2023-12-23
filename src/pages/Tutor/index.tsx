@@ -30,6 +30,7 @@ import {TEST_PREPARATIONS, LEARN_TOPICS} from '@/store/mock-data';
 import * as tutorService from '@/services/tutorService';
 import BEPagination from '@/components/BEPagination';
 import UpComingLesson from './components/UpComingLesson';
+import useDebounce from '@/hooks/useDebound';
 
 const width = Dimensions.get('window').width; //full width
 
@@ -93,6 +94,7 @@ const Tutor = () => {
     endTime: null,
     specialty: defaultSpecialty,
   });
+  const debouncedSearchTutorName = useDebounce(filters.tutorName, 300);
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
@@ -377,7 +379,15 @@ const Tutor = () => {
       }
     };
     fetchForSearchingTutors();
-  }, [filters, page.currentPage]);
+  }, [
+    page.currentPage,
+    debouncedSearchTutorName,
+    filters.date,
+    filters.endTime,
+    filters.startTime,
+    filters.nationalities,
+    filters.specialty,
+  ]);
 
   return (
     <ScrollView
@@ -646,9 +656,11 @@ const Tutor = () => {
           <ActivityIndicator
             className="mr-4"
             size="large"
-            color={colors.primary}
+            color={colors.white}
           />
-          <Text className="text-base font-bold mt-4">Loading...</Text>
+          <Text className="text-base text-white font-bold mt-4">
+            Loading...
+          </Text>
         </View>
       </Modal>
     </ScrollView>
