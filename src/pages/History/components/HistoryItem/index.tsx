@@ -16,7 +16,7 @@ import ModalPopper from '@/components/ModalPopper';
 import {colors} from '@/constants';
 import DropdownMenu from '@/components/DropdownMenu';
 import {useTranslations} from '@/hooks';
-import {padNumber} from '@/utils';
+import {padNumber, renderStartAndEndHourOnLearning} from '@/utils';
 import RenderRating from '@/components/RenderRating';
 import {images} from '@/assets';
 import * as bookingService from '@/services/bookingService';
@@ -333,20 +333,9 @@ const HistoryItem = (props: Props) => {
               style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
               {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
               ,{' '}
-              {padNumber(
-                new Date(scheduleDetailInfo.startPeriodTimestamp).getHours(),
-              )}
-              :
-              {padNumber(
-                new Date(scheduleDetailInfo.startPeriodTimestamp).getMinutes(),
-              )}{' '}
-              -{' '}
-              {padNumber(
-                new Date(scheduleDetailInfo.endPeriodTimestamp).getHours(),
-              )}
-              :
-              {padNumber(
-                new Date(scheduleDetailInfo.endPeriodTimestamp).getMinutes(),
+              {renderStartAndEndHourOnLearning(
+                scheduleDetailInfo.startPeriodTimestamp,
+                scheduleDetailInfo.endPeriodTimestamp,
               )}
             </Text>
           </View>

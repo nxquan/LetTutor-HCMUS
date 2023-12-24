@@ -25,6 +25,8 @@ export const BOOKING = {
   GET_NEXT_BOOKING: '/booking/next',
   CREATE_FEEDBACK: '/user/feedbackTutor',
   PLACE_BOOKING: '/booking',
+  CANCEL_BOOKING: '/booking/schedule-detail',
+  EDIT_REQUEST: (bookingId: string) => `/booking/student-request/${bookingId}`,
 };
 
 export const REPORT = {

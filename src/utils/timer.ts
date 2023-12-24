@@ -102,3 +102,13 @@ export const getDateAgo = (date1: number, date2: number) => {
     return Math.floor(days / 365) + ' years ago';
   }
 };
+
+export const renderStartAndEndHourOnLearning = (start: number, end: number) => {
+  const startHour = `${padNumber(new Date(start).getHours())}:${padNumber(
+    new Date(start).getMinutes(),
+  )}`;
+  const endHour = `${padNumber(new Date(end).getHours())}:${padNumber(
+    new Date(end).getMinutes(),
+  )}`;
+  return startHour + ' - ' + endHour;
+};

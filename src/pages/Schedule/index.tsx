@@ -19,6 +19,7 @@ const Schedule = () => {
   const {t} = useTranslations();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState({
     current: 1,
     total: 0,
@@ -50,7 +51,11 @@ const Schedule = () => {
     };
 
     getHistory();
-  }, [page.current]);
+  }, [page.current, refreshing]);
+
+  const onChangeRefresh = () => {
+    setRefreshing(!refreshing);
+  };
 
   return (
     <ScrollView style={styles.container} stickyHeaderIndices={[0]}>
@@ -98,9 +103,7 @@ const Schedule = () => {
             style={[
               styles.tableCol,
               {width: '40%', backgroundColor: colors.white},
-            ]}>
-            Sample.pdf
-          </Text>
+            ]}></Text>
           <Text style={[styles.tableCol, {width: '18%'}]}>
             {t('schedule.page')}
           </Text>
@@ -120,9 +123,7 @@ const Schedule = () => {
             style={[
               styles.tableCol,
               {width: '70%', backgroundColor: colors.white, lineHeight: 20},
-            ]}>
-            Sample.pdfDescriptionDescriptionDescriptionDescriptionDescription
-          </Text>
+            ]}></Text>
         </View>
       </View>
 
@@ -138,7 +139,13 @@ const Schedule = () => {
           </View>
         ) : schedules.length > 0 ? (
           schedules.map((item, index) => {
-            return <ScheduleItem data={item} key={index} />;
+            return (
+              <ScheduleItem
+                data={item}
+                key={index}
+                onChangeRefresh={onChangeRefresh}
+              />
+            );
           })
         ) : (
           <View className="self-center mt-10 items-center">

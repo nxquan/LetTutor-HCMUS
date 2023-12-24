@@ -85,3 +85,19 @@ export const put = async (url: string, body: any, config = {}) => {
     };
   }
 };
+
+export const deleteRequest = async (url: string, config = {}) => {
+  try {
+    const res: any = await instance.delete(url, config);
+    return {
+      success: true,
+      data: res.data,
+    };
+  } catch (error: any) {
+    const {data} = error.response;
+    return {
+      success: false,
+      message: data.message,
+    };
+  }
+};

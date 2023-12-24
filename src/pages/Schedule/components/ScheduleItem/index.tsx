@@ -6,7 +6,7 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -18,22 +18,23 @@ import ModalPopper from '@/components/ModalPopper';
 import Lesson from '@/components/Lesson';
 import DropdownMenu from '@/components/DropdownMenu';
 import {useGlobalContext, useTranslations} from '@/hooks';
-import {editStudentRequest} from '@/store';
 const reasons = [
   {id: 1, title: 'Reschedule at another time', key: 'reschedule'},
   {id: 2, title: 'Busy at that time', key: 'busy'},
   {id: 3, title: 'Asked by the tutor', key: 'asked'},
   {id: 4, title: 'Other', key: 'other1'},
 ];
+import * as bookingService from '@/services/bookingService';
+import {renderStartAndEndHourOnLearning} from '@/utils';
 
 type Props = {
   data: any;
+  onChangeRefresh: () => void;
 };
 const ScheduleItem = (props: Props) => {
-  const {data} = props;
+  const {data, onChangeRefresh} = props;
   const {scheduleDetailInfo} = data;
 
-  const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
@@ -68,23 +69,64 @@ const ScheduleItem = (props: Props) => {
     return false;
   };
 
-  const handleSubmitRequestStudent = () => {
+  const handleSubmitRequestStudent = async () => {
     if (studentRequest.length > 0) {
-      const payload = {
+      const res = await bookingService.editRequest(data.id, {
         studentRequest,
-        id: data.id,
-      };
-      dispatch(editStudentRequest(payload));
+      });
+
+      if (res.success) {
+        onChangeRefresh();
+      }
     }
+
     setIsOpenRequestModal(false);
   };
 
+  const handleCancelBooking = async () => {
+    console.log({
+      scheduleDetailId: data.scheduleDetailInfo.id,
+      cancelInfo: {
+        cancelReasonId: reasons.find((item: any) => item.title == reason.type)
+          ?.id,
+        note: reason.notes,
+      },
+    });
+
+    const isEligible =
+      data.scheduleDetailInfo.startPeriodTimestamp <=
+      Date.now() + 2 * 60 * 60 * 1000;
+    if (isEligible) {
+      const res = await bookingService.cancelBooking({
+        data: {
+          scheduleDetailId: data.id,
+          cancelInfo: {
+            cancelReasonId: reasons.find(
+              (item: any) => item.title == reason.type,
+            )?.id,
+            note: reason.notes,
+          },
+        },
+      });
+      setIsOpenCancelModal(false);
+      onChangeRefresh();
+    } else {
+      console.log('Chỉ hủy được 2 tiếng trước khi học');
+    }
+  };
+
+  useEffect(() => {
+    data && setStudentRequest(data?.studentRequest);
+  }, [data]);
   return (
     <Lesson data={data}>
       <View style={styles.requestContainer}>
         <View style={styles.requestHeader}>
           <Text className="text-base font-medium text-black">
-            {scheduleDetailInfo.startPeriod} - {scheduleDetailInfo.endPeriod}
+            {renderStartAndEndHourOnLearning(
+              scheduleDetailInfo.startPeriodTimestamp,
+              scheduleDetailInfo.endPeriodTimestamp,
+            )}
           </Text>
           <TouchableOpacity
             style={styles.cancelBtn}
@@ -259,6 +301,8 @@ const ScheduleItem = (props: Props) => {
                 zIndex: -1,
                 fontSize: 15,
               }}
+              value={reason.notes}
+              onChangeText={text => setReason(prev => ({...prev, notes: text}))}
             />
 
             <View
@@ -279,7 +323,7 @@ const ScheduleItem = (props: Props) => {
                 <Text style={{fontSize: 14, color: colors.text}}>Later</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setIsOpenCancelModal(false)}
+                onPress={() => handleCancelBooking()}
                 style={{
                   backgroundColor: colors.primary,
                   paddingVertical: 5,

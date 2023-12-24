@@ -97,7 +97,7 @@ const UpComingLesson = () => {
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, []);
+  });
 
   useEffect(() => {
     if (remainingTimeForUpcomingLesson === 0) {
@@ -106,7 +106,7 @@ const UpComingLesson = () => {
       }, 1000);
       return () => clearInterval(timerId);
     }
-  }, [remainingTimeForUpcomingLesson]);
+  }); //remainingTimeForUpcomingLesson
 
   return (
     <LinearGradient

@@ -37,9 +37,9 @@ import DocumentPicker, {
 import StackProps from '@/types/type';
 import {useNavigation} from '@react-navigation/native';
 import {useGlobalContext, useTranslations} from '@/hooks';
-import {addApplication} from '@/store';
 import DrawerButton from '@/components/DrawerButton';
 import * as tutorService from '@/services/tutorService';
+import * as userService from '@/services/userService';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import ModalPopper from '@/components/ModalPopper';
 import ToastManager, {Toast} from 'toastify-react-native';
@@ -346,16 +346,15 @@ const BecomeTutor = () => {
       return temp;
     });
 
-    // const application = state.applications.find(
-    //   (app: any) => app.id === 'f569c202-7bbf-4620-af77-ecc1419a6b28',
-    // );
-    // if (application) {
-    //   setGeneralInfo(application.generalInfo);
-    //   setCV(application.cv);
-    //   setTeaching(application.teaching);
-    //   setLanguages(application.languages);
-    //   setVideo(application.video);
-    // }
+    const fetchInfo = async () => {
+      const res = await userService.getUserInfo();
+      if (res.success) {
+        if (!!res.data.user.tutorInfo) {
+          setTab(3);
+        }
+      }
+    };
+    fetchInfo();
   }, []);
 
   const handleError = (err: unknown) => {
