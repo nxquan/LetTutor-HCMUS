@@ -12,6 +12,10 @@ Link: https://app.diagrams.net/#G1uKldG1G-AoHq1dvfCl5EjjAtZG4Gh6aW
 
 Link: https://youtu.be/9VFV5svS4dk
 
+## Link youtube milestone 3:
+
+Link: https://youtu.be/P6DdZsus9Qk
+
 ## Getting Started
 
 > **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
