@@ -15,6 +15,8 @@ export type RootParamList = {
   VideoCall: undefined;
   Profile: undefined;
   BecomeTutor: undefined;
+  Message: undefined;
+  Messages: undefined;
 };
 
 type StackProps = NativeStackNavigationProp<
@@ -29,7 +31,9 @@ type StackProps = NativeStackNavigationProp<
   'CourseTopic',
   'TutorDetail',
   'Profile',
-  'BecomeTutor'
+  'BecomeTutor',
+  'Message',
+  'Messages'
 >;
 export type DrawerProps = DrawerNavigationProp<
   RootParamList,

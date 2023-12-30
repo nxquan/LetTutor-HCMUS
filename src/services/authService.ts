@@ -9,6 +9,10 @@ export const login = (data = {}) => {
   return post(AUTH.LOGIN, data);
 };
 
+export const loginByGoogle = (data = {}) => {
+  return post(AUTH.LOGIN_BY_GOOGLE, data);
+};
+
 export const changePassword = (data = {}) => {
   return post(AUTH.CHANGE_PASSWORD, data);
 };

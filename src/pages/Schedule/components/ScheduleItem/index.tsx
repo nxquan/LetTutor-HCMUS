@@ -34,7 +34,6 @@ type Props = {
 const ScheduleItem = (props: Props) => {
   const {data, onChangeRefresh} = props;
   const {scheduleDetailInfo} = data;
-
   const {t} = useTranslations();
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);

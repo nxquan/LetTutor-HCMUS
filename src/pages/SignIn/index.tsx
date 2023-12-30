@@ -12,6 +12,8 @@ import React, {useCallback, useContext, useEffect, useState} from 'react';
 import styles from './styles';
 import {images} from '@/assets';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {REACT_APP_WEB_CLIENT_ID} from '@env';
 
 import FormGroup from '@/components/FormGroup';
 import globalStyles from '@/global/globalStyles';
@@ -90,17 +92,6 @@ const SignIn = () => {
     });
 
     if (res.success) {
-      await EncryptedStorage.setItem(
-        'user_session',
-        JSON.stringify({
-          user: res.data.user,
-          accessToken: res.data.tokens.access.token,
-          accessExpires: res.data.tokens.access.expires,
-          refreshToken: res.data.tokens.refresh.token,
-          refreshExpires: res.data.tokens.refresh.expires,
-        }),
-      );
-
       const payload = res.data;
       dispatch(login(payload));
       navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
@@ -141,6 +132,38 @@ const SignIn = () => {
     setLoading(false);
   };
 
+  const onGoogleButtonPress = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      await GoogleSignin.signIn();
+      const {accessToken} = await GoogleSignin.getTokens();
+      await GoogleSignin.signOut();
+      if (accessToken) {
+        setLoading(true);
+        const res = await authService.loginByGoogle({
+          access_token: accessToken,
+        });
+        if (res.success) {
+          const payload = res.data;
+          dispatch(login(payload));
+          navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+
+          setUser({
+            email: '',
+            password: '',
+          });
+        } else {
+          setNotification({
+            type: 'error',
+            message: res.message || 'Đăng nhập thất bại. Vui lòng thử lại!',
+          });
+        }
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('error', error);
+    }
+  };
   useEffect(() => {
     let timerId: any;
     if (notification.message.length > 0) {
@@ -154,91 +177,18 @@ const SignIn = () => {
     return () => clearTimeout(timerId);
   }, [notification]);
 
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: REACT_APP_WEB_CLIENT_ID,
+    });
+  }, []);
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       stickyHeaderIndices={[0]}>
       <Header />
-      {!isForgotPassword ? (
-        <View>
-          <Image source={images.banner} style={styles.banner} />
-          <View style={styles.body}>
-            <Text style={styles.heading}>{t('signin.longTitle')}</Text>
-            <Text style={styles.des}>{t('signin.description')}</Text>
-            <FormGroup
-              title={t('email')}
-              type="email"
-              field="email"
-              placeholder="Example@email.com"
-              value={user.email}
-              onChange={onChangeDataOfUser}
-            />
-            <FormGroup
-              title={t('password')}
-              type="password"
-              field="password"
-              value={user.password}
-              onChange={onChangeDataOfUser}
-            />
-
-            <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
-              <Text style={styles.forgetPassword}>
-                {t('signin.forgotPassword')}
-              </Text>
-            </TouchableOpacity>
-            {notification.message.length > 0 && (
-              <Text
-                style={[
-                  notification.type === 'error' ? styles.error : styles.success,
-                  styles.notification,
-                ]}>
-                {notification.message}
-              </Text>
-            )}
-            <TouchableOpacity
-              style={[
-                styles.loginBtn,
-                !validate(user.email, user.password) && styles.disable,
-              ]}
-              disabled={!validate(user.email, user.password)}
-              onPress={() => handleSubmit()}>
-              {loading && (
-                <ActivityIndicator
-                  className="mr-4"
-                  size="small"
-                  color={colors.white}
-                />
-              )}
-              <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
-            <View style={styles.loginList}>
-              <View style={styles.loginItem}>
-                <FontAwesome name="facebook" size={24} color="#0071F0" />
-              </View>
-              <View style={[globalStyles.ml16]}>
-                <Image
-                  source={images.googleLogo}
-                  style={{width: 36, height: 36}}
-                />
-              </View>
-              <View style={[styles.loginItem, globalStyles.ml16]}>
-                <FontAwesome name="mobile-phone" size={26} color="#888888" />
-              </View>
-            </View>
-            <Text style={styles.signupText}>
-              {t('signin.other')}{' '}
-              <Text
-                style={styles.signupLink}
-                onPress={() => navigation.navigate('SignUp')}>
-                {t('signup.title')}
-              </Text>
-            </Text>
-          </View>
-        </View>
-      ) : (
+      {isForgotPassword ? (
         <View style={{height: Dimensions.get('window').height - 56}}>
           <View style={[styles.body]}>
             <Text style={[styles.heading, {marginTop: 24}]}>
@@ -303,6 +253,86 @@ const SignIn = () => {
                 {t('back')}
               </Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <View>
+          <Image source={images.banner} style={styles.banner} />
+          <View style={styles.body}>
+            <Text style={styles.heading}>{t('signin.longTitle')}</Text>
+            <Text style={styles.des}>{t('signin.description')}</Text>
+            <FormGroup
+              title={t('email')}
+              type="email"
+              field="email"
+              placeholder="Example@email.com"
+              value={user.email}
+              onChange={onChangeDataOfUser}
+            />
+            <FormGroup
+              title={t('password')}
+              type="password"
+              field="password"
+              value={user.password}
+              onChange={onChangeDataOfUser}
+            />
+
+            <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
+              <Text style={styles.forgetPassword}>
+                {t('signin.forgotPassword')}
+              </Text>
+            </TouchableOpacity>
+            {notification.message.length > 0 && (
+              <Text
+                style={[
+                  notification.type === 'error' ? styles.error : styles.success,
+                  styles.notification,
+                ]}>
+                {notification.message}
+              </Text>
+            )}
+            <TouchableOpacity
+              style={[
+                styles.loginBtn,
+                !validate(user.email, user.password) && styles.disable,
+              ]}
+              disabled={!validate(user.email, user.password)}
+              onPress={() => handleSubmit()}>
+              {loading && (
+                <ActivityIndicator
+                  className="mr-4"
+                  size="small"
+                  color={colors.white}
+                />
+              )}
+              <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
+            <View style={styles.loginList}>
+              <View style={styles.loginItem}>
+                <FontAwesome name="facebook" size={24} color="#0071F0" />
+              </View>
+              <TouchableOpacity onPress={onGoogleButtonPress}>
+                <View style={[globalStyles.ml16]}>
+                  <Image
+                    source={images.googleLogo}
+                    style={{width: 36, height: 36}}
+                  />
+                </View>
+              </TouchableOpacity>
+              <View style={[styles.loginItem, globalStyles.ml16]}>
+                <FontAwesome name="mobile-phone" size={26} color="#888888" />
+              </View>
+            </View>
+            <Text style={styles.signupText}>
+              {t('signin.other')}{' '}
+              <Text
+                style={styles.signupLink}
+                onPress={() => navigation.navigate('SignUp')}>
+                {t('signup.title')}
+              </Text>
+            </Text>
           </View>
         </View>
       )}

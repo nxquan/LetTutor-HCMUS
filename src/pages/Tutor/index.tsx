@@ -17,6 +17,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {useNavigation} from '@react-navigation/native';
 
 import styles from './styles';
 import Header from '@/components/Header';
@@ -31,8 +32,8 @@ import * as tutorService from '@/services/tutorService';
 import BEPagination from '@/components/BEPagination';
 import UpComingLesson from './components/UpComingLesson';
 import useDebounce from '@/hooks/useDebound';
-
-const width = Dimensions.get('window').width; //full width
+import StackProps from '@/types/type';
+import MessageIcon from '@/components/MessageIcon';
 
 const typesOfTutor = [
   {
@@ -68,9 +69,11 @@ const defaultSpecialty = {
   updatedAt: '2021-09-05T15:12:34.907Z',
 };
 
+const width = Dimensions.get('window').width; //full width
+const height = Dimensions.get('window').height; //full height
 const Tutor = () => {
   const {t} = useTranslations();
-
+  const navigation = useNavigation<StackProps>();
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isShowTimePicker, setIsShowTimePicker] = useState(false);
   const [isOpenNationality, setIsOpenNationality] = useState(false);
@@ -390,280 +393,284 @@ const Tutor = () => {
   ]);
 
   return (
-    <ScrollView
-      ref={scrollRef}
-      stickyHeaderIndices={[0]}
-      showsVerticalScrollIndicator={false}
-      style={{backgroundColor: colors.white}}>
-      <Header drawerBtn={<DrawerButton />} />
-      <UpComingLesson />
-      <View style={styles.tutorContainer}>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: 29,
-            fontWeight: '700',
-            marginBottom: 6,
-          }}>
-          {t('tutor.findATutor')}
-        </Text>
+    <>
+      <ScrollView
+        ref={scrollRef}
+        stickyHeaderIndices={[0]}
+        style={{backgroundColor: colors.white}}>
+        <Header drawerBtn={<DrawerButton />} />
+        <UpComingLesson />
+        <View style={styles.tutorContainer}>
+          <Text
+            style={{
+              color: colors.black,
+              fontSize: 29,
+              fontWeight: '700',
+              marginBottom: 6,
+            }}>
+            {t('tutor.findATutor')}
+          </Text>
 
-        <TextInput
-          placeholder={t('tutor.tutorName')}
-          placeholderTextColor={colors.text}
-          value={filters.tutorName}
-          onChangeText={text =>
-            setFilters(prev => ({...prev, tutorName: text}))
-          }
-          style={[styles.inputContainer, {flex: 1, marginBottom: 12}]}
-        />
+          <TextInput
+            placeholder={t('tutor.tutorName')}
+            placeholderTextColor={colors.text}
+            value={filters.tutorName}
+            onChangeText={text =>
+              setFilters(prev => ({...prev, tutorName: text}))
+            }
+            style={[styles.inputContainer, {flex: 1, marginBottom: 12}]}
+          />
 
-        <DropdownMenu
-          isOpen={isOpenNationality}
-          data={nationalities}
-          onChangeOpen={onChangeOpenNationalityMenu}
-          onChangeSelected={onChangeNationality}
-          selectedItem={filters.nationalities}
-          style={{zIndex: 3}}>
-          <Pressable
-            onPress={() => setIsOpenNationality(!isOpenNationality)}
-            style={styles.dropdownMenuBtn}>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                marginLeft: -8,
-                marginTop: -4,
-              }}>
-              {filters.nationalities?.length > 0 ? (
-                renderNationalities()
+          <DropdownMenu
+            isOpen={isOpenNationality}
+            data={nationalities}
+            onChangeOpen={onChangeOpenNationalityMenu}
+            onChangeSelected={onChangeNationality}
+            selectedItem={filters.nationalities}
+            style={{zIndex: 3}}>
+            <Pressable
+              onPress={() => setIsOpenNationality(!isOpenNationality)}
+              style={styles.dropdownMenuBtn}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginLeft: -8,
+                  marginTop: -4,
+                }}>
+                {filters.nationalities?.length > 0 ? (
+                  renderNationalities()
+                ) : (
+                  <Text style={{fontSize: 14, color: colors.text}}>
+                    {t('tutor.selectNationalities')}
+                  </Text>
+                )}
+              </View>
+              {isOpenNationality ? (
+                <Entypo
+                  name="chevron-small-down"
+                  size={24}
+                  color="black"
+                  style={{marginLeft: -20}}
+                />
               ) : (
-                <Text style={{fontSize: 14, color: colors.text}}>
-                  {t('tutor.selectNationalities')}
+                <Entypo
+                  name="chevron-small-right"
+                  size={24}
+                  color="black"
+                  style={{marginLeft: -20}}
+                />
+              )}
+            </Pressable>
+          </DropdownMenu>
+          <Text
+            style={{
+              color: colors.black,
+              fontSize: 18,
+              fontWeight: '500',
+              marginTop: 10,
+              marginBottom: 4,
+            }}>
+            {t('tutor.selectTutoringTime')}
+          </Text>
+
+          {/*Input date & time */}
+          <View>
+            <View
+              style={[
+                styles.inputContainer,
+                {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '50%',
+                },
+              ]}>
+              <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
+                <Text style={{color: colors.text, paddingVertical: 2}}>
+                  {filters.date
+                    ? filters.date?.toDateString()
+                    : t('tutor.selectADay')}
+                </Text>
+              </Pressable>
+              <FontAwesome
+                onPress={() =>
+                  setFilters((prev: any) => ({...prev, date: null}))
+                }
+                name="calendar"
+                size={18}
+                color={colors.grey500}
+                style={{marginLeft: 20}}
+              />
+              {isShowDatePicker && (
+                <DateTimePicker
+                  mode="date"
+                  display="calendar"
+                  value={filters.date ? filters.date : new Date()}
+                  onChange={onChangeDate}
+                />
+              )}
+            </View>
+
+            <View
+              style={[
+                styles.inputContainer,
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: (width * 3) / 4,
+                  marginTop: 12,
+                },
+              ]}>
+              <Pressable //Only on android
+                onPress={() => {
+                  showTimePicker('start');
+                }}
+                style={{flex: 1, paddingVertical: 2}}>
+                <Text
+                  onPressIn={() => {
+                    //with editable(false), onPressIn only will work on iOS
+                    showTimePicker('start');
+                  }}
+                  style={{flex: 1, color: colors.text}}>
+                  {filters.startTime
+                    ? filters.startTime.toLocaleTimeString()
+                    : t('tutor.startTime')}
+                </Text>
+              </Pressable>
+              <Entypo
+                style={{marginHorizontal: 12}}
+                name="arrow-long-right"
+                size={20}
+                color={colors.text}
+              />
+              <Pressable
+                style={{flex: 1, paddingVertical: 2}}
+                onPress={() => {
+                  showTimePicker('end');
+                }}>
+                <Text
+                  onPressIn={() => {
+                    showTimePicker('end');
+                  }}
+                  style={{flex: 1, color: colors.text}}>
+                  {filters.endTime
+                    ? filters.endTime.toLocaleTimeString()
+                    : t('tutor.endTime')}
+                </Text>
+              </Pressable>
+              <AntDesign
+                style={{marginLeft: 12}}
+                name="clockcircleo"
+                size={20}
+                color={colors.text}
+                onPress={() => {
+                  setFilters((prev: any) => {
+                    return {
+                      ...prev,
+                      startTime: null,
+                      endTime: null,
+                    };
+                  });
+                }}
+              />
+              {isShowTimePicker && (
+                <DateTimePicker
+                  mode="time"
+                  display="spinner"
+                  value={filters.startTime ? filters.startTime : new Date()}
+                  onChange={onChangeTime}
+                />
+              )}
+            </View>
+          </View>
+
+          <View
+            style={{
+              marginTop: 12,
+              marginLeft: -12,
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}>
+            {renderSpecialties()}
+          </View>
+          <Button
+            title={t('tutor.resetFilter')}
+            style={styles.resetBtn}
+            onPress={() => {
+              setFilters({
+                tutorName: '',
+                nationalities: [],
+                date: null,
+                startTime: null,
+                endTime: null,
+                specialty: defaultSpecialty,
+              });
+            }}
+          />
+          <View>
+            <Text
+              ref={tutorRef}
+              style={{
+                color: colors.black,
+                fontSize: 20,
+                fontWeight: '600',
+                marginTop: 10,
+              }}>
+              {t('tutor.recommendedTutor')}
+            </Text>
+            <View style={styles.tutorList}>
+              {tutors.length > 0 ? (
+                tutors.map((tutorItem: any) => {
+                  return (
+                    <TutorItem
+                      data={tutorItem}
+                      key={tutorItem?.id}
+                      onAddFavorite={handleAddFavorite}
+                    />
+                  );
+                })
+              ) : (
+                <Text
+                  style={{
+                    marginTop: 16,
+                    color: colors.black,
+                    textAlign: 'center',
+                    fontSize: 14,
+                    fontWeight: '500',
+                  }}>
+                  Empty list. Find other tutors!
                 </Text>
               )}
             </View>
-            {isOpenNationality ? (
-              <Entypo
-                name="chevron-small-down"
-                size={24}
-                color="black"
-                style={{marginLeft: -20}}
-              />
-            ) : (
-              <Entypo
-                name="chevron-small-right"
-                size={24}
-                color="black"
-                style={{marginLeft: -20}}
-              />
-            )}
-          </Pressable>
-        </DropdownMenu>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: 18,
-            fontWeight: '500',
-            marginTop: 10,
-            marginBottom: 4,
-          }}>
-          {t('tutor.selectTutoringTime')}
-        </Text>
-
-        {/*Input date & time */}
-        <View>
+            <BEPagination
+              ITEMS_PER_PAGE={12}
+              totalItems={page.totalItems}
+              currentPage={page.currentPage}
+              onChangePage={onChangePage}
+            />
+          </View>
+        </View>
+        <Modal
+          visible={loading}
+          transparent={true}
+          style={{backgroundColor: 'rgba(0,0,0,0.5)', flex: 1}}>
           <View
-            style={[
-              styles.inputContainer,
-              {
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '50%',
-              },
-            ]}>
-            <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
-              <Text style={{color: colors.text, paddingVertical: 2}}>
-                {filters.date
-                  ? filters.date?.toDateString()
-                  : t('tutor.selectADay')}
-              </Text>
-            </Pressable>
-            <FontAwesome
-              onPress={() => setFilters((prev: any) => ({...prev, date: null}))}
-              name="calendar"
-              size={18}
-              color={colors.grey500}
-              style={{marginLeft: 20}}
+            className="flex-1 justify-center items-center"
+            style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+            <ActivityIndicator
+              className="mr-4"
+              size="large"
+              color={colors.white}
             />
-            {isShowDatePicker && (
-              <DateTimePicker
-                mode="date"
-                display="calendar"
-                value={filters.date ? filters.date : new Date()}
-                onChange={onChangeDate}
-              />
-            )}
+            <Text className="text-base text-white font-bold mt-4">
+              Loading...
+            </Text>
           </View>
-
-          <View
-            style={[
-              styles.inputContainer,
-              {
-                flexDirection: 'row',
-                alignItems: 'center',
-                width: (width * 3) / 4,
-                marginTop: 12,
-              },
-            ]}>
-            <Pressable //Only on android
-              onPress={() => {
-                showTimePicker('start');
-              }}
-              style={{flex: 1, paddingVertical: 2}}>
-              <Text
-                onPressIn={() => {
-                  //with editable(false), onPressIn only will work on iOS
-                  showTimePicker('start');
-                }}
-                style={{flex: 1, color: colors.text}}>
-                {filters.startTime
-                  ? filters.startTime.toLocaleTimeString()
-                  : t('tutor.startTime')}
-              </Text>
-            </Pressable>
-            <Entypo
-              style={{marginHorizontal: 12}}
-              name="arrow-long-right"
-              size={20}
-              color={colors.text}
-            />
-            <Pressable
-              style={{flex: 1, paddingVertical: 2}}
-              onPress={() => {
-                showTimePicker('end');
-              }}>
-              <Text
-                onPressIn={() => {
-                  showTimePicker('end');
-                }}
-                style={{flex: 1, color: colors.text}}>
-                {filters.endTime
-                  ? filters.endTime.toLocaleTimeString()
-                  : t('tutor.endTime')}
-              </Text>
-            </Pressable>
-            <AntDesign
-              style={{marginLeft: 12}}
-              name="clockcircleo"
-              size={20}
-              color={colors.text}
-              onPress={() => {
-                setFilters((prev: any) => {
-                  return {
-                    ...prev,
-                    startTime: null,
-                    endTime: null,
-                  };
-                });
-              }}
-            />
-            {isShowTimePicker && (
-              <DateTimePicker
-                mode="time"
-                display="spinner"
-                value={filters.startTime ? filters.startTime : new Date()}
-                onChange={onChangeTime}
-              />
-            )}
-          </View>
-        </View>
-
-        <View
-          style={{
-            marginTop: 12,
-            marginLeft: -12,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-          }}>
-          {renderSpecialties()}
-        </View>
-        <Button
-          title={t('tutor.resetFilter')}
-          style={styles.resetBtn}
-          onPress={() => {
-            setFilters({
-              tutorName: '',
-              nationalities: [],
-              date: null,
-              startTime: null,
-              endTime: null,
-              specialty: defaultSpecialty,
-            });
-          }}
-        />
-        <View>
-          <Text
-            ref={tutorRef}
-            style={{
-              color: colors.black,
-              fontSize: 20,
-              fontWeight: '600',
-              marginTop: 10,
-            }}>
-            {t('tutor.recommendedTutor')}
-          </Text>
-          <View style={styles.tutorList}>
-            {tutors.length > 0 ? (
-              tutors.map((tutorItem: any) => {
-                return (
-                  <TutorItem
-                    data={tutorItem}
-                    key={tutorItem?.id}
-                    onAddFavorite={handleAddFavorite}
-                  />
-                );
-              })
-            ) : (
-              <Text
-                style={{
-                  marginTop: 16,
-                  color: colors.black,
-                  textAlign: 'center',
-                  fontSize: 14,
-                  fontWeight: '500',
-                }}>
-                Empty list. Find other tutors!
-              </Text>
-            )}
-          </View>
-          <BEPagination
-            ITEMS_PER_PAGE={12}
-            totalItems={page.totalItems}
-            currentPage={page.currentPage}
-            onChangePage={onChangePage}
-          />
-        </View>
-      </View>
-      <Modal
-        visible={loading}
-        transparent={true}
-        style={{backgroundColor: 'rgba(0,0,0,0.5)', flex: 1}}>
-        <View
-          className="flex-1 justify-center items-center"
-          style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
-          <ActivityIndicator
-            className="mr-4"
-            size="large"
-            color={colors.white}
-          />
-          <Text className="text-base text-white font-bold mt-4">
-            Loading...
-          </Text>
-        </View>
-      </Modal>
-    </ScrollView>
+        </Modal>
+      </ScrollView>
+      <MessageIcon />
+    </>
   );
 };
 

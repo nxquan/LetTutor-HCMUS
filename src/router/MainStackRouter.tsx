@@ -11,6 +11,8 @@ import VideoCall from '@/pages/VideoCall';
 import Profile from '@/pages/Profile';
 import TutorDetail from '@/pages/TutorDetail';
 import Tutor from '@/pages/Tutor';
+import Message from '@/pages/Message';
+import Messages from '@/pages/Messages';
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
@@ -28,6 +30,8 @@ const MainStackRouter = () => {
       <Stack.Screen name="HomeDrawerRouter" component={HomeDrawerRouter} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="TutorDetail" component={TutorDetail} />
+      <Stack.Screen name="Message" component={Message} />
+      <Stack.Screen name="Messages" component={Messages} />
     </Stack.Navigator>
   );
 };

@@ -38,7 +38,7 @@ import ReviewModal from './components/ReviewInner';
 import ChangePasswordInner from './components/ChangePasswordInner';
 import ToastManager, {Toast} from 'toastify-react-native';
 import {toastConfig} from '@/config';
-
+import MessageIcon from '@/components/MessageIcon';
 import * as userService from '@/services/userService';
 import * as utilService from '@/services/utilService';
 const LEVELS = [
@@ -302,393 +302,404 @@ const Profile = () => {
   }, []);
 
   return (
-    <ScrollView
-      className="bg-white"
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={[0]}>
-      <Header drawerBtn={renderDrawerButton} />
-      <View
-        style={styles.inner}
-        className="border border-gray-300 rounded-md mx-4 my-8">
-        <View className="flex justify-center px-6 py-4">
-          <View style={{width: 140, height: 140}} className="self-center">
-            <Image
-              className="self-center rounded-full"
-              resizeMode="cover"
-              resizeMethod="auto"
-              source={{
-                uri:
-                  profile?.avatar ||
-                  'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
-              }}
-              style={{
-                width: 140,
-                height: 140,
-                borderWidth: 1,
-                borderColor: 'rgba(0,0,0,0.1)',
-              }}
-            />
-            <TouchableOpacity
-              onPress={async () => {
-                setIsOpenUploadModal(true);
-              }}
-              className="bg-blue-500 rounded-full flex justify-center items-center"
-              style={{
-                width: 36,
-                height: 36,
-                position: 'absolute',
-                top: '65%',
-                right: 0,
-              }}>
-              <FontAwesome5 name="pen" size={20} color={colors.white} />
-            </TouchableOpacity>
-          </View>
-          <Text className="font-medium text-blue-500 text-3xl text-center mt-2">
-            {curName}
-          </Text>
-          <Text className="text-base text-grey-500 mt-1">
-            Account ID: f569c202-7bbf-4620-af77-ecc1419a6b28
-          </Text>
-          <TouchableOpacity
-            onPress={() => setIsOpenReviewModal(true)}
-            className="my-1">
-            <Text className="text-base text-blue-500 font-medium">
-              {t('profile.othersReviewYou')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setIsOpenPasswordModal(true)}>
-            <Text className="text-base text-blue-500 font-medium">
-              {t('signin.changePassword')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <Text className="text-base text-black font-medium p-3 bg-gray-200">
-          {t('profile.account')}
-        </Text>
-        <View className="px-6 pt-6 pb-9">
-          <FormGroup
-            required={true}
-            title={t('profile.name')}
-            field="name"
-            value={profile?.name}
-            onChange={onChangeProfile}
-          />
-          <FormGroup
-            editable={false}
-            title={t('profile.emailAddress')}
-            field="email"
-            value={profile?.email}
-            onChange={onChangeProfile}
-          />
-
-          <Text className="text-base mb-1 font-normal text-gray-800">
-            <Text className="text-red-500">* </Text>
-            {t('profile.country')}
-          </Text>
-          <DropdownMenu
-            isOpen={isOpenCountryModal}
-            data={countries}
-            onChangeOpen={setIsOpenCountryModal}
-            onChangeSelected={onChangeProfile}
-            selectedItem={{key: profile?.country}}
-            typeOfMenu="country"
-            style={{zIndex: 4}}>
-            <Pressable
-              className="py-2.5 mb-2.5"
-              onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
-              style={styles.dropdownMenuBtn}>
-              <Text style={{fontSize: 14, color: colors.text}}>
-                {countries.find((country: any) => {
-                  if (profile?.country?.key) {
-                    return country.key === profile?.country?.key;
-                  }
-                  return country.key === profile?.country;
-                })?.name || t('tutor.selectNationalities')}
-              </Text>
-              {isOpenCountryModal ? (
-                <Entypo name="chevron-small-down" size={24} color="black" />
-              ) : (
-                <Entypo name="chevron-small-right" size={24} color="black" />
-              )}
-            </Pressable>
-          </DropdownMenu>
-
-          <FormGroup
-            required
-            editable={false}
-            title={t('profile.phoneNumber')}
-            type="phone"
-            field="phone"
-            value={profile?.phone}
-            onChange={onChangeProfile}
-          />
-          {profile?.isPhoneActivated && (
-            <Text className="px-2 py-1 bg-green-50 rounded text-green-600 border border-green-500 self-end">
-              Verified
-            </Text>
-          )}
-          <Text className="text-base font-normal text-gray-800">
-            <Text className="text-red-500">* </Text>
-            {t('birthday')}
-          </Text>
-          <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
-            <View
-              className="py-2.5 mt-1 flex-row justify-between items-center w-full"
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: colors.grey500,
-                },
-              ]}>
-              <Text className="text-black py-0.5">
-                {profile?.birthday
-                  ? formatDate(new Date(profile?.birthday))
-                  : t('tutor.selectADay')}
-              </Text>
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  setProfile((prev: any) => ({...prev, birthday: undefined}))
-                }>
-                <FontAwesome
-                  name="calendar"
-                  size={18}
-                  color={colors.grey500}
-                  style={{marginLeft: 20}}
-                />
-              </TouchableWithoutFeedback>
-              {isShowDatePicker && (
-                <DateTimePicker
-                  mode="date"
-                  display="calendar"
-                  value={new Date()}
-                  onChange={onChangeDate}
-                />
-              )}
+    <>
+      <ScrollView
+        className="bg-white"
+        showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[0]}>
+        <Header drawerBtn={renderDrawerButton} />
+        <View
+          style={styles.inner}
+          className="border border-gray-300 rounded-md mx-4 my-8">
+          <View className="flex justify-center px-6 py-4">
+            <View style={{width: 140, height: 140}} className="self-center">
+              <Image
+                className="self-center rounded-full"
+                resizeMode="cover"
+                resizeMethod="auto"
+                source={{
+                  uri:
+                    profile?.avatar ||
+                    'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
+                }}
+                style={{
+                  width: 140,
+                  height: 140,
+                  borderWidth: 1,
+                  borderColor: 'rgba(0,0,0,0.1)',
+                }}
+              />
+              <TouchableOpacity
+                onPress={async () => {
+                  setIsOpenUploadModal(true);
+                }}
+                className="bg-blue-500 rounded-full flex justify-center items-center"
+                style={{
+                  width: 36,
+                  height: 36,
+                  position: 'absolute',
+                  top: '65%',
+                  right: 0,
+                }}>
+                <FontAwesome5 name="pen" size={20} color={colors.white} />
+              </TouchableOpacity>
             </View>
-          </Pressable>
-
-          <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
-            <Text className="text-red-500">* </Text>
-            {t('profile.myLevel')}
+            <Text className="font-medium text-blue-500 text-3xl text-center mt-2">
+              {curName}
+            </Text>
+            <Text className="text-base text-grey-500 mt-1">
+              Account ID: f569c202-7bbf-4620-af77-ecc1419a6b28
+            </Text>
+            <TouchableOpacity
+              onPress={() => setIsOpenReviewModal(true)}
+              className="my-1">
+              <Text className="text-base text-blue-500 font-medium">
+                {t('profile.othersReviewYou')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setIsOpenPasswordModal(true)}>
+              <Text className="text-base text-blue-500 font-medium">
+                {t('signin.changePassword')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <Text className="text-base text-black font-medium p-3 bg-gray-200">
+            {t('profile.account')}
           </Text>
-          <DropdownMenu
-            isOpen={isOpenLevelMenu}
-            data={LEVELS}
-            onChangeOpen={setIsOpenLevelMenu}
-            onChangeSelected={onChangeProfile}
-            selectedItem={{key: profile?.level}}
-            typeOfMenu="level"
-            style={{zIndex: 3}}>
-            <Pressable
-              onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
-              className="flex-row justify-between items-center w-full px-3 py-2.5 rounded-md border"
-              style={styles.dropdownMenuBtn}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginLeft: -4,
-                  marginTop: -4,
-                }}>
-                <Text className="text-sm text-gray-800">
-                  {profile?.level
-                    ? LEVELS.find((level: any) => level.key === profile?.level)
-                        ?.title
-                    : t('profile.selectLevel')}
-                </Text>
-              </View>
-              {isOpenLevelMenu ? (
-                <Entypo name="chevron-small-down" size={24} color="black" />
-              ) : (
-                <Entypo name="chevron-small-right" size={24} color="black" />
-              )}
-            </Pressable>
-          </DropdownMenu>
+          <View className="px-6 pt-6 pb-9">
+            <FormGroup
+              required={true}
+              title={t('profile.name')}
+              field="name"
+              value={profile?.name}
+              onChange={onChangeProfile}
+            />
+            <FormGroup
+              editable={false}
+              title={t('profile.emailAddress')}
+              field="email"
+              value={profile?.email}
+              onChange={onChangeProfile}
+            />
 
-          <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
-            <Text className="text-red-500">* </Text>
-            {t('profile.wantToLearn')}
-          </Text>
-          <DropdownMenu
-            isOpen={isOpenSpecialtyMenu}
-            data={specialties}
-            onChangeOpen={setIsOpenSpecialtyMenu}
-            onChangeSelected={onChangeProfile}
-            selectedItem={null}
-            typeOfMenu="learnTopics"
-            useKey={true}
-            style={{zIndex: 2}}>
-            <Pressable
-              onPress={() => setIsOpenSpecialtyMenu(!isOpenSpecialtyMenu)}
-              className="flex-row justify-between items-center w-full px-3 py-2.5 rounded-md border"
-              style={styles.dropdownMenuBtn}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginLeft: -4,
-                  marginTop: -4,
-                }}>
-                {renderSpecialties()}
-              </View>
-              {isOpenLevelMenu ? (
-                <Entypo
-                  name="chevron-small-down"
-                  size={24}
-                  color="black"
-                  style={{marginLeft: -22}}
-                />
-              ) : (
-                <Entypo
-                  style={{marginLeft: -22}}
-                  name="chevron-small-right"
-                  size={24}
-                  color="black"
-                />
-              )}
-            </Pressable>
-          </DropdownMenu>
-
-          <View className="mt-3">
-            <Text className="text-base text-gray-800 font-normal mb-1.5">
+            <Text className="text-base mb-1 font-normal text-gray-800">
               <Text className="text-red-500">* </Text>
-              {t('profile.studySchedule')}
+              {t('profile.country')}
             </Text>
-            <TextInput
-              multiline={true}
-              numberOfLines={12}
-              textAlignVertical="top"
-              placeholder={t('profile.noteForStudySchedule')}
-              placeholderTextColor={colors.grey600}
-              className="text-black text-left py-3 px-2.5 border rounded-md text-base"
-              onChangeText={text => onChangeProfile('studySchedule', text)}
-              style={{
-                borderColor: colors.grey350,
-              }}>
-              {profile?.studySchedule}
-            </TextInput>
-          </View>
+            <DropdownMenu
+              isOpen={isOpenCountryModal}
+              data={countries}
+              onChangeOpen={setIsOpenCountryModal}
+              onChangeSelected={onChangeProfile}
+              selectedItem={{key: profile?.country}}
+              typeOfMenu="country"
+              style={{zIndex: 4}}>
+              <Pressable
+                className="py-2.5 mb-2.5"
+                onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
+                style={styles.dropdownMenuBtn}>
+                <Text style={{fontSize: 14, color: colors.text}}>
+                  {countries.find((country: any) => {
+                    if (profile?.country?.key) {
+                      return country.key === profile?.country?.key;
+                    }
+                    return country.key === profile?.country;
+                  })?.name || t('tutor.selectNationalities')}
+                </Text>
+                {isOpenCountryModal ? (
+                  <Entypo name="chevron-small-down" size={24} color="black" />
+                ) : (
+                  <Entypo name="chevron-small-right" size={24} color="black" />
+                )}
+              </Pressable>
+            </DropdownMenu>
 
-          <Button
-            title={t('profile.saveChanges')}
-            onPress={isChange ? handleChangeProfile : undefined}
-            style={{
-              backgroundColor: colors.primary,
-              color: colors.white,
-              fontWeight: '500',
-              marginTop: 24,
-            }}
-          />
-        </View>
-      </View>
-
-      <ModalPopper visible={isOpenPasswordModal} transparent={true}>
-        <ChangePasswordInner toggleModal={setIsOpenPasswordModal} />
-      </ModalPopper>
-
-      <ModalPopper visible={isOpenReviewModal} transparent={true}>
-        <ReviewModal toggleModal={setIsOpenReviewModal} tutorId={profile?.id} />
-      </ModalPopper>
-
-      <ModalPopper visible={isOpenUploadModal} transparent={true}>
-        <View style={{width: '100%'}}>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-black text-lg font-semibold">
-              Upload avatar
+            <FormGroup
+              required
+              editable={false}
+              title={t('profile.phoneNumber')}
+              type="phone"
+              field="phone"
+              value={profile?.phone}
+              onChange={onChangeProfile}
+            />
+            {profile?.isPhoneActivated && (
+              <Text className="px-2 py-1 bg-green-50 rounded text-green-600 border border-green-500 self-end">
+                Verified
+              </Text>
+            )}
+            <Text className="text-base font-normal text-gray-800">
+              <Text className="text-red-500">* </Text>
+              {t('birthday')}
             </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setIsOpenUploadModal(false);
-              }}>
-              <AntDesign name="close" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              marginVertical: 16,
-              height: 1,
-              backgroundColor: colors.grey300,
-            }}
-          />
+            <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
+              <View
+                className="py-2.5 mt-1 flex-row justify-between items-center w-full"
+                style={[
+                  styles.inputContainer,
+                  {
+                    borderColor: colors.grey500,
+                  },
+                ]}>
+                <Text className="text-black py-0.5">
+                  {profile?.birthday
+                    ? formatDate(new Date(profile?.birthday))
+                    : t('tutor.selectADay')}
+                </Text>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    setProfile((prev: any) => ({...prev, birthday: undefined}))
+                  }>
+                  <FontAwesome
+                    name="calendar"
+                    size={18}
+                    color={colors.grey500}
+                    style={{marginLeft: 20}}
+                  />
+                </TouchableWithoutFeedback>
+                {isShowDatePicker && (
+                  <DateTimePicker
+                    mode="date"
+                    display="calendar"
+                    value={new Date()}
+                    onChange={onChangeDate}
+                  />
+                )}
+              </View>
+            </Pressable>
 
-          <View
-            style={{width: 200, height: 200, marginVertical: 20}}
-            className="self-center">
-            <Image
-              className="self-center rounded-full"
-              resizeMode="cover"
-              resizeMethod="auto"
-              src={avatar?.fileCopyUri}
-              source={{
-                uri:
-                  avatar?.fileCopyUri ||
-                  'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
-              }}
-              style={{
-                width: 160,
-                height: 160,
-                borderWidth: 1,
-                borderColor: 'rgba(0,0,0,0.1)',
-              }}
-            />
-            <TouchableOpacity
-              onPress={async () => {
-                try {
-                  const pickerResult = await DocumentPicker.pickSingle({
-                    presentationStyle: 'fullScreen',
-                    copyTo: 'documentDirectory',
-                    type: [DocumentPicker.types.images],
-                    mode: 'import',
-                  });
-                  setAvatar({...pickerResult, isChange: true});
-                } catch (e) {
-                  handleError(e);
-                }
-              }}
-              className="bg-blue-500 rounded-full flex justify-center items-center"
-              style={{
-                width: 36,
-                height: 36,
-                position: 'absolute',
-                top: '60%',
-                right: 20,
-              }}>
-              <FontAwesome5 name="pen" size={20} color={colors.white} />
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-              marginTop: 16,
-            }}>
+            <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
+              <Text className="text-red-500">* </Text>
+              {t('profile.myLevel')}
+            </Text>
+            <DropdownMenu
+              isOpen={isOpenLevelMenu}
+              data={LEVELS}
+              onChangeOpen={setIsOpenLevelMenu}
+              onChangeSelected={onChangeProfile}
+              selectedItem={{key: profile?.level}}
+              typeOfMenu="level"
+              style={{zIndex: 3}}>
+              <Pressable
+                onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
+                className="flex-row justify-between items-center w-full px-3 py-2.5 rounded-md border"
+                style={styles.dropdownMenuBtn}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginLeft: -4,
+                    marginTop: -4,
+                  }}>
+                  <Text className="text-sm text-gray-800">
+                    {profile?.level
+                      ? LEVELS.find(
+                          (level: any) => level.key === profile?.level,
+                        )?.title
+                      : t('profile.selectLevel')}
+                  </Text>
+                </View>
+                {isOpenLevelMenu ? (
+                  <Entypo name="chevron-small-down" size={24} color="black" />
+                ) : (
+                  <Entypo name="chevron-small-right" size={24} color="black" />
+                )}
+              </Pressable>
+            </DropdownMenu>
+
+            <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
+              <Text className="text-red-500">* </Text>
+              {t('profile.wantToLearn')}
+            </Text>
+            <DropdownMenu
+              isOpen={isOpenSpecialtyMenu}
+              data={specialties}
+              onChangeOpen={setIsOpenSpecialtyMenu}
+              onChangeSelected={onChangeProfile}
+              selectedItem={null}
+              typeOfMenu="learnTopics"
+              useKey={true}
+              style={{zIndex: 2}}>
+              <Pressable
+                onPress={() => setIsOpenSpecialtyMenu(!isOpenSpecialtyMenu)}
+                className="flex-row justify-between items-center w-full px-3 py-2.5 rounded-md border"
+                style={styles.dropdownMenuBtn}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginLeft: -4,
+                    marginTop: -4,
+                  }}>
+                  {renderSpecialties()}
+                </View>
+                {isOpenLevelMenu ? (
+                  <Entypo
+                    name="chevron-small-down"
+                    size={24}
+                    color="black"
+                    style={{marginLeft: -22}}
+                  />
+                ) : (
+                  <Entypo
+                    style={{marginLeft: -22}}
+                    name="chevron-small-right"
+                    size={24}
+                    color="black"
+                  />
+                )}
+              </Pressable>
+            </DropdownMenu>
+
+            <View className="mt-3">
+              <Text className="text-base text-gray-800 font-normal mb-1.5">
+                <Text className="text-red-500">* </Text>
+                {t('profile.studySchedule')}
+              </Text>
+              <TextInput
+                multiline={true}
+                numberOfLines={12}
+                textAlignVertical="top"
+                placeholder={t('profile.noteForStudySchedule')}
+                placeholderTextColor={colors.grey600}
+                className="text-black text-left py-3 px-2.5 border rounded-md text-base"
+                onChangeText={text => onChangeProfile('studySchedule', text)}
+                style={{
+                  borderColor: colors.grey350,
+                }}>
+                {profile?.studySchedule}
+              </TextInput>
+            </View>
+
             <Button
-              title="Cancel"
-              onPress={() => {
-                setIsOpenUploadModal(false);
-              }}
-              style={{
-                borderColor: colors.primary,
-                color: colors.primary,
-              }}
-            />
-            <Button
-              title="Upload"
-              onPress={avatar?.isChange ? handleUploadAvatar : undefined}
-              leftIcon={
-                <Feather name="chevrons-right" size={20} color={colors.white} />
-              }
+              title={t('profile.saveChanges')}
+              onPress={isChange ? handleChangeProfile : undefined}
               style={{
                 backgroundColor: colors.primary,
                 color: colors.white,
-                marginLeft: 16,
+                fontWeight: '500',
+                marginTop: 24,
               }}
             />
           </View>
         </View>
-      </ModalPopper>
-      <ToastManager {...toastConfig} width={width - 24} />
-    </ScrollView>
+
+        <ModalPopper visible={isOpenPasswordModal} transparent={true}>
+          <ChangePasswordInner toggleModal={setIsOpenPasswordModal} />
+        </ModalPopper>
+
+        <ModalPopper visible={isOpenReviewModal} transparent={true}>
+          <ReviewModal
+            toggleModal={setIsOpenReviewModal}
+            tutorId={profile?.id}
+          />
+        </ModalPopper>
+
+        <ModalPopper visible={isOpenUploadModal} transparent={true}>
+          <View style={{width: '100%'}}>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-black text-lg font-semibold">
+                Upload avatar
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsOpenUploadModal(false);
+                }}>
+                <AntDesign name="close" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                marginVertical: 16,
+                height: 1,
+                backgroundColor: colors.grey300,
+              }}
+            />
+
+            <View
+              style={{width: 200, height: 200, marginVertical: 20}}
+              className="self-center">
+              <Image
+                className="self-center rounded-full"
+                resizeMode="cover"
+                resizeMethod="auto"
+                src={avatar?.fileCopyUri}
+                source={{
+                  uri:
+                    avatar?.fileCopyUri ||
+                    'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
+                }}
+                style={{
+                  width: 160,
+                  height: 160,
+                  borderWidth: 1,
+                  borderColor: 'rgba(0,0,0,0.1)',
+                }}
+              />
+              <TouchableOpacity
+                onPress={async () => {
+                  try {
+                    const pickerResult = await DocumentPicker.pickSingle({
+                      presentationStyle: 'fullScreen',
+                      copyTo: 'documentDirectory',
+                      type: [DocumentPicker.types.images],
+                      mode: 'import',
+                    });
+                    setAvatar({...pickerResult, isChange: true});
+                  } catch (e) {
+                    handleError(e);
+                  }
+                }}
+                className="bg-blue-500 rounded-full flex justify-center items-center"
+                style={{
+                  width: 36,
+                  height: 36,
+                  position: 'absolute',
+                  top: '60%',
+                  right: 20,
+                }}>
+                <FontAwesome5 name="pen" size={20} color={colors.white} />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'flex-end',
+                marginTop: 16,
+              }}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setIsOpenUploadModal(false);
+                }}
+                style={{
+                  borderColor: colors.primary,
+                  color: colors.primary,
+                }}
+              />
+              <Button
+                title="Upload"
+                onPress={avatar?.isChange ? handleUploadAvatar : undefined}
+                leftIcon={
+                  <Feather
+                    name="chevrons-right"
+                    size={20}
+                    color={colors.white}
+                  />
+                }
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.white,
+                  marginLeft: 16,
+                }}
+              />
+            </View>
+          </View>
+        </ModalPopper>
+        <ToastManager {...toastConfig} width={width - 24} />
+      </ScrollView>
+      <MessageIcon />
+    </>
   );
 };
 

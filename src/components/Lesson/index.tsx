@@ -3,10 +3,12 @@ import React, {useLayoutEffect, useState} from 'react';
 import styles from './styles';
 import {colors} from '@/constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useNavigation} from '@react-navigation/native';
 
 import {images, languageImages} from '@/assets';
 import {getCountryNameFromCode, getDateAgo} from '@/utils';
 import {useTranslations} from '@/hooks';
+import StackProps from '@/types/type';
 type Props = {
   children: any;
   data: any;
@@ -14,6 +16,7 @@ type Props = {
 };
 
 const Lesson = (props: Props) => {
+  const navigation = useNavigation<StackProps>();
   const {children, data, history} = props;
   const {scheduleDetailInfo} = data;
   const {scheduleInfo} = scheduleDetailInfo;
@@ -69,7 +72,10 @@ const Lesson = (props: Props) => {
               />
               <Text className="text-sm text-gray-700">{country.name}</Text>
             </View>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Message');
+              }}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <AntDesign
                   name="message1"

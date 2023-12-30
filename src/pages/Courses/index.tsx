@@ -26,6 +26,8 @@ import DrawerButton from '@/components/DrawerButton';
 import {useTranslations} from '@/hooks';
 import * as courseService from '@/services/courseService';
 import BEPagination from '@/components/BEPagination';
+import StackProps from '@/types/type';
+import MessageIcon from '@/components/MessageIcon';
 
 const levels = [
   {
@@ -94,7 +96,6 @@ const sorts = [
     key: 'ASC',
   },
 ];
-
 const Courses = () => {
   const {t} = useTranslations();
   const [isOpenLevelMenu, setIsOpenLevelMenu] = useState(false);
@@ -360,238 +361,245 @@ const Courses = () => {
     }
   };
   return (
-    <ScrollView
-      style={styles.container}
-      stickyHeaderIndices={[0]}
-      showsVerticalScrollIndicator={false}>
-      <Header style={{zIndex: 10}} drawerBtn={<DrawerButton />} />
-      <View style={styles.intro}>
-        <Image source={images.course} style={{width: 100, height: 100}} />
-        <View>
-          <Text style={styles.headingText}>{t('courses.title')}</Text>
-          <View style={styles.courseSearch}>
-            <TextInput
-              placeholderTextColor={colors.text}
-              placeholder={t('courses.searchCourse')}
-              style={styles.courseInput}
-              onChangeText={text => {
-                setSearchValue((prev: any) => {
-                  return {
-                    ...prev,
-                    courseName: text,
-                  };
-                });
-              }}
-              value={searchValue.courseName}
-            />
-            <TouchableHighlight
-              style={styles.searchBtn}
-              onPress={() => {
-                handleSearch();
-              }}
-              underlayColor="rgba(0,0,0,0.1)"
-              activeOpacity={0.8}>
-              <EvilIcons
-                name="search"
-                size={24}
-                color={colors.text}
-                style={{marginTop: -5}}
+    <>
+      <ScrollView
+        style={styles.container}
+        stickyHeaderIndices={[0]}
+        showsVerticalScrollIndicator={false}>
+        <Header style={{zIndex: 10}} drawerBtn={<DrawerButton />} />
+        <View style={styles.intro}>
+          <Image source={images.course} style={{width: 100, height: 100}} />
+          <View>
+            <Text style={styles.headingText}>{t('courses.title')}</Text>
+            <View style={styles.courseSearch}>
+              <TextInput
+                placeholderTextColor={colors.text}
+                placeholder={t('courses.searchCourse')}
+                style={styles.courseInput}
+                onChangeText={text => {
+                  setSearchValue((prev: any) => {
+                    return {
+                      ...prev,
+                      courseName: text,
+                    };
+                  });
+                }}
+                value={searchValue.courseName}
               />
-            </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.searchBtn}
+                onPress={() => {
+                  handleSearch();
+                }}
+                underlayColor="rgba(0,0,0,0.1)"
+                activeOpacity={0.8}>
+                <EvilIcons
+                  name="search"
+                  size={24}
+                  color={colors.text}
+                  style={{marginTop: -5}}
+                />
+              </TouchableHighlight>
+            </View>
           </View>
+          <Text style={styles.text}>{t('courses.des')}</Text>
         </View>
-        <Text style={styles.text}>{t('courses.des')}</Text>
-      </View>
 
-      <View style={styles.search}>
-        <DropdownMenu
-          isOpen={isOpenLevelMenu}
-          data={levels}
-          onChangeOpen={setIsOpenLevelMenu}
-          onChangeSelected={onChangeSearchValue}
-          selectedItem={searchValue.levels}
-          typeOfMenu="levels"
-          style={{zIndex: 3, marginTop: 16}}>
-          <Pressable
-            onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
-            style={styles.dropdownMenuBtn}>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                marginLeft: -4,
-                marginTop: -4,
-              }}>
-              {searchValue.levels.length > 0 ? (
-                renderSearchItems('levels')
+        <View style={styles.search}>
+          <DropdownMenu
+            isOpen={isOpenLevelMenu}
+            data={levels}
+            onChangeOpen={setIsOpenLevelMenu}
+            onChangeSelected={onChangeSearchValue}
+            selectedItem={searchValue.levels}
+            typeOfMenu="levels"
+            style={{zIndex: 3, marginTop: 16}}>
+            <Pressable
+              onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
+              style={styles.dropdownMenuBtn}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginLeft: -4,
+                  marginTop: -4,
+                }}>
+                {searchValue.levels.length > 0 ? (
+                  renderSearchItems('levels')
+                ) : (
+                  <Text style={{fontSize: 14, color: colors.text}}>
+                    {t('profile.selectLevel')}
+                  </Text>
+                )}
+              </View>
+              {isOpenLevelMenu ? (
+                <Entypo
+                  name="chevron-small-down"
+                  style={{marginLeft: -20}}
+                  size={24}
+                  color="black"
+                />
               ) : (
-                <Text style={{fontSize: 14, color: colors.text}}>
-                  {t('profile.selectLevel')}
-                </Text>
+                <Entypo
+                  name="chevron-small-right"
+                  style={{marginLeft: -20}}
+                  size={24}
+                  color="black"
+                />
               )}
-            </View>
-            {isOpenLevelMenu ? (
-              <Entypo
-                name="chevron-small-down"
-                style={{marginLeft: -20}}
-                size={24}
-                color="black"
-              />
-            ) : (
-              <Entypo
-                name="chevron-small-right"
-                style={{marginLeft: -20}}
-                size={24}
-                color="black"
-              />
-            )}
-          </Pressable>
-        </DropdownMenu>
+            </Pressable>
+          </DropdownMenu>
 
-        <DropdownMenu
-          isOpen={isOpenCategoriesMenu}
-          data={categories}
-          onChangeOpen={setIsOpenCategoriesMenu}
-          onChangeSelected={onChangeSearchValue}
-          selectedItem={null}
-          typeOfMenu="categories"
-          style={{zIndex: 2, marginTop: 16}}>
-          <Pressable
-            onPress={() => {
-              setIsOpenCategoriesMenu(!isOpenCategoriesMenu);
-            }}
-            style={styles.dropdownMenuBtn}>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                marginLeft: -4,
-                marginTop: -4,
-              }}>
-              {searchValue.categories.length > 0 ? (
-                renderSearchItems('categories')
+          <DropdownMenu
+            isOpen={isOpenCategoriesMenu}
+            data={categories}
+            onChangeOpen={setIsOpenCategoriesMenu}
+            onChangeSelected={onChangeSearchValue}
+            selectedItem={null}
+            typeOfMenu="categories"
+            style={{zIndex: 2, marginTop: 16}}>
+            <Pressable
+              onPress={() => {
+                setIsOpenCategoriesMenu(!isOpenCategoriesMenu);
+              }}
+              style={styles.dropdownMenuBtn}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginLeft: -4,
+                  marginTop: -4,
+                }}>
+                {searchValue.categories.length > 0 ? (
+                  renderSearchItems('categories')
+                ) : (
+                  <Text style={{fontSize: 14, color: colors.text}}>
+                    {t('courses.selectCategories')}
+                  </Text>
+                )}
+              </View>
+              {isOpenCategoriesMenu ? (
+                <Entypo
+                  name="chevron-small-down"
+                  style={{marginLeft: -12}}
+                  size={24}
+                  color="black"
+                />
               ) : (
-                <Text style={{fontSize: 14, color: colors.text}}>
-                  {t('courses.selectCategories')}
-                </Text>
+                <Entypo
+                  name="chevron-small-right"
+                  style={{marginLeft: -12}}
+                  size={24}
+                  color="black"
+                />
               )}
-            </View>
-            {isOpenCategoriesMenu ? (
-              <Entypo
-                name="chevron-small-down"
-                style={{marginLeft: -12}}
-                size={24}
-                color="black"
-              />
-            ) : (
-              <Entypo
-                name="chevron-small-right"
-                style={{marginLeft: -12}}
-                size={24}
-                color="black"
-              />
-            )}
-          </Pressable>
-        </DropdownMenu>
+            </Pressable>
+          </DropdownMenu>
 
-        <DropdownMenu
-          isOpen={isOpenSortMenu}
-          data={sorts}
-          onChangeOpen={setIsOpenSortMenu}
-          onChangeSelected={onChangeSearchValue}
-          selectedItem={searchValue.sortByLevel}
-          typeOfMenu="sortByLevel"
-          style={{zIndex: 1, marginTop: 16}}>
-          <Pressable
-            onPress={() => setIsOpenSortMenu(!isOpenSortMenu)}
-            style={styles.dropdownMenuBtn}>
-            <Text style={{fontSize: 14, color: colors.text}}>
-              {searchValue.sortByLevel?.title?.length > 0
-                ? searchValue.sortByLevel?.title
-                : t('courses.sortByLevel')}
+          <DropdownMenu
+            isOpen={isOpenSortMenu}
+            data={sorts}
+            onChangeOpen={setIsOpenSortMenu}
+            onChangeSelected={onChangeSearchValue}
+            selectedItem={searchValue.sortByLevel}
+            typeOfMenu="sortByLevel"
+            style={{zIndex: 1, marginTop: 16}}>
+            <Pressable
+              onPress={() => setIsOpenSortMenu(!isOpenSortMenu)}
+              style={styles.dropdownMenuBtn}>
+              <Text style={{fontSize: 14, color: colors.text}}>
+                {searchValue.sortByLevel?.title?.length > 0
+                  ? searchValue.sortByLevel?.title
+                  : t('courses.sortByLevel')}
+              </Text>
+              {isOpenSortMenu ? (
+                <Entypo name="chevron-small-down" size={24} color="black" />
+              ) : (
+                <Entypo name="chevron-small-right" size={24} color="black" />
+              )}
+            </Pressable>
+          </DropdownMenu>
+        </View>
+
+        <View style={styles.courseTabs}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setTab('course')}>
+            <Text
+              style={[
+                styles.courseTabText,
+                tab === 'course' && {color: colors.primary},
+              ]}>
+              {t('courses.courses')}
             </Text>
-            {isOpenSortMenu ? (
-              <Entypo name="chevron-small-down" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setTab('e-book')}>
+            <Text
+              style={[
+                styles.courseTabText,
+                tab === 'e-book' && {color: colors.primary},
+              ]}>
+              E-book
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setTab('interactive e-book')}>
+            <Text
+              style={[
+                styles.courseTabText,
+                tab === 'interactive e-book' && {color: colors.primary},
+              ]}>
+              Interactive E-book
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {tab === 'course' && (
+          <View style={{marginBottom: 32}}>
+            {loading ? (
+              <View className="self-center justify-center">
+                <ActivityIndicator
+                  className="mb-2 mt-5"
+                  size="large"
+                  color={colors.primary}
+                />
+                <Text className="text-base font-normal">Loading...</Text>
+              </View>
             ) : (
-              <Entypo name="chevron-small-right" size={24} color="black" />
+              renderCourses()
             )}
-          </Pressable>
-        </DropdownMenu>
-      </View>
+          </View>
+        )}
 
-      <View style={styles.courseTabs}>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => setTab('course')}>
-          <Text
-            style={[
-              styles.courseTabText,
-              tab === 'course' && {color: colors.primary},
-            ]}>
-            {t('courses.courses')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => setTab('e-book')}>
-          <Text
-            style={[
-              styles.courseTabText,
-              tab === 'e-book' && {color: colors.primary},
-            ]}>
-            E-book
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => setTab('interactive e-book')}>
-          <Text
-            style={[
-              styles.courseTabText,
-              tab === 'interactive e-book' && {color: colors.primary},
-            ]}>
-            Interactive E-book
-          </Text>
-        </TouchableOpacity>
-      </View>
-      {tab === 'course' && (
-        <View style={{marginBottom: 32}}>
-          {loading ? (
-            <View className="self-center justify-center">
-              <ActivityIndicator
-                className="mb-2 mt-5"
-                size="large"
-                color={colors.primary}
-              />
-              <Text className="text-base font-normal">Loading...</Text>
-            </View>
-          ) : (
-            renderCourses()
-          )}
-        </View>
-      )}
+        {tab === 'e-book' && (
+          <View style={{marginBottom: 32}}>
+            {loading ? (
+              <View className="self-center justify-center">
+                <ActivityIndicator
+                  className="mb-2 mt-5"
+                  size="large"
+                  color={colors.primary}
+                />
+                <Text className="text-base font-normal">Loading...</Text>
+              </View>
+            ) : (
+              renderEbooks()
+            )}
+          </View>
+        )}
 
-      {tab === 'e-book' && (
-        <View style={{marginBottom: 32}}>
-          {loading ? (
-            <View className="self-center justify-center">
-              <ActivityIndicator
-                className="mb-2 mt-5"
-                size="large"
-                color={colors.primary}
-              />
-              <Text className="text-base font-normal">Loading...</Text>
-            </View>
-          ) : (
-            renderEbooks()
-          )}
-        </View>
-      )}
-
-      {tab === 'interactive e-book' && (
-        <View className="mt-4">
-          <Text className="text-base text-center text-black">
-            There aren't interactive ebooks here!
-          </Text>
-        </View>
-      )}
-    </ScrollView>
+        {tab === 'interactive e-book' && (
+          <View className="mt-4">
+            <Text className="text-base text-center text-black">
+              There aren't interactive ebooks here!
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+      <MessageIcon />
+    </>
   );
 };
 

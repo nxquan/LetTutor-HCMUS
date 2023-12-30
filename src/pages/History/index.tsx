@@ -21,6 +21,8 @@ import * as bookingService from '@/services/bookingService';
 import ToastManager from 'toastify-react-native';
 import {toastConfig} from '@/config';
 import {useNavigation} from '@react-navigation/native';
+import StackProps from '@/types/type';
+import MessageIcon from '@/components/MessageIcon';
 
 const width = Dimensions.get('window').width;
 const History = () => {
@@ -68,76 +70,79 @@ const History = () => {
   }, []);
 
   return (
-    <ScrollView
-      style={styles.container}
-      stickyHeaderIndices={[0]}
-      showsVerticalScrollIndicator={false}>
-      <Header drawerBtn={<DrawerButton />} />
+    <>
+      <ScrollView
+        style={styles.container}
+        stickyHeaderIndices={[0]}
+        showsVerticalScrollIndicator={false}>
+        <Header drawerBtn={<DrawerButton />} />
 
-      <View style={styles.intro}>
-        <Image source={images.history} style={{width: 120, height: 120}} />
-        <View>
-          <Text style={styles.heading}>{t('history.title')}</Text>
-          <View
-            style={{
-              borderLeftWidth: 2,
-              borderLeftColor: colors.grey400,
-              paddingLeft: 10,
-            }}>
-            <Text style={styles.text}>{t('history.description')}</Text>
+        <View style={styles.intro}>
+          <Image source={images.history} style={{width: 120, height: 120}} />
+          <View>
+            <Text style={styles.heading}>{t('history.title')}</Text>
+            <View
+              style={{
+                borderLeftWidth: 2,
+                borderLeftColor: colors.grey400,
+                paddingLeft: 10,
+              }}>
+              <Text style={styles.text}>{t('history.description')}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.historyList}>
-        {loading ? (
-          <View className="self-center justify-center">
-            <ActivityIndicator
-              className="mb-2 mt-5"
-              size="large"
-              color={colors.primary}
-            />
-            <Text className="text-base font-normal">Loading...</Text>
-          </View>
-        ) : schedules.length > 0 ? (
-          schedules.map((item, index) => {
-            return (
-              <HistoryItem data={item} key={index} onRefresh={onRefresh} />
-            );
-          })
-        ) : (
-          <View className="self-center mt-10 items-center">
-            <Image source={images.noData} style={{height: 150}} />
-            <Text className="font-normal text-center text-base text-gray-600">
-              Empty data
-            </Text>
-            <Button
-              title="Book a lesson"
-              onPress={() => {
-                navigation.navigate('Tutor');
-              }}
-              style={{
-                color: colors.white,
-                fontWeight: '500',
-                backgroundColor: colors.primary,
-                marginTop: 16,
-                paddingHorizontal: 20,
-              }}
-            />
-          </View>
+        <View style={styles.historyList}>
+          {loading ? (
+            <View className="self-center justify-center">
+              <ActivityIndicator
+                className="mb-2 mt-5"
+                size="large"
+                color={colors.primary}
+              />
+              <Text className="text-base font-normal">Loading...</Text>
+            </View>
+          ) : schedules.length > 0 ? (
+            schedules.map((item, index) => {
+              return (
+                <HistoryItem data={item} key={index} onRefresh={onRefresh} />
+              );
+            })
+          ) : (
+            <View className="self-center mt-10 items-center">
+              <Image source={images.noData} style={{height: 150}} />
+              <Text className="font-normal text-center text-base text-gray-600">
+                Empty data
+              </Text>
+              <Button
+                title="Book a lesson"
+                onPress={() => {
+                  navigation.navigate('Tutor');
+                }}
+                style={{
+                  color: colors.white,
+                  fontWeight: '500',
+                  backgroundColor: colors.primary,
+                  marginTop: 16,
+                  paddingHorizontal: 20,
+                }}
+              />
+            </View>
+          )}
+        </View>
+        {schedules.length > 0 && !loading && (
+          <BEPagination
+            ITEMS_PER_PAGE={20}
+            totalItems={page.total}
+            currentPage={page.current}
+            style={{paddingHorizontal: 20}}
+            onChangePage={onChangePage}
+          />
         )}
-      </View>
-      {schedules.length > 0 && !loading && (
-        <BEPagination
-          ITEMS_PER_PAGE={20}
-          totalItems={page.total}
-          currentPage={page.current}
-          style={{paddingHorizontal: 20}}
-          onChangePage={onChangePage}
-        />
-      )}
-      <ToastManager {...toastConfig} width={width - 24} />
-    </ScrollView>
+        <ToastManager {...toastConfig} width={width - 24} />
+      </ScrollView>
+      <MessageIcon />
+    </>
   );
 };
 

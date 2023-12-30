@@ -1,4 +1,5 @@
 import {ACTION_TYPE} from '.';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export type initStateType = {
   currentUser: any;
@@ -19,12 +20,24 @@ const reducer = (
   action: {payload: any; type: string},
 ) => {
   switch (action.type) {
-    case ACTION_TYPE.LOGIN:
+    case ACTION_TYPE.LOGIN: {
+      const {payload} = action;
+      EncryptedStorage.setItem(
+        'user_session',
+        JSON.stringify({
+          user: payload.user,
+          accessToken: payload.tokens.access.token,
+          accessExpires: payload.tokens.access.expires,
+          refreshToken: payload.tokens.refresh.token,
+          refreshExpires: payload.tokens.refresh.expires,
+        }),
+      );
       return {
         ...state,
         tokens: action.payload?.tokens,
         currentUser: action.payload.user,
       };
+    }
     case ACTION_TYPE.LOG_OUT:
       return {
         ...state,

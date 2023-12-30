@@ -1,6 +1,7 @@
 export const AUTH = {
   REGISTER: '/auth/register',
   LOGIN: '/auth/login',
+  LOGIN_BY_GOOGLE: '/auth/google',
   VERIFY_ACCOUNT: (token: string) => `/auth/verifyAccount?token=${token}`,
   CHANGE_PASSWORD: '/auth/change-password',
   FORGOT_PASSWORD: '/user/forgotPassword',

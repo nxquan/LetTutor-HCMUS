@@ -18,7 +18,7 @@ export const instance = axios.create({
 instance.interceptors.request.use(
   async config => {
     const token: any = await EncryptedStorage.getItem('user_session');
-    if (token) {
+    if (token && !config?.url?.includes('/auth/')) {
       if (config.data instanceof FormData) {
         // eslint-disable-next-line no-param-reassign
         const headers: any = {
@@ -62,7 +62,9 @@ export const post = async (url: string, body: any, config = {}) => {
       data: res.data,
     };
   } catch (error: any) {
+    console.log('error', error);
     const {data} = error.response;
+    console.log('data', data.message);
     return {
       success: false,
       message: data.message,
