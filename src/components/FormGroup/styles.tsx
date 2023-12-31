@@ -3,7 +3,7 @@ import {colors} from '@/constants';
 
 export default StyleSheet.create({
   container: {
-    marginBottom: 12,
+    marginBottom: 4,
   },
   title: {
     textTransform: 'capitalize',

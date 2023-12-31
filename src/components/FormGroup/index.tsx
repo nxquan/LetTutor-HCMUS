@@ -1,5 +1,5 @@
-import {View, Text, TextInput} from 'react-native';
-import React, {useState} from 'react';
+import {View, Text, TextInput, Animated} from 'react-native';
+import React, {useRef, useState} from 'react';
 import styles from './styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '@/constants';
@@ -31,6 +31,7 @@ const FormGroup = (props: Props) => {
   } = props;
   const [isShowPassword, setIsShowPassword] = useState(type === 'password');
   const [error, setError] = useState('');
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const renderActionShow = () => {
     if (type === 'password') {
@@ -67,6 +68,7 @@ const FormGroup = (props: Props) => {
       case 'email':
         if (!isEmail(value)) {
           setError('Email không hợp lệ');
+          fadeIn();
         }
         break;
       case 'password':
@@ -76,6 +78,7 @@ const FormGroup = (props: Props) => {
           setError(
             'Mật khẩu ít nhất 6 kí tự', // gồm kí tự hoa, thường, chữ số và đặc biệt',
           );
+          fadeIn();
         }
         break;
       }
@@ -84,17 +87,20 @@ const FormGroup = (props: Props) => {
           setError(
             'Mật khẩu ít nhất 6 kí tự', // gồm kí tự hoa, thường, chữ số và đặc biệt',
           );
+          fadeIn();
         }
 
         const isMatchConfirm = value === duplicateValue;
         if (!isMatchConfirm) {
           setError('Mật khẩu phải giống nhau!');
+          fadeIn();
         }
         break;
       case 'code': {
         const isMatch = String(value).match(/^[0-9]+$/);
         if (!isMatch || value.length !== 6) {
           setError('Mã code bao gồm 6 chữ số');
+          fadeIn();
         }
         break;
       }
@@ -108,16 +114,39 @@ const FormGroup = (props: Props) => {
     }
     return 'default';
   };
+
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0 in 3 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  let borderBottomColor = fadeAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.grey500, colors.error],
+  });
   return (
     <View style={styles.container}>
       <Text style={styles.title} className="text-gray-800">
         {required && <Text className="text-red-500">* </Text>}
         {title}
       </Text>
-      <View
+      <Animated.View
         style={[
           styles.textControl,
-          error.length > 0 && styles.textControlError,
+          {borderColor: borderBottomColor},
           editable === false && {backgroundColor: colors.grey200},
         ]}>
         <TextInput
@@ -135,6 +164,7 @@ const FormGroup = (props: Props) => {
           }}
           onFocus={() => {
             setError('');
+            fadeOut();
           }}
           value={value}
           onChangeText={value => {
@@ -142,8 +172,10 @@ const FormGroup = (props: Props) => {
           }}
         />
         {renderActionShow()}
-      </View>
-      {error.length > 0 && <Text style={styles.error}>{error}</Text>}
+      </Animated.View>
+      <Animated.Text style={[styles.error, {opacity: fadeAnim}]}>
+        {error}
+      </Animated.Text>
     </View>
   );
 };

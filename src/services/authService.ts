@@ -13,6 +13,10 @@ export const loginByGoogle = (data = {}) => {
   return post(AUTH.LOGIN_BY_GOOGLE, data);
 };
 
+export const loginByFacebook = (data = {}) => {
+  return post(AUTH.LOGIN_BY_FACEBOOK, data);
+};
+
 export const changePassword = (data = {}) => {
   return post(AUTH.CHANGE_PASSWORD, data);
 };

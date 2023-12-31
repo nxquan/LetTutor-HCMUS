@@ -8,11 +8,12 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import styles from './styles';
 import {images} from '@/assets';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {REACT_APP_WEB_CLIENT_ID} from '@env';
 
 import FormGroup from '@/components/FormGroup';
@@ -24,7 +25,6 @@ import {colors} from '@/constants';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {login} from '@/store';
 import * as authService from '@/services/authService';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import {isEmail, isPassword} from '@/utils';
 
 const SignIn = () => {
@@ -132,7 +132,7 @@ const SignIn = () => {
     setLoading(false);
   };
 
-  const onGoogleButtonPress = async () => {
+  const handleLoginByGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       await GoogleSignin.signIn();
@@ -161,9 +161,44 @@ const SignIn = () => {
         setLoading(false);
       }
     } catch (error) {
-      console.error('error', error);
+      // console.error('error', error);
     }
   };
+
+  const handleLoginByFacebook = async () => {
+    // Attempt login with permissions
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
+
+    if (!result.isCancelled) {
+      const data = await AccessToken.getCurrentAccessToken();
+      if (data) {
+        setLoading(true);
+        const res = await authService.loginByFacebook({
+          access_token: data.accessToken,
+        });
+        if (res.success) {
+          const payload = res.data;
+          dispatch(login(payload));
+          navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+
+          setUser({
+            email: '',
+            password: '',
+          });
+        } else {
+          setNotification({
+            type: 'error',
+            message: res.message || 'Đăng nhập thất bại. Vui lòng thử lại!',
+          });
+        }
+        setLoading(false);
+      }
+    }
+  };
+
   useEffect(() => {
     let timerId: any;
     if (notification.message.length > 0) {
@@ -310,20 +345,19 @@ const SignIn = () => {
 
             <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
             <View style={styles.loginList}>
-              <View style={styles.loginItem}>
-                <FontAwesome name="facebook" size={24} color="#0071F0" />
-              </View>
-              <TouchableOpacity onPress={onGoogleButtonPress}>
+              <TouchableOpacity onPress={handleLoginByFacebook}>
+                <View style={styles.loginItem}>
+                  <FontAwesome name="facebook" size={24} color="#0071F0" />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleLoginByGoogle}>
                 <View style={[globalStyles.ml16]}>
                   <Image
                     source={images.googleLogo}
-                    style={{width: 36, height: 36}}
+                    style={{width: 40, height: 40}}
                   />
                 </View>
               </TouchableOpacity>
-              <View style={[styles.loginItem, globalStyles.ml16]}>
-                <FontAwesome name="mobile-phone" size={26} color="#888888" />
-              </View>
             </View>
             <Text style={styles.signupText}>
               {t('signin.other')}{' '}

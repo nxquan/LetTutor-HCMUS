@@ -64,8 +64,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   loginItem: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderColor: colors.primary,
     borderWidth: 1,
     borderRadius: 18,

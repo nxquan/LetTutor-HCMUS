@@ -30,6 +30,7 @@ import {logout} from '@/store';
 import BecomeTutor from '@/pages/BecomeTutor';
 import Profile from '@/pages/Profile';
 import MyCourse from '@/pages/MyCourse';
+import {images} from '@/assets';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
@@ -45,7 +46,6 @@ const HomeDrawerRouter = () => {
       setProfile(state.currentUser);
     }
   }, []);
-
   return (
     <Drawer.Navigator
       drawerContent={(props: any) => {
@@ -70,11 +70,13 @@ const HomeDrawerRouter = () => {
                   paddingHorizontal: 12,
                 }}>
                 <Image
-                  source={{
-                    uri:
-                      profile?.avatar ||
-                      'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
-                  }}
+                  src={
+                    profile?.avatar ==
+                    'https://www.alliancerehabmed.com/wp-content/uploads/icon-avatar-default.png'
+                      ? undefined
+                      : profile?.avatar
+                  }
+                  source={images.defaultAvatar}
                   style={{
                     width: 54,
                     height: 54,

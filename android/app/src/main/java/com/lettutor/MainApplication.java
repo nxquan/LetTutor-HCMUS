@@ -1,5 +1,6 @@
 package com.lettutor;
 
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import android.app.Application;
 import com.facebook.react.PackageList;

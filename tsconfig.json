@@ -5,7 +5,8 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@env": ["node_modules/react-native-dotenv"]
     }
   }
 }

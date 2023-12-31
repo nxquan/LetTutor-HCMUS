@@ -41,6 +41,7 @@ import {toastConfig} from '@/config';
 import MessageIcon from '@/components/MessageIcon';
 import * as userService from '@/services/userService';
 import * as utilService from '@/services/utilService';
+import {images} from '@/assets';
 const LEVELS = [
   {
     id: 1,
@@ -317,11 +318,13 @@ const Profile = () => {
                 className="self-center rounded-full"
                 resizeMode="cover"
                 resizeMethod="auto"
-                source={{
-                  uri:
-                    profile?.avatar ||
-                    'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
-                }}
+                src={
+                  profile?.avatar ==
+                  'https://www.alliancerehabmed.com/wp-content/uploads/icon-avatar-default.png'
+                    ? undefined
+                    : profile?.avatar
+                }
+                source={images.defaultAvatar}
                 style={{
                   width: 140,
                   height: 140,
