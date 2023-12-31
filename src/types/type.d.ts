@@ -15,7 +15,7 @@ export type RootParamList = {
   VideoCall: undefined;
   Profile: undefined;
   BecomeTutor: undefined;
-  Message: undefined;
+  Message: {recipientId: string; name: string; avatar: string};
   Messages: undefined;
 };
 

@@ -9,6 +9,7 @@ export const colors = {
   error: '#ff4d4f',
   success: '#4BB543',
   heart: 'rgb(240, 72, 72)',
+  message: '#e52f17',
   grey50: '#FAFAFA',
   grey100: '#F5F5F5',
   grey200: '#EEEEEE',

@@ -40,6 +40,11 @@ export const CALL = {
   GET_TOTAL: '/call/total',
 };
 
+export const MESSAGE = {
+  GET_RECIPIENTS: '/message/get-all-recipient',
+  GET_MESSAGES: (recipientId: string) => `/message/get/${recipientId}`,
+};
+
 export const COURSE = {
   GET_COURSES: '/course',
   GET_COURSE_BY_ID: (courseId: string) => `/course/${courseId}`,

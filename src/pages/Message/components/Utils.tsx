@@ -112,21 +112,15 @@ export const scrollToBottomComponent = () => {
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        width: 32,
-        height: 32,
-        borderWidth: 1,
-        borderColor: 'rgba(0,0,0,0.8)',
+        width: 40,
+        height: 40,
         borderRadius: 9999,
+        borderWidth: 1,
+        borderColor: colors.primary,
+        backgroundColor: 'white',
+        elevation: 5,
       }}>
-      <Entypo name="chevron-small-down" size={26} color="rgba(0,0,0,0.8)" />
+      <Entypo name="chevron-small-down" size={26} color={colors.primary} />
     </View>
   );
-};
-
-export const renderAvatar = (props: any) => {
-  const message = props.currentMessage;
-  if (message?.user.name === 'assistant') {
-    return <Avatar {...props} />;
-  }
-  return null;
 };
