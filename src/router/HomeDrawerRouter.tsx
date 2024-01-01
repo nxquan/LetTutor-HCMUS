@@ -24,13 +24,16 @@ import {
 } from '@/assets/icons';
 
 import CourseDetail from '@/pages/CourseDetail';
-import {colors} from '@/constants';
 import {useGlobalContext} from '@/hooks';
-import {logout} from '@/store';
 import BecomeTutor from '@/pages/BecomeTutor';
 import Profile from '@/pages/Profile';
 import MyCourse from '@/pages/MyCourse';
+import Messages from '@/pages/Messages';
+import Message from '@/pages/Message';
+
+import {colors} from '@/constants';
 import {images} from '@/assets';
+import {logout} from '@/store';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
@@ -208,14 +211,6 @@ const HomeDrawerRouter = () => {
         }}
       />
       <Drawer.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          drawerLabel: () => null,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
-      <Drawer.Screen
         name="BecomeTutor"
         component={BecomeTutor}
         options={{
@@ -228,9 +223,35 @@ const HomeDrawerRouter = () => {
           ),
         }}
       />
+
+      {/* Hide this page */}
       <Drawer.Screen
         name="TutorDetail"
         component={TutorDetail}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="Messages"
+        component={Messages}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="Message"
+        component={Message}
         options={{
           drawerLabel: () => null,
           drawerItemStyle: {display: 'none'},

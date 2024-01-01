@@ -17,7 +17,6 @@ import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {REACT_APP_WEB_CLIENT_ID} from '@env';
 
 import FormGroup from '@/components/FormGroup';
-import globalStyles from '@/global/globalStyles';
 import Header from '@/components/Header';
 import {useNavigation} from '@react-navigation/native';
 import Props from '@/types/type';
@@ -351,7 +350,7 @@ const SignIn = () => {
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleLoginByGoogle}>
-                <View style={[globalStyles.ml16]}>
+                <View className="ml-4">
                   <Image
                     source={images.googleLogo}
                     style={{width: 40, height: 40}}

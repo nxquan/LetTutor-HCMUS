@@ -19,6 +19,10 @@ type PaginationProps = {
   totalPages: number;
   itemCount: number;
 };
+// This component is altered by BEPagination component due to
+//BEPagination com handles the pagination in backend and this component
+//handles the pagination in frontend
+//If you want to use pagination in FE, use this component otherwise in BE, use BEPagination
 const Pagination = (props: Props) => {
   const {data, style, ITEMS_PER_PAGE, onChangeDataInPage} = props;
   const [state, setState] = useState<PaginationProps>({

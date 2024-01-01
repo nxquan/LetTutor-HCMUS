@@ -45,7 +45,9 @@ export type DrawerProps = DrawerNavigationProp<
   'CourseTopic',
   'TutorDetail',
   'Profile',
-  'BecomeTutor'
+  'BecomeTutor',
+  'Messages',
+  'Message'
 >;
 
 export type User = {
