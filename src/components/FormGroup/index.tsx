@@ -154,6 +154,7 @@ const FormGroup = (props: Props) => {
             styles.textInput,
             editable === false && {color: colors.grey700},
           ]}
+          cursorColor={colors.primary}
           keyboardType={getKeyboardType()}
           placeholder={placeholder}
           placeholderTextColor={colors.text}

@@ -107,7 +107,7 @@ const Messages = () => {
         <Icon type="antdesign" name="search1" color={colors.grey500} />
         <TextInput
           placeholder="Search"
-          selectionColor={colors.message}
+          cursorColor={colors.primary}
           className="text-base text-black px-2 py-1.5 flex-1"
           value={searchValue}
           onChangeText={t => setSearchValue(t)}

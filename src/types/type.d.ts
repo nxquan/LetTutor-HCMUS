@@ -12,7 +12,7 @@ export type RootParamList = {
   CourseTopic: undefined;
   TutorDetail: {tutorId: string};
   HomeDrawerRouter: undefined;
-  VideoCall: undefined;
+  VideoCall: {data: any};
   Profile: undefined;
   BecomeTutor: undefined;
   Message: {recipientId: string; name: string; avatar: string};

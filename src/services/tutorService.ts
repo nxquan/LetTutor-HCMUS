@@ -8,6 +8,11 @@ export const getTutorByPage = (config = {}) => {
 export const getTutorInfoById = (config: any = {}) => {
   return get(TUTOR.GET_TUTOR_INFO(config?.params?.tutorId), config);
 };
+
+export const getTutorShortInfoById = (config: any = {}) => {
+  return get(TUTOR.GET_SHORT_TUTOR_INFO(config?.params?.tutorId), config);
+};
+
 export const getFeedbackByTutorId = (tutorId: string, config: any = {}) => {
   return get(TUTOR.GET_FEEDBACK(tutorId), config);
 };

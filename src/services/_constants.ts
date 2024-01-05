@@ -16,6 +16,8 @@ export const USER = {
 export const TUTOR = {
   GET_TUTORS: 'tutor/more',
   GET_TUTOR_INFO: (tutorId: string) => `/tutor/${tutorId}`,
+  GET_SHORT_TUTOR_INFO: (tutorId: string) =>
+    `/user/getShortUserById/${tutorId}`,
   GET_FEEDBACK: (tutorId: string) => `/feedback/v2/${tutorId}`,
   SEARCH_TUTORS: '/tutor/search',
   ADD_FAVORITE: '/user/manageFavoriteTutor',

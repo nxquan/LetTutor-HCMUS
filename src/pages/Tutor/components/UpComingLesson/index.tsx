@@ -59,7 +59,8 @@ const UpComingLesson = () => {
             setTeachingTime(
               Math.floor(
                 (Date.now() -
-                  nearestLesson.scheduleDetailInfo.startPeriodTimestamp) /
+                  nearestLesson.scheduleDetailInfo.startPeriodTimestamp +
+                  2000) /
                   1000,
               ),
             );
@@ -68,7 +69,8 @@ const UpComingLesson = () => {
             setRemainingTimeForUpcomingLesson(
               Math.floor(
                 (nearestLesson.scheduleDetailInfo.startPeriodTimestamp -
-                  Date.now()) /
+                  Date.now() -
+                  1000) /
                   1000,
               ),
             );
@@ -171,7 +173,9 @@ const UpComingLesson = () => {
               )}
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate('VideoCall')}
+              onPress={() =>
+                navigation.navigate('VideoCall', {data: upcomingLesson})
+              }
               activeOpacity={0.8}
               className="flex-row items-center bg-white rounded-full px-3 py-1.5">
               <Feather name="youtube" size={24} color={colors.primary} />
