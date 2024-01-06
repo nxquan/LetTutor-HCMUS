@@ -6,7 +6,6 @@ const height = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   dropdownMenu: {
     maxHeight: 360,
-    backgroundColor: colors.white,
     shadowColor: 'rgba(0,0,0,0.5)',
     elevation: 10,
     borderWidth: 1,
@@ -16,7 +15,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   dropdownItem: {
-    color: colors.black,
     paddingVertical: 10,
     paddingHorizontal: 12,
     fontSize: 14,

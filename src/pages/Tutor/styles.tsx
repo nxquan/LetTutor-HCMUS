@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   inputContainer: {
-    color: colors.text,
     fontSize: 15,
     borderWidth: 1,
     borderColor: colors.grey300,

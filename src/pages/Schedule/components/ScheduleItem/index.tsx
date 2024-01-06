@@ -23,6 +23,7 @@ import {renderStartAndEndHourOnLearning} from '@/utils';
 import ScheduleInfo from '../ScheduleInfo';
 import {useNavigation} from '@react-navigation/native';
 import StackProps from '@/types/type';
+import {useColorScheme} from 'nativewind';
 
 const reasons = [
   {id: 1, title: 'Reschedule at another time', key: 'reschedule'},
@@ -38,6 +39,7 @@ type Props = {
 const ScheduleItem = (props: Props) => {
   const {data, isSingle, onChangeRefresh} = props;
   const {t} = useTranslations();
+  const {colorScheme} = useColorScheme();
   const navigation = useNavigation<StackProps>();
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
   const [isOpenRequestModal, setIsOpenRequestModal] = useState(false);
@@ -128,16 +130,14 @@ const ScheduleItem = (props: Props) => {
     } else {
       return data.map((item: any, index: number) => {
         return (
-          <>
-            <ScheduleInfo
-              key={item.id}
-              data={item}
-              orderSession={index + 1}
-              onOpenCancelModal={setIsOpenCancelModal}
-              onOpenRequestModal={setIsOpenRequestModal}
-              onChangeSelectedItem={onChangeSelectedItem}
-            />
-          </>
+          <ScheduleInfo
+            key={item.id}
+            data={item}
+            orderSession={index + 1}
+            onOpenCancelModal={setIsOpenCancelModal}
+            onOpenRequestModal={setIsOpenRequestModal}
+            onChangeSelectedItem={onChangeSelectedItem}
+          />
         );
       });
     }
@@ -153,7 +153,7 @@ const ScheduleItem = (props: Props) => {
       data={isSingle ? data : data[0]}
       numberOfLesson={isSingle ? 1 : data.length}>
       {!isSingle && (
-        <Text className="text-lg font-normal mb-2 text-black">
+        <Text className="text-lg font-normal mb-2 text-black dark:text-white">
           Lesson time:{' '}
           {renderStartAndEndHourOnLearning(
             data[0].scheduleDetailInfo.startPeriodTimestamp,
@@ -189,33 +189,25 @@ const ScheduleItem = (props: Props) => {
       </TouchableOpacity>
 
       <ModalPopper visible={isOpenCancelModal} transparent={true}>
-        <View>
+        <View className="bg-white dark:bg-black">
           <TouchableOpacity
             style={{alignSelf: 'flex-end', padding: 8}}
             onPress={() => setIsOpenCancelModal(false)}>
-            <AntDesign name="close" size={20} color="black" />
+            <AntDesign
+              name="close"
+              size={20}
+              color={colorScheme == 'light' ? 'black' : 'white'}
+            />
           </TouchableOpacity>
           <View style={styles.modalInfo}>
             <Image source={images.becomeTutor2} style={styles.avatar} />
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: '500',
-                marginVertical: 2,
-                color: colors.black,
-              }}>
+            <Text className="text-lg text-medium mx-0.5 text-black dark:text-white">
               {selectedItem?.scheduleDetailInfo?.scheduleInfo?.tutorInfo?.name}
             </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.black,
-                marginVertical: 2,
-              }}>
+            <Text className="text-sm mx-0.5 text-black dark:text-white">
               Lesson time
             </Text>
-            <Text
-              style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
+            <Text className="text-base text-medium text-black dark:text-white">
               {new Date(
                 selectedItem?.scheduleDetailInfo?.startPeriodTimestamp,
               ).toDateString()}
@@ -229,19 +221,13 @@ const ScheduleItem = (props: Props) => {
             }}
           />
           <View style={styles.modalBody}>
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: 15,
-                fontWeight: '500',
-                marginBottom: 8,
-              }}>
+            <Text className="text-sm text-medium mb-2 text-black dark:text-white">
               <Text
                 style={{
                   color: colors.error,
                   fontWeight: '600',
                 }}>
-                *
+                *{' '}
               </Text>
               What was the reason you cancel this booking?
             </Text>
@@ -258,12 +244,7 @@ const ScheduleItem = (props: Props) => {
                     styles.dropdownBtn,
                     isOpenMenu && {borderColor: colors.primary},
                   ]}>
-                  <Text
-                    style={{
-                      flex: 1,
-                      textAlign: 'center',
-                      color: colors.text,
-                    }}>
+                  <Text className="text-sm flex-1 text-center text-text dark:text-white">
                     {reason.type}
                   </Text>
                   {isOpenMenu ? (
@@ -289,14 +270,9 @@ const ScheduleItem = (props: Props) => {
               textAlignVertical="top"
               placeholder="Additional notes"
               onBlur={() => {}}
+              className="text-black dark:text-white text-left py-2 px-1 border rounded-md mt-4"
               style={{
-                textAlign: 'left',
-                paddingHorizontal: 8,
-                paddingVertical: 4,
                 borderColor: colors.grey350,
-                borderWidth: 1,
-                borderRadius: 6,
-                marginTop: 16,
                 zIndex: -1,
                 fontSize: 15,
               }}
@@ -319,7 +295,7 @@ const ScheduleItem = (props: Props) => {
                   paddingHorizontal: 12,
                   zIndex: -1,
                 }}>
-                <Text style={{fontSize: 14, color: colors.text}}>Later</Text>
+                <Text className="text-sm text-text dark:text-white">Later</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleCancelBooking()}
@@ -346,12 +322,15 @@ const ScheduleItem = (props: Props) => {
               justifyContent: 'space-between',
               alignContent: 'center',
             }}>
-            <Text
-              style={{color: colors.black, fontSize: 16, fontWeight: '500'}}>
+            <Text className="text-black dark:text-white text-base font-medium">
               Special Request
             </Text>
             <TouchableOpacity onPress={() => setIsOpenRequestModal(false)}>
-              <AntDesign name="close" size={24} color="black" />
+              <AntDesign
+                name="close"
+                size={24}
+                color={colorScheme == 'light' ? 'black' : 'white'}
+              />
             </TouchableOpacity>
           </View>
           <View
@@ -364,18 +343,16 @@ const ScheduleItem = (props: Props) => {
 
           <View style={styles.modalBody}>
             <Text
+              className="text-black dark:text-white text-medium mb-2"
               style={{
-                color: colors.black,
                 fontSize: 15,
-                fontWeight: '500',
-                marginBottom: 8,
               }}>
               <Text
                 style={{
                   color: colors.error,
                   fontWeight: '600',
                 }}>
-                *
+                *{' '}
               </Text>
               Notes
             </Text>
@@ -387,20 +364,14 @@ const ScheduleItem = (props: Props) => {
               placeholder="Additional notes"
               placeholderTextColor={colors.grey600}
               value={studentRequest}
+              className="text-black dark:text-white text-left p-2 border rounded-md mt-4"
               style={{
-                textAlign: 'left',
-                paddingHorizontal: 8,
-                paddingVertical: 4,
                 borderColor: colors.grey350,
-                borderWidth: 1,
-                borderRadius: 6,
-                marginTop: 16,
                 zIndex: -1,
                 fontSize: 15,
-                color: colors.black,
               }}
             />
-            <Text style={{fontSize: 12, color: colors.text, marginTop: 6}}>
+            <Text className="text-text dark:text-white mt-1.5 text-xs">
               You can write in English or Vietnamese (Maximum 200 letters)
             </Text>
 
@@ -422,7 +393,9 @@ const ScheduleItem = (props: Props) => {
                   paddingHorizontal: 12,
                   zIndex: -1,
                 }}>
-                <Text style={{fontSize: 14, color: colors.text}}>Cancel</Text>
+                <Text className="text-sm text-text dark:text-white">
+                  Cancel
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleSubmitRequestStudent()}

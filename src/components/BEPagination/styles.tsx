@@ -25,9 +25,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 16,
   },
-  title: {
-    color: colors.black,
-  },
 });
 
 export default styles;

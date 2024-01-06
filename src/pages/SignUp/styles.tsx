@@ -12,7 +12,6 @@ export default StyleSheet.create({
   heading: {
     fontSize: 28,
     fontWeight: '500',
-    color: colors.primary,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -22,7 +21,6 @@ export default StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 10,
     lineHeight: 24,
-    color: colors.black,
   },
   loginBtn: {
     backgroundColor: colors.primary,
@@ -58,7 +56,6 @@ export default StyleSheet.create({
   signupText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.grey500,
     marginTop: 24,
     marginBottom: 30,
     textAlign: 'center',

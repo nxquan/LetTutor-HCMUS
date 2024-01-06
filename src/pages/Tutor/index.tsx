@@ -35,6 +35,8 @@ import UpComingLesson from './components/UpComingLesson';
 import useDebounce from '@/hooks/useDebound';
 import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
+import {useColorScheme} from 'nativewind';
+import {color} from '@rneui/base';
 
 const typesOfTutor = [
   {
@@ -75,6 +77,7 @@ const height = Dimensions.get('window').height; //full height
 const Tutor = () => {
   const {t} = useTranslations();
   const navigation = useNavigation<StackProps>();
+  const {colorScheme} = useColorScheme();
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [isShowTimePicker, setIsShowTimePicker] = useState(false);
   const [isOpenNationality, setIsOpenNationality] = useState(false);
@@ -157,8 +160,8 @@ const Tutor = () => {
   const renderSpecialties = () => {
     return typesOfTutor.map((item, index) => {
       let _styles = {
-        color: colors.text,
-        backgroundColor: colors.grey100,
+        color: colorScheme == 'light' ? colors.text : colors.black,
+        backgroundColor: colorScheme == 'light' ? colors.grey100 : colors.white,
       };
       if (filters.specialty.key === item.key) {
         _styles.color = colors.primary;
@@ -192,14 +195,18 @@ const Tutor = () => {
         <View
           key={index}
           style={{
-            backgroundColor: 'rgba(0,0,0,0.1)',
+            backgroundColor:
+              colorScheme == 'light' ? 'rgba(0,0,0,0.1)' : 'white',
             borderRadius: 4,
             flexDirection: 'row',
             paddingVertical: 2,
+            paddingHorizontal: 2,
             marginLeft: 4,
             marginTop: 4,
           }}>
-          <Text style={{fontSize: 14, color: colors.text}}>{t(item.key)}</Text>
+          <Text className="text-sm text-text dark:text-black">
+            {t(item.key)}
+          </Text>
           <TouchableWithoutFeedback
             onPress={() => {
               setIsOpenNationality(false);
@@ -416,7 +423,7 @@ const Tutor = () => {
       <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
       <ScrollView
         ref={scrollRef}
-        style={{backgroundColor: colors.white}}
+        className="bg-white dark:bg-black"
         refreshControl={
           <RefreshControl
             refreshing={refresh}
@@ -428,24 +435,21 @@ const Tutor = () => {
         }>
         <UpComingLesson refresh={refresh} />
         <View style={styles.tutorContainer}>
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: 29,
-              fontWeight: '700',
-              marginBottom: 6,
-            }}>
+          <Text className="text-black dark:text-white text-3xl font-bold mb-1.5">
             {t('tutor.findATutor')}
           </Text>
 
           <TextInput
             placeholder={t('tutor.tutorName')}
-            placeholderTextColor={colors.text}
+            placeholderTextColor={
+              colorScheme == 'light' ? colors.text : colors.white
+            }
             value={filters.tutorName}
             onChangeText={text =>
               setFilters(prev => ({...prev, tutorName: text}))
             }
-            style={[styles.inputContainer, {flex: 1, marginBottom: 12}]}
+            className="text-text dark:text-white flex-1 mb-3"
+            style={[styles.inputContainer]}
           />
 
           <DropdownMenu
@@ -459,16 +463,15 @@ const Tutor = () => {
               onPress={() => setIsOpenNationality(!isOpenNationality)}
               style={styles.dropdownMenuBtn}>
               <View
+                className="flex-row flex-wrap"
                 style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
                   marginLeft: -8,
                   marginTop: -4,
                 }}>
                 {filters.nationalities?.length > 0 ? (
                   renderNationalities()
                 ) : (
-                  <Text style={{fontSize: 14, color: colors.text}}>
+                  <Text className="text-sm text-text dark:text-white">
                     {t('tutor.selectNationalities')}
                   </Text>
                 )}
@@ -477,31 +480,23 @@ const Tutor = () => {
                 <Entypo
                   name="chevron-small-down"
                   size={24}
-                  color="black"
+                  color={colorScheme == 'light' ? 'black' : 'white'}
                   style={{marginLeft: -20}}
                 />
               ) : (
                 <Entypo
                   name="chevron-small-right"
                   size={24}
-                  color="black"
+                  color={colorScheme == 'light' ? 'black' : 'white'}
                   style={{marginLeft: -20}}
                 />
               )}
             </Pressable>
           </DropdownMenu>
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: 18,
-              fontWeight: '500',
-              marginTop: 10,
-              marginBottom: 4,
-            }}>
+          <Text className="text-black dark:text-white text-lg font-medium mt-2.5 mb-1">
             {t('tutor.selectTutoringTime')}
           </Text>
 
-          {/*Input date & time */}
           <View>
             <View
               style={[
@@ -513,8 +508,12 @@ const Tutor = () => {
                   width: '50%',
                 },
               ]}>
-              <Pressable onPress={() => setIsShowDatePicker(!isShowDatePicker)}>
-                <Text style={{color: colors.text, paddingVertical: 2}}>
+              <Pressable
+                onPress={() => setIsShowDatePicker(!isShowDatePicker)}
+                className="flex-1">
+                <Text
+                  style={{paddingVertical: 2}}
+                  className="text-text dark:text-white">
                   {filters.date
                     ? filters.date?.toDateString()
                     : t('tutor.selectADay')}
@@ -526,7 +525,7 @@ const Tutor = () => {
                 }
                 name="calendar"
                 size={18}
-                color={colors.grey500}
+                color={colorScheme == 'light' ? colors.grey500 : colors.white}
                 style={{marginLeft: 20}}
               />
               {isShowDatePicker && (
@@ -559,7 +558,7 @@ const Tutor = () => {
                     //with editable(false), onPressIn only will work on iOS
                     showTimePicker('start');
                   }}
-                  style={{flex: 1, color: colors.text}}>
+                  className="text-text dark:text-white flex-1">
                   {filters.startTime
                     ? filters.startTime.toLocaleTimeString()
                     : t('tutor.startTime')}
@@ -569,7 +568,7 @@ const Tutor = () => {
                 style={{marginHorizontal: 12}}
                 name="arrow-long-right"
                 size={20}
-                color={colors.text}
+                color={colorScheme == 'light' ? colors.text : colors.white}
               />
               <Pressable
                 style={{flex: 1, paddingVertical: 2}}
@@ -580,7 +579,7 @@ const Tutor = () => {
                   onPressIn={() => {
                     showTimePicker('end');
                   }}
-                  style={{flex: 1, color: colors.text}}>
+                  className="text-text dark:text-white flex-1">
                   {filters.endTime
                     ? filters.endTime.toLocaleTimeString()
                     : t('tutor.endTime')}
@@ -590,7 +589,7 @@ const Tutor = () => {
                 style={{marginLeft: 12}}
                 name="clockcircleo"
                 size={20}
-                color={colors.text}
+                color={colorScheme == 'light' ? colors.text : colors.white}
                 onPress={() => {
                   setFilters((prev: any) => {
                     return {

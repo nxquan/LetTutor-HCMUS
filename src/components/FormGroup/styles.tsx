@@ -27,7 +27,6 @@ export default StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     flex: 1,
-    color: colors.black,
   },
   icon: {
     marginRight: 12,

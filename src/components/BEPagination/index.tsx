@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './styles';
 import PaginationItem from './PaginationItem';
 import {colors} from '@/constants';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   style?: any;
@@ -34,6 +35,8 @@ const BEPagination = (props: Props) => {
     currentPage: 0,
     totalPages: 0,
   });
+
+  const {colorScheme} = useColorScheme();
 
   useEffect(() => {
     setState(prev => {
@@ -76,7 +79,13 @@ const BEPagination = (props: Props) => {
           <Ionicons
             name="chevron-back"
             size={20}
-            color={state.currentPage === 1 ? colors.grey350 : colors.black}
+            color={
+              state.currentPage === 1
+                ? colors.grey350
+                : colorScheme == 'light'
+                ? colors.black
+                : colors.white
+            }
           />
         }
       />
@@ -91,7 +100,9 @@ const BEPagination = (props: Props) => {
             color={
               state.currentPage === state.totalPages
                 ? colors.grey350
-                : colors.black
+                : colorScheme == 'light'
+                ? colors.black
+                : colors.white
             }
           />
         }

@@ -23,12 +23,14 @@ import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
 import ToastManager, {Toast} from 'toastify-react-native';
 import {toastConfig} from '@/config';
+import {useColorScheme} from 'nativewind';
 
 export const width = Dimensions.get('window').width;
 
 const Schedule = () => {
   const navigation: any = useNavigation<StackProps>();
   const {t} = useTranslations();
+  const {colorScheme} = useColorScheme();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -110,7 +112,7 @@ const Schedule = () => {
     <View className="flex-1">
       <Header style={{zIndex: 100}} drawerBtn={<DrawerButton />} />
       <ScrollView
-        style={styles.container}
+        className="bg-white dark:bg-black"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -127,13 +129,7 @@ const Schedule = () => {
             style={{width: 120, height: 120}}
           />
           <View>
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: 30,
-                fontWeight: '500',
-                marginBottom: 8,
-              }}>
+            <Text className="text-black dark:text-white text-3xl text-medium mb-2">
               {t('schedule.title')}
             </Text>
             <View
@@ -142,69 +138,102 @@ const Schedule = () => {
                 borderLeftColor: colors.grey400,
                 paddingLeft: 10,
               }}>
-              <Text style={styles.text}>{t('schedule.description1')}</Text>
-              <Text style={styles.text}>{t('schedule.description2')}</Text>
+              <Text style={styles.text} className="text-text dark:text-white">
+                {t('schedule.description1')}
+              </Text>
+              <Text style={styles.text} className="text-text dark:text-white">
+                {t('schedule.description2')}
+              </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.bookContainer}>
           <Text
-            style={[
-              styles.text,
-              {fontWeight: '500', color: colors.black, marginBottom: 8},
-            ]}>
+            className="text-black dark:text-white text-medium mb-2"
+            style={styles.text}>
             {t('schedule.latestBook')}
           </Text>
           <View style={styles.tableHeader}>
-            <Text style={[styles.tableCol, {width: '30%'}]}>
+            <Text
+              className="text-text dark:text-white"
+              style={[
+                styles.tableCol,
+                {
+                  width: '30%',
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.grey200 : colors.black,
+                },
+              ]}>
               {t('schedule.name')}
             </Text>
             <Text
+              className="text-text dark:text-white"
               style={[
                 styles.tableCol,
-                {width: '40%', backgroundColor: colors.white},
+                {
+                  width: '40%',
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.white : colors.black,
+                },
               ]}></Text>
-            <Text style={[styles.tableCol, {width: '18%'}]}>
+            <Text
+              className="text-text dark:text-white"
+              style={[styles.tableCol, {width: '18%'}]}>
               {t('schedule.page')}
             </Text>
             <Text
+              className="text-text dark:text-white"
               style={[
                 styles.tableCol,
-                {width: '12%', backgroundColor: colors.white},
+                {
+                  width: '12%',
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.white : colors.black,
+                },
               ]}>
               0
             </Text>
           </View>
           <View style={styles.tableRow}>
-            <Text style={[styles.tableCol, {width: '30%'}]}>
+            <Text
+              className="text-text dark:text-white"
+              style={[styles.tableCol, {width: '30%'}]}>
               {t('schedule.description')}
             </Text>
             <Text
+              className="text-text dark:text-white"
               style={[
                 styles.tableCol,
-                {width: '70%', backgroundColor: colors.white, lineHeight: 20},
+                {
+                  width: '70%',
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.white : colors.black,
+                  lineHeight: 20,
+                },
               ]}></Text>
           </View>
         </View>
 
         <View style={styles.scheduleList}>
           {loading ? (
-            <View className="self-center justify-center">
+            <View className="self-center justify-center bg-white dark:bg-black">
               <ActivityIndicator
                 className="mb-2 mt-5"
                 size="large"
                 color={colors.primary}
               />
-              <Text className="text-base font-normal">Loading...</Text>
+              <Text className="text-base font-normal text-black dark:text-white">
+                Loading...
+              </Text>
             </View>
           ) : schedules.length > 0 ? (
             schedules.map((item, index) => {
               return (
                 <ScheduleItem
+                  key={index}
                   data={item}
                   isSingle={item.length === undefined}
-                  key={item.id || index}
                   onChangeRefresh={onChangeRefresh}
                 />
               );

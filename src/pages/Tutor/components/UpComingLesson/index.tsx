@@ -15,6 +15,7 @@ import StackProps from '@/types/type';
 import {colors} from '@/constants';
 import * as utilService from '@/services/utilService';
 import * as bookingService from '@/services/bookingService';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   refresh?: boolean;
@@ -32,6 +33,7 @@ const UpComingLesson = (props: Props) => {
   const [teachingTime, setTeachingTime] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const {colorScheme} = useColorScheme();
 
   useEffect(() => {
     const fetchUpComingLesson = async () => {
@@ -45,11 +47,16 @@ const UpComingLesson = (props: Props) => {
       if (resNextBookings.success) {
         const {data} = resNextBookings.data;
         if (data.length > 0) {
-          let nearestLesson: any = data.find(
-            (item: any) =>
-              item.scheduleDetailInfo.startPeriodTimestamp >=
-              Date.now() - 25 * 60 * 1000,
-          );
+          // let nearestLesson: any = data.find(
+          //   (item: any) =>
+          //     item.scheduleDetailInfo.startPeriodTimestamp >=
+          //     Date.now() - 25 * 60 * 1000,
+          // );
+          let nearestLesson: any = {
+            scheduleDetailInfo: {
+              endPeriodTimestamp: 999999999999999,
+            },
+          };
 
           data.forEach((item: any) => {
             const {scheduleDetailInfo} = item;
@@ -132,20 +139,25 @@ const UpComingLesson = (props: Props) => {
       start={{x: 0.1, y: 0}}
       end={{x: 0.75, y: 1.0}}
       style={styles.notiContainer}
-      colors={['rgb(12, 61, 223)', 'rgb(5, 23, 157)']}>
+      colors={
+        colorScheme == 'light'
+          ? ['rgb(12, 61, 223)', 'rgb(5, 23, 157)']
+          : ['black', 'rgba(0,0,0,0.1)']
+      }>
       {loading ? (
         <ActivityIndicator className="mr-4" size="large" color={colors.white} />
       ) : upcomingLesson ? (
         <View>
-          <Text style={styles.notiHeading}>{t('tutor.upcoming')}</Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 10,
-            }}>
+          <Text
+            style={styles.notiHeading}
+            className="text-white dark:text-white">
+            {t('tutor.upcoming')}
+          </Text>
+          <View className="flex-row items-center mt-2.5">
             <View style={{flex: 1}}>
-              <Text style={styles.notiDateText}>
+              <Text
+                style={styles.notiDateText}
+                className="text-white dark:text-white">
                 {new Date(
                   upcomingLesson?.scheduleDetailInfo?.startPeriodTimestamp,
                 ).toDateString()}
@@ -196,8 +208,7 @@ const UpComingLesson = (props: Props) => {
               activeOpacity={0.8}
               className="flex-row items-center bg-white rounded-full px-3 py-1.5">
               <Feather name="youtube" size={24} color={colors.primary} />
-              <Text
-                style={{marginLeft: 6, color: colors.primary, fontSize: 14}}>
+              <Text className="text-first ml-1.5 text-sm">
                 {t('tutor.enterUpcomingText')}
               </Text>
             </TouchableOpacity>
@@ -205,7 +216,9 @@ const UpComingLesson = (props: Props) => {
         </View>
       ) : (
         <View>
-          <Text style={[styles.notiHeading, {paddingVertical: 40}]}>
+          <Text
+            style={[styles.notiHeading, {paddingVertical: 40}]}
+            className="text-white">
             You have no upcoming lesson.
           </Text>
         </View>

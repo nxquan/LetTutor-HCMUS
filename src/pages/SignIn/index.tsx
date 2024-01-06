@@ -25,8 +25,10 @@ import {useGlobalContext, useTranslations} from '@/hooks';
 import {login} from '@/store';
 import * as authService from '@/services/authService';
 import {isEmail, isPassword} from '@/utils';
+import {useColorScheme} from 'nativewind';
 
 const SignIn = () => {
+  const {colorScheme, toggleColorScheme} = useColorScheme();
   const navigation = useNavigation<Props>();
   const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
@@ -217,21 +219,33 @@ const SignIn = () => {
     });
   }, []);
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-white dark:bg-black">
       <Header style={{zIndex: 50}} />
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {isForgotPassword ? (
           <View style={{height: Dimensions.get('window').height - 56}}>
             <View style={[styles.body]}>
-              <Text style={[styles.heading, {marginTop: 24}]}>
+              <Text
+                style={[
+                  styles.heading,
+                  {
+                    marginTop: 24,
+                    color:
+                      colorScheme === 'light' ? colors.primary : colors.white,
+                  },
+                ]}>
                 {t('signin.resetPassword')}
               </Text>
               <Text
                 style={[
                   styles.des,
-                  {fontWeight: '400', paddingHorizontal: 0, marginBottom: 8},
+                  {
+                    fontWeight: '400',
+                    paddingHorizontal: 0,
+                    marginBottom: 8,
+                    color:
+                      colorScheme === 'light' ? colors.black : colors.white,
+                  },
                 ]}>
                 <Text style={{color: colors.error}}>*</Text>{' '}
                 {t('signin.enterEmail')}
@@ -295,8 +309,14 @@ const SignIn = () => {
           <View>
             <Image source={images.banner} style={styles.banner} />
             <View style={styles.body}>
-              <Text style={styles.heading}>{t('signin.longTitle')}</Text>
-              <Text style={styles.des}>{t('signin.description')}</Text>
+              <Text
+                style={styles.heading}
+                className="text-first dark:text-white">
+                {t('signin.longTitle')}
+              </Text>
+              <Text style={styles.des} className="text-black dark:text-white">
+                {t('signin.description')}
+              </Text>
               <FormGroup
                 title={t('email')}
                 type="email"
@@ -314,7 +334,7 @@ const SignIn = () => {
               />
 
               <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
-                <Text style={styles.forgetPassword}>
+                <Text style={[styles.forgetPassword]}>
                   {t('signin.forgotPassword')}
                 </Text>
               </TouchableOpacity>
@@ -346,7 +366,11 @@ const SignIn = () => {
                 <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
               </TouchableOpacity>
 
-              <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
+              <Text
+                style={styles.moreText}
+                className="text-black dark:text-white">
+                {t('signin.continueWith')}
+              </Text>
               <View style={styles.loginList}>
                 <TouchableOpacity onPress={handleLoginByFacebook}>
                   <View style={styles.loginItem}>
@@ -362,10 +386,13 @@ const SignIn = () => {
                   </View>
                 </TouchableOpacity>
               </View>
-              <Text style={styles.signupText}>
+              <Text
+                style={styles.signupText}
+                className="text-blur dark:text-white">
                 {t('signin.other')}{' '}
                 <Text
                   style={styles.signupLink}
+                  className="text-first "
                   onPress={() => navigation.navigate('SignUp')}>
                   {t('signup.title')}
                 </Text>

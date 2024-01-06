@@ -7,12 +7,10 @@ const styles = StyleSheet.create({
   nav: {
     width: '100%',
     height: 56,
-    backgroundColor: colors.white,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomColor: colors.grey300,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     paddingHorizontal: 12,
   },
   logoContainer: {

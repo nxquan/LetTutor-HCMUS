@@ -86,14 +86,20 @@ const SignUp = () => {
   }, [notification]);
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-white ">
       <Header style={{zIndex: 50}} backIcon={<BackButton />} />
-      <ScrollView className="bg-white" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className=" dark:bg-black"
+        showsVerticalScrollIndicator={false}>
         <View style={styles.inner}>
           <Image source={images.banner} style={styles.banner} />
           <View className="px-6">
-            <Text style={styles.heading}>{t('signup.longTitle')}</Text>
-            <Text style={styles.des}>{t('signup.description')}</Text>
+            <Text style={styles.heading} className="text-first dark:text-white">
+              {t('signup.longTitle')}
+            </Text>
+            <Text style={styles.des} className="text-black dark:text-white">
+              {t('signup.description')}
+            </Text>
             <FormGroup
               title={t('email')}
               type="email"
@@ -133,7 +139,9 @@ const SignUp = () => {
                 {t('signup.title')}
               </Text>
             </TouchableOpacity>
-            <Text style={styles.signupText}>
+            <Text
+              style={styles.signupText}
+              className="text-blur dark:text-white">
               {t('signup.other')}{' '}
               <Text
                 style={styles.signupLink}

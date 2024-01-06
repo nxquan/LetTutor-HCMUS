@@ -12,7 +12,7 @@ const MessageIcon = () => {
     <FAB
       style={{
         position: 'absolute',
-        top: height - 100,
+        top: height - 130,
         right: 20,
       }}
       activeOpacity={0.8}

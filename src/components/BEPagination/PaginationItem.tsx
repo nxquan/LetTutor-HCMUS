@@ -32,7 +32,9 @@ const PaginationItem = (props: Props) => {
     } else {
       if (!!title) {
         return (
-          <Text style={[styles.title, active && styles.activeTitle]}>
+          <Text
+            className="text-black dark:text-white"
+            style={[active && styles.activeTitle]}>
             {title}
           </Text>
         );

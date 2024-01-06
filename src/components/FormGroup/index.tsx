@@ -4,6 +4,7 @@ import styles from './styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {colors} from '@/constants';
 import {isEmail, isPassword} from '@/utils';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   title: string;
@@ -32,6 +33,7 @@ const FormGroup = (props: Props) => {
   const [isShowPassword, setIsShowPassword] = useState(type === 'password');
   const [error, setError] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const {colorScheme, toggleColorScheme} = useColorScheme();
 
   const renderActionShow = () => {
     if (type === 'password') {
@@ -139,7 +141,7 @@ const FormGroup = (props: Props) => {
   });
   return (
     <View style={styles.container}>
-      <Text style={styles.title} className="text-gray-800">
+      <Text style={styles.title} className="text-gray-800 dark:text-white">
         {required && <Text className="text-red-500">* </Text>}
         {title}
       </Text>
@@ -152,12 +154,19 @@ const FormGroup = (props: Props) => {
         <TextInput
           style={[
             styles.textInput,
-            editable === false && {color: colors.grey700},
+            editable === false && {
+              color: colorScheme == 'light' ? colors.grey700 : colors.white,
+            },
+            {
+              color: colorScheme == 'light' ? colors.black : colors.white,
+            },
           ]}
           cursorColor={colors.primary}
           keyboardType={getKeyboardType()}
           placeholder={placeholder}
-          placeholderTextColor={colors.text}
+          placeholderTextColor={
+            colorScheme == 'light' ? colors.text : colors.white
+          }
           secureTextEntry={isShowPassword}
           editable={editable}
           onBlur={() => {

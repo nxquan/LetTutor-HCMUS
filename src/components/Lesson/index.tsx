@@ -9,6 +9,7 @@ import {images, languageImages} from '@/assets';
 import {getCountryNameFromCode, getDateAgo} from '@/utils';
 import {useTranslations} from '@/hooks';
 import StackProps from '@/types/type';
+import {useColorScheme} from 'nativewind';
 type Props = {
   children: any;
   data: any;
@@ -26,6 +27,7 @@ const Lesson = (props: Props) => {
     flag: undefined,
     name: '',
   });
+  const {colorScheme} = useColorScheme();
 
   useLayoutEffect(() => {
     const getCountry = async () => {
@@ -38,13 +40,23 @@ const Lesson = (props: Props) => {
   }, [data]);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colorScheme == 'light' ? '#f1f1f1' : colors.black,
+          borderColor:
+            colorScheme == 'light'
+              ? 'rgba(0,0,0,0.05)'
+              : 'rgba(255,255,255,0.4)',
+        },
+      ]}>
       <View style={styles.infoLesson}>
         <View>
-          <Text style={styles.meetDate}>
+          <Text className="text-black dark:text-white font-medium text-lg">
             {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
           </Text>
-          <Text style={{fontSize: 14, color: colors.text}}>
+          <Text className="text-text dark:text-white text-sm">
             {history === true
               ? getDateAgo(scheduleDetailInfo?.startPeriodTimestamp, Date.now())
               : numberOfLesson == 1
@@ -52,14 +64,14 @@ const Lesson = (props: Props) => {
               : `${numberOfLesson} consecutive lessons`}
           </Text>
         </View>
-        <View style={styles.info}>
+        <View className="flex-row items-center">
           <Image
             source={images.defaultAvatar}
             src={scheduleInfo?.tutorInfo?.avatar}
             style={styles.avatar}
           />
           <View>
-            <Text className="text-base text-black font-semibold">
+            <Text className="text-base text-black dark:text-white font-semibold">
               {scheduleInfo.tutorInfo.name}
             </Text>
             <View
@@ -73,7 +85,9 @@ const Lesson = (props: Props) => {
                 src={country.flag}
                 style={{width: 24, height: 16, marginRight: 4}}
               />
-              <Text className="text-sm text-gray-700">{country.name}</Text>
+              <Text className="text-sm text-gray-700 dark:text-white">
+                {country.name}
+              </Text>
             </View>
             <TouchableOpacity
               onPress={() => {
@@ -97,7 +111,9 @@ const Lesson = (props: Props) => {
         </View>
       </View>
 
-      <View style={[styles.content]}>{children}</View>
+      <View style={[styles.content]} className="bg-white dark:bg-black">
+        {children}
+      </View>
     </View>
   );
 };

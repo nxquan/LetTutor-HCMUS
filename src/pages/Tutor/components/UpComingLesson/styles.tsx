@@ -8,14 +8,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   notiHeading: {
-    color: colors.white,
     fontSize: 24,
     marginTop: -12,
     fontWeight: '500',
     textAlign: 'center',
   },
   notiDateText: {
-    color: colors.white,
     fontSize: 18,
     fontWeight: '500',
     textAlign: 'center',

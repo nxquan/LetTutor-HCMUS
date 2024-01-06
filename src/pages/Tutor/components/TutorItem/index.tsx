@@ -14,6 +14,7 @@ import {useTranslations} from '@/hooks';
 import RenderRating from '@/components/RenderRating';
 import * as tutorService from '@/services/tutorService';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   data: any;
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const TutorItem = (props: Props) => {
+  const {colorScheme} = useColorScheme();
   const {data, onAddFavorite} = props;
   const navigation = useNavigation<StackProps>();
   const {t} = useTranslations();
@@ -40,9 +42,12 @@ const TutorItem = (props: Props) => {
           <Button
             key={topic.key}
             title={t(topic.key)}
+            activeOpacity={1}
+            onPress={() => {}}
             style={{
               color: colors.primary,
-              backgroundColor: colors.backgroundActive,
+              backgroundColor:
+                colorScheme == 'light' ? colors.backgroundActive : colors.white,
               paddingVertical: 4,
               paddingHorizontal: 12,
               marginBottom: 8,
@@ -61,9 +66,14 @@ const TutorItem = (props: Props) => {
             <Button
               key={testItem.key}
               title={t(testItem.key)}
+              activeOpacity={1}
+              onPress={() => {}}
               style={{
                 color: colors.primary,
-                backgroundColor: colors.backgroundActive,
+                backgroundColor:
+                  colorScheme == 'light'
+                    ? colors.backgroundActive
+                    : colors.white,
                 paddingVertical: 4,
                 paddingHorizontal: 12,
                 marginBottom: 8,
@@ -112,17 +122,15 @@ const TutorItem = (props: Props) => {
   };
 
   return (
-    <View style={styles.wrapper}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
+    <View
+      style={styles.wrapper}
+      className="bg-white dark:bg-black border-gray-200 dark:border-white">
+      <View className="flex-row justify-between">
         <Pressable
           onPress={() => {
             navigation.navigate('TutorDetail', {tutorId: data.id});
           }}>
-          <View style={styles.info}>
+          <View className="flex-row">
             <Image
               source={images.defaultAvatar}
               src={
@@ -131,30 +139,23 @@ const TutorItem = (props: Props) => {
                   ? data?.avatar
                   : null
               }
+              className="w-20 h-20 self-center rounded-full border"
               style={{
-                width: 80,
-                height: 80,
-                alignSelf: 'center',
-                borderRadius: 999,
                 borderColor: colors.grey300,
-                borderWidth: 1,
               }}
             />
 
-            <View style={styles.infoDes}>
-              <Text style={styles.name}>{data?.name}</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginVertical: 5,
-                }}>
+            <View className="flex-col ml-3 pr-8">
+              <Text style={styles.name} className="text-black dark:text-white">
+                {data?.name}
+              </Text>
+              <View className="flex-row items-center mx-1.5">
                 <Image
                   source={languageImages.vietNam}
                   src={country.flag}
-                  style={{width: 24, height: 16}}
+                  className="w-6 h-4"
                 />
-                <Text style={styles.nationality}>
+                <Text className="text-text dark:text-white ml-1.5">
                   {country?.name && 'Vietnam'}
                 </Text>
               </View>
@@ -185,14 +186,7 @@ const TutorItem = (props: Props) => {
         {renderSpecialties()}
       </View>
 
-      <Text
-        style={{
-          marginBottom: 14,
-          fontSize: 14,
-          lineHeight: 20,
-          color: colors.text,
-          textAlign: 'justify',
-        }}>
+      <Text className="text-text text-justify text-sm mb-3.5 leading-5 dark:text-white">
         {data?.bio}
       </Text>
       <TouchableOpacity

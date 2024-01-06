@@ -5,6 +5,8 @@ import styles from './styles';
 import OutsidePressHandler from 'react-native-outside-press';
 import {useTranslations} from '@/hooks';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useColorScheme} from 'nativewind';
+import {colors} from '@/constants';
 function DropdownMenu(props: {
   data: Array<any>;
   selectedItem: any;
@@ -33,6 +35,7 @@ function DropdownMenu(props: {
   } = props;
 
   const {t} = useTranslations();
+  const {colorScheme} = useColorScheme();
   return (
     <OutsidePressHandler
       onOutsidePress={function (): void {
@@ -51,6 +54,7 @@ function DropdownMenu(props: {
             maxHeight: 400,
           }}>
           <ScrollView
+            className="bg-white dark:bg-black"
             style={[styles.dropdownMenu, styleMenu]}
             showsVerticalScrollIndicator={true}
             nestedScrollEnabled={true}>
@@ -59,7 +63,11 @@ function DropdownMenu(props: {
                 <TouchableHighlight
                   key={useKey === true ? item?.key : item?.id}
                   activeOpacity={0.8}
-                  underlayColor="rgba(0,0,0,0.1)"
+                  underlayColor={
+                    colorScheme === 'light'
+                      ? 'rgba(0,0,0,0.1)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {
                     if (item?.parentType) {
                       onChangeSelected(item?.parentType, item);
@@ -78,13 +86,21 @@ function DropdownMenu(props: {
                       item?.icon && {
                         paddingHorizontal: 6,
                       },
-                      selectedItem?.key === item?.key && styles.active,
+                      selectedItem?.key === item?.key && {
+                        fontWeight: '500',
+                        backgroundColor:
+                          colorScheme == 'light'
+                            ? colors.backgroundActive
+                            : 'rgba(255,255,255,0.4)',
+                      },
                       index === 0 && styles.borderLeftToRightTop,
                       index === data.length - 1 &&
                         styles.borderLeftToRightBottom,
                     ]}>
                     {item?.icon}
-                    <Text style={[styles.dropdownItem]}>
+                    <Text
+                      style={[styles.dropdownItem]}
+                      className="text-black dark:text-white">
                       {translation === true
                         ? t(item?.key)
                         : item?.title || item?.name}
