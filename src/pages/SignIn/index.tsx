@@ -217,161 +217,166 @@ const SignIn = () => {
     });
   }, []);
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={[0]}>
-      <Header />
-      {isForgotPassword ? (
-        <View style={{height: Dimensions.get('window').height - 56}}>
-          <View style={[styles.body]}>
-            <Text style={[styles.heading, {marginTop: 24}]}>
-              {t('signin.resetPassword')}
-            </Text>
-            <Text
-              style={[
-                styles.des,
-                {fontWeight: '400', paddingHorizontal: 0, marginBottom: 8},
-              ]}>
-              <Text style={{color: colors.error}}>*</Text>{' '}
-              {t('signin.enterEmail')}
-            </Text>
-            <FormGroup
-              title="Email"
-              type="email"
-              placeholder="Example@email.com"
-              field="email"
-              value={resetInfo.email}
-              onChange={onChangeDataOfResetPassword}
-            />
-            {notification.message.length > 0 && (
+    <View className="flex-1">
+      <Header style={{zIndex: 50}} />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}>
+        {isForgotPassword ? (
+          <View style={{height: Dimensions.get('window').height - 56}}>
+            <View style={[styles.body]}>
+              <Text style={[styles.heading, {marginTop: 24}]}>
+                {t('signin.resetPassword')}
+              </Text>
               <Text
                 style={[
-                  styles.notification,
-                  notification.type === 'error' ? styles.error : styles.success,
+                  styles.des,
+                  {fontWeight: '400', paddingHorizontal: 0, marginBottom: 8},
                 ]}>
-                {notification.message}
+                <Text style={{color: colors.error}}>*</Text>{' '}
+                {t('signin.enterEmail')}
               </Text>
-            )}
-            <TouchableOpacity
-              style={[
-                styles.loginBtn,
-                !isEmail(resetInfo.email) && styles.disable,
-              ]}
-              disabled={!isEmail(resetInfo.email)}
-              onPress={() => handleForgotPassword()}>
-              {loading && (
-                <ActivityIndicator
-                  className="mr-4"
-                  size="small"
-                  color={colors.white}
-                />
+              <FormGroup
+                title="Email"
+                type="email"
+                placeholder="Example@email.com"
+                field="email"
+                value={resetInfo.email}
+                onChange={onChangeDataOfResetPassword}
+              />
+              {notification.message.length > 0 && (
+                <Text
+                  style={[
+                    styles.notification,
+                    notification.type === 'error'
+                      ? styles.error
+                      : styles.success,
+                  ]}>
+                  {notification.message}
+                </Text>
               )}
-              <Text style={styles.loginBtnText}>{t('sendResetLink')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsForgotPassword(false);
-                setNotification({
-                  message: '',
-                  type: '',
-                });
-              }}>
-              <Text
-                style={{
-                  color: colors.primary,
-                  fontSize: 15,
-                  fontWeight: '500',
-                  marginTop: 12,
-                }}>
-                {t('back')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ) : (
-        <View>
-          <Image source={images.banner} style={styles.banner} />
-          <View style={styles.body}>
-            <Text style={styles.heading}>{t('signin.longTitle')}</Text>
-            <Text style={styles.des}>{t('signin.description')}</Text>
-            <FormGroup
-              title={t('email')}
-              type="email"
-              field="email"
-              placeholder="Example@email.com"
-              value={user.email}
-              onChange={onChangeDataOfUser}
-            />
-            <FormGroup
-              title={t('password')}
-              type="password"
-              field="password"
-              value={user.password}
-              onChange={onChangeDataOfUser}
-            />
-
-            <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
-              <Text style={styles.forgetPassword}>
-                {t('signin.forgotPassword')}
-              </Text>
-            </TouchableOpacity>
-            {notification.message.length > 0 && (
-              <Text
+              <TouchableOpacity
                 style={[
-                  notification.type === 'error' ? styles.error : styles.success,
-                  styles.notification,
-                ]}>
-                {notification.message}
-              </Text>
-            )}
-            <TouchableOpacity
-              style={[
-                styles.loginBtn,
-                !validate(user.email, user.password) && styles.disable,
-              ]}
-              disabled={!validate(user.email, user.password)}
-              onPress={() => handleSubmit()}>
-              {loading && (
-                <ActivityIndicator
-                  className="mr-4"
-                  size="small"
-                  color={colors.white}
-                />
-              )}
-              <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
-            <View style={styles.loginList}>
-              <TouchableOpacity onPress={handleLoginByFacebook}>
-                <View style={styles.loginItem}>
-                  <FontAwesome name="facebook" size={24} color="#0071F0" />
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleLoginByGoogle}>
-                <View className="ml-4">
-                  <Image
-                    source={images.googleLogo}
-                    style={{width: 40, height: 40}}
+                  styles.loginBtn,
+                  !isEmail(resetInfo.email) && styles.disable,
+                ]}
+                disabled={!isEmail(resetInfo.email)}
+                onPress={() => handleForgotPassword()}>
+                {loading && (
+                  <ActivityIndicator
+                    className="mr-4"
+                    size="small"
+                    color={colors.white}
                   />
-                </View>
+                )}
+                <Text style={styles.loginBtnText}>{t('sendResetLink')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsForgotPassword(false);
+                  setNotification({
+                    message: '',
+                    type: '',
+                  });
+                }}>
+                <Text
+                  style={{
+                    color: colors.primary,
+                    fontSize: 15,
+                    fontWeight: '500',
+                    marginTop: 12,
+                  }}>
+                  {t('back')}
+                </Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.signupText}>
-              {t('signin.other')}{' '}
-              <Text
-                style={styles.signupLink}
-                onPress={() => navigation.navigate('SignUp')}>
-                {t('signup.title')}
-              </Text>
-            </Text>
           </View>
-        </View>
-      )}
+        ) : (
+          <View>
+            <Image source={images.banner} style={styles.banner} />
+            <View style={styles.body}>
+              <Text style={styles.heading}>{t('signin.longTitle')}</Text>
+              <Text style={styles.des}>{t('signin.description')}</Text>
+              <FormGroup
+                title={t('email')}
+                type="email"
+                field="email"
+                placeholder="Example@email.com"
+                value={user.email}
+                onChange={onChangeDataOfUser}
+              />
+              <FormGroup
+                title={t('password')}
+                type="password"
+                field="password"
+                value={user.password}
+                onChange={onChangeDataOfUser}
+              />
 
-      <StatusBar barStyle={'dark-content'} backgroundColor={colors.white} />
-    </ScrollView>
+              <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
+                <Text style={styles.forgetPassword}>
+                  {t('signin.forgotPassword')}
+                </Text>
+              </TouchableOpacity>
+              {notification.message.length > 0 && (
+                <Text
+                  style={[
+                    notification.type === 'error'
+                      ? styles.error
+                      : styles.success,
+                    styles.notification,
+                  ]}>
+                  {notification.message}
+                </Text>
+              )}
+              <TouchableOpacity
+                style={[
+                  styles.loginBtn,
+                  !validate(user.email, user.password) && styles.disable,
+                ]}
+                disabled={!validate(user.email, user.password)}
+                onPress={() => handleSubmit()}>
+                {loading && (
+                  <ActivityIndicator
+                    className="mr-4"
+                    size="small"
+                    color={colors.white}
+                  />
+                )}
+                <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.moreText}>{t('signin.continueWith')}</Text>
+              <View style={styles.loginList}>
+                <TouchableOpacity onPress={handleLoginByFacebook}>
+                  <View style={styles.loginItem}>
+                    <FontAwesome name="facebook" size={24} color="#0071F0" />
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLoginByGoogle}>
+                  <View className="ml-4">
+                    <Image
+                      source={images.googleLogo}
+                      style={{width: 40, height: 40}}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.signupText}>
+                {t('signin.other')}{' '}
+                <Text
+                  style={styles.signupLink}
+                  onPress={() => navigation.navigate('SignUp')}>
+                  {t('signup.title')}
+                </Text>
+              </Text>
+            </View>
+          </View>
+        )}
+
+        <StatusBar barStyle={'dark-content'} backgroundColor={colors.white} />
+      </ScrollView>
+    </View>
   );
 };
 

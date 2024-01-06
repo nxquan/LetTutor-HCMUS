@@ -4,11 +4,11 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  RefreshControl,
   Dimensions,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {useNavigation} from '@react-navigation/native';
-
 import styles from './styles';
 import {images} from '@/assets';
 import {colors} from '@/constants';
@@ -21,6 +21,10 @@ import {useTranslations} from '@/hooks';
 import * as bookingService from '@/services/bookingService';
 import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
+import ToastManager, {Toast} from 'toastify-react-native';
+import {toastConfig} from '@/config';
+
+export const width = Dimensions.get('window').width;
 
 const Schedule = () => {
   const navigation: any = useNavigation<StackProps>();
@@ -28,6 +32,7 @@ const Schedule = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshPage, setRefreshPage] = useState(false);
   const [page, setPage] = useState({
     current: 1,
     total: 0,
@@ -37,38 +42,85 @@ const Schedule = () => {
     setPage((prev: any) => ({...prev, current: page}));
   };
 
+  const getHistory = useCallback(async () => {
+    setLoading(true);
+    const res = await bookingService.getHistoryOfBooking({
+      params: {
+        page: page.current,
+        perPage: 20,
+        inFuture: 1,
+        orderBy: 'meeting',
+        sortBy: 'asc',
+      },
+    });
+
+    if (res.success) {
+      const {data} = res.data;
+      const groupedSchedule = groupSchedule(data.rows);
+      setSchedules(groupedSchedule);
+      setPage((prev: any) => ({...prev, total: data.count}));
+    }
+    setLoading(false);
+  }, [page.current, refreshing]);
+
   useEffect(() => {
-    const getHistory = async () => {
-      setLoading(true);
-      const res = await bookingService.getHistoryOfBooking({
-        params: {
-          page: page.current,
-          perPage: 20,
-          inFuture: 1,
-          orderBy: 'meeting',
-          sortBy: 'asc',
-        },
-      });
-
-      if (res.success) {
-        const {data} = res.data;
-        setSchedules(data.rows);
-        setPage((prev: any) => ({...prev, total: data.count}));
-      }
-      setLoading(false);
-    };
-
     getHistory();
   }, [page.current, refreshing]);
+
+  const groupSchedule = useCallback((schedules: any[]) => {
+    const result: any = [];
+    for (let i = 0; i < schedules.length; i++) {
+      const peers = [schedules[i]];
+      for (let j = i + 1; j < schedules.length; j++) {
+        if (
+          peers[peers.length - 1].scheduleDetailInfo.endPeriodTimestamp +
+            5 * 60 * 1000 ===
+          schedules[j].scheduleDetailInfo.startPeriodTimestamp
+        ) {
+          peers.push(schedules[j]);
+        } else {
+          break;
+        }
+      }
+
+      if (peers.length > 1) {
+        i += peers.length - 1;
+        result.push(peers);
+      } else {
+        result.push(peers[0]);
+      }
+    }
+
+    return result;
+  }, []);
 
   const onChangeRefresh = () => {
     setRefreshing(!refreshing);
   };
 
+  const handleRefreshPage = () => {
+    setRefreshPage(true);
+    getHistory();
+    setTimeout(() => {
+      setRefreshPage(false);
+    }, 800);
+  };
+
   return (
-    <>
-      <ScrollView style={styles.container} stickyHeaderIndices={[0]}>
-        <Header drawerBtn={<DrawerButton />} />
+    <View className="flex-1">
+      <Header style={{zIndex: 100}} drawerBtn={<DrawerButton />} />
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshPage}
+            onRefresh={() => {
+              handleRefreshPage();
+            }}
+            colors={[colors.primary]}
+          />
+        }>
         <View style={styles.intro}>
           <Image
             source={images.calendarCheck}
@@ -151,7 +203,8 @@ const Schedule = () => {
               return (
                 <ScheduleItem
                   data={item}
-                  key={index}
+                  isSingle={item.length === undefined}
+                  key={item.id || index}
                   onChangeRefresh={onChangeRefresh}
                 />
               );
@@ -177,20 +230,28 @@ const Schedule = () => {
               />
             </View>
           )}
+          {schedules.length > 0 && !loading && (
+            <BEPagination
+              ITEMS_PER_PAGE={20}
+              totalItems={page.total}
+              currentPage={page.current}
+              style={{paddingHorizontal: 20}}
+              onChangePage={onChangePage}
+            />
+          )}
         </View>
-
-        {schedules.length > 0 && !loading && (
-          <BEPagination
-            ITEMS_PER_PAGE={20}
-            totalItems={page.total}
-            currentPage={page.current}
-            style={{paddingHorizontal: 20}}
-            onChangePage={onChangePage}
-          />
-        )}
       </ScrollView>
       <MessageIcon />
-    </>
+      <ToastManager
+        {...toastConfig}
+        width={width - 24}
+        style={{
+          position: 'absolute',
+          top: 50,
+          zIndex: 1000,
+        }}
+      />
+    </View>
   );
 };
 

@@ -7,12 +7,22 @@ import {
   View,
   TouchableHighlight,
 } from 'react-native';
-import {DrawerProps} from '@/types/type';
+
 import Tutor from '@/pages/Tutor';
 import Schedule from '@/pages/Schedule';
 import History from '@/pages/History';
 import Courses from '@/pages/Courses';
 import TutorDetail from '@/pages/TutorDetail';
+import CourseDetail from '@/pages/CourseDetail';
+import BecomeTutor from '@/pages/BecomeTutor';
+import Profile from '@/pages/Profile';
+import MyCourse from '@/pages/MyCourse';
+import Messages from '@/pages/Messages';
+import Message from '@/pages/Message';
+
+import {useGlobalContext} from '@/hooks';
+import {colors} from '@/constants';
+import {images} from '@/assets';
 import {
   BecomeTutorIcon,
   CoursesIcon,
@@ -22,18 +32,9 @@ import {
   ScheduleIcon,
   TutorIcon,
 } from '@/assets/icons';
-
-import CourseDetail from '@/pages/CourseDetail';
-import {useGlobalContext} from '@/hooks';
-import BecomeTutor from '@/pages/BecomeTutor';
-import Profile from '@/pages/Profile';
-import MyCourse from '@/pages/MyCourse';
-import Messages from '@/pages/Messages';
-import Message from '@/pages/Message';
-
-import {colors} from '@/constants';
-import {images} from '@/assets';
 import {logout} from '@/store';
+import {DrawerProps} from '@/types/type';
+
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {

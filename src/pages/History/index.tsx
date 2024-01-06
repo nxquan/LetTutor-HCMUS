@@ -5,6 +5,7 @@ import {
   ScrollView,
   Dimensions,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
 
@@ -27,11 +28,13 @@ import MessageIcon from '@/components/MessageIcon';
 const width = Dimensions.get('window').width;
 const History = () => {
   const {t} = useTranslations();
-  const navigation: any = useNavigation();
+  const navigation: any = useNavigation<StackProps>();
   const [loading, setLoading] = useState(false);
 
   const [schedules, setSchedules] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshPage, setRefreshPage] = useState(false);
+
   const [page, setPage] = useState({
     current: 1,
     total: 0,
@@ -40,43 +43,57 @@ const History = () => {
   const onChangePage = (page: number) => {
     setPage((prev: any) => ({...prev, current: page}));
   };
-
-  useEffect(() => {
-    const getHistory = async () => {
-      setLoading(true);
-      const res = await bookingService.getHistoryOfBooking({
-        params: {
-          page: page.current,
-          perPage: 20,
-          inFuture: 0,
-          orderBy: 'meeting',
-          sortBy: 'desc',
-        },
-      });
-
-      if (res.success) {
-        const {data} = res.data;
-        setSchedules(data.rows);
-        setPage((prev: any) => ({...prev, total: data.count}));
-      }
-      setLoading(false);
-    };
-
-    getHistory();
-  }, [page.current, refreshing]);
-
   const onRefresh = useCallback(() => {
     setRefreshing(!refreshing);
   }, []);
 
+  const getHistory = useCallback(async () => {
+    setLoading(true);
+    const res = await bookingService.getHistoryOfBooking({
+      params: {
+        page: page.current,
+        perPage: 20,
+        inFuture: 0,
+        orderBy: 'meeting',
+        sortBy: 'desc',
+      },
+    });
+
+    if (res.success) {
+      const {data} = res.data;
+      setSchedules(data.rows);
+      setPage((prev: any) => ({...prev, total: data.count}));
+    }
+    setLoading(false);
+  }, [page.current, refreshing]);
+
+  const handleRefreshPage = () => {
+    setRefreshPage(true);
+    getHistory();
+    setTimeout(() => {
+      setRefreshPage(false);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    getHistory();
+  }, [page.current, refreshing]);
+
   return (
-    <>
+    <View className="flex-1">
+      <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
       <ScrollView
         style={styles.container}
-        stickyHeaderIndices={[0]}
-        showsVerticalScrollIndicator={false}>
-        <Header drawerBtn={<DrawerButton />} />
-
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshPage}
+            onRefresh={() => {
+              handleRefreshPage();
+            }}
+            colors={[colors.primary]}
+          />
+        }>
         <View style={styles.intro}>
           <Image source={images.history} style={{width: 120, height: 120}} />
           <View>
@@ -139,10 +156,18 @@ const History = () => {
             onChangePage={onChangePage}
           />
         )}
-        <ToastManager {...toastConfig} width={width - 24} />
       </ScrollView>
+      <ToastManager
+        {...toastConfig}
+        width={width - 24}
+        style={{
+          position: 'absolute',
+          top: 50,
+          zIndex: 1000,
+        }}
+      />
       <MessageIcon />
-    </>
+    </View>
   );
 };
 

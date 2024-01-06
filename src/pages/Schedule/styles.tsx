@@ -1,5 +1,5 @@
-import { colors } from '@/constants';
-import { StyleSheet } from 'react-native';
+import {colors} from '@/constants';
+import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   scheduleList: {
     paddingHorizontal: 20,
     marginTop: 12,
+    backgroundColor: colors.white,
   },
 });
 

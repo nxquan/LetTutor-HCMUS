@@ -375,9 +375,9 @@ const BecomeTutor = () => {
   }, [video]);
 
   return (
-    <>
+    <View className="flex-1">
+      <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
       <ScrollView className="bg-white">
-        <Header drawerBtn={<DrawerButton />} />
         <View className="flex-column mt-4 px-2.5">
           <View className="flex-row items-center">
             <Text
@@ -1187,7 +1187,7 @@ const BecomeTutor = () => {
         <ToastManager {...toastConfig} width={width - 24} />
       </ScrollView>
       <MessageIcon />
-    </>
+    </View>
   );
 };
 

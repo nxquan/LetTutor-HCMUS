@@ -6,10 +6,9 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import styles from './styles';
 import {images} from '@/assets';
@@ -17,39 +16,41 @@ import {colors} from '@/constants';
 import ModalPopper from '@/components/ModalPopper';
 import Lesson from '@/components/Lesson';
 import DropdownMenu from '@/components/DropdownMenu';
-import {useGlobalContext, useTranslations} from '@/hooks';
+import {useTranslations} from '@/hooks';
+import {Toast} from 'toastify-react-native';
+import * as bookingService from '@/services/bookingService';
+import {renderStartAndEndHourOnLearning} from '@/utils';
+import ScheduleInfo from '../ScheduleInfo';
+import {useNavigation} from '@react-navigation/native';
+import StackProps from '@/types/type';
+
 const reasons = [
   {id: 1, title: 'Reschedule at another time', key: 'reschedule'},
   {id: 2, title: 'Busy at that time', key: 'busy'},
   {id: 3, title: 'Asked by the tutor', key: 'asked'},
   {id: 4, title: 'Other', key: 'other1'},
 ];
-import * as bookingService from '@/services/bookingService';
-import {renderStartAndEndHourOnLearning} from '@/utils';
-
 type Props = {
-  data: any;
+  data: any | any[];
+  isSingle?: boolean;
   onChangeRefresh: () => void;
 };
 const ScheduleItem = (props: Props) => {
-  const {data, onChangeRefresh} = props;
-  const {scheduleDetailInfo} = data;
+  const {data, isSingle, onChangeRefresh} = props;
   const {t} = useTranslations();
-  const [isOpenRequest, setIsOpenRequest] = useState(true);
+  const navigation = useNavigation<StackProps>();
   const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
   const [isOpenRequestModal, setIsOpenRequestModal] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [studentRequest, setStudentRequest] = useState('');
-
+  const [selectedItem, setSelectedItem] = useState<any>(undefined);
+  const [isReadyMeeting, setIsReadyMeeting] = useState(false);
   const [reason, setReason] = useState({
     type: 'Choose a reason',
     notes: '',
   });
-  const toggleOpenRequest = () => {
-    setIsOpenRequest(!isOpenRequest);
-  };
 
-  const onChangeSelectedItem = (item: any) => {
+  const onChangeReason = (item: any) => {
     setReason((prev: any) => {
       return {
         ...prev,
@@ -58,22 +59,31 @@ const ScheduleItem = (props: Props) => {
     });
   };
 
+  const onChangeSelectedItem = (data: any) => {
+    setSelectedItem(data);
+    setStudentRequest(data?.studentRequest);
+  };
+
   const isAllowedToJoinMeeting = () => {
-    const diff =
-      Date.now() -
-      (scheduleDetailInfo.startPeriodTimestamp - 7 * 60 * 60 * 1000);
-    if (diff >= 0 && diff <= 25 * 60 * 1000) {
-      return true;
+    if (isSingle) {
+      const diff = Date.now() - data.scheduleDetailInfo.startPeriodTimestamp;
+      if (diff >= 0 && diff <= 25 * 60 * 1000) {
+        return true;
+      }
+    } else {
+      const diff = Date.now() - data[0].scheduleDetailInfo.startPeriodTimestamp;
+      if (diff >= 0 && diff <= 25 * 60 * 1000) {
+        return true;
+      }
     }
     return false;
   };
 
   const handleSubmitRequestStudent = async () => {
-    if (studentRequest.length > 0) {
-      const res = await bookingService.editRequest(data.id, {
+    if (studentRequest.length > 0 && selectedItem) {
+      const res = await bookingService.editRequest(selectedItem.id, {
         studentRequest,
       });
-
       if (res.success) {
         onChangeRefresh();
       }
@@ -83,22 +93,13 @@ const ScheduleItem = (props: Props) => {
   };
 
   const handleCancelBooking = async () => {
-    console.log({
-      scheduleDetailId: data.scheduleDetailInfo.id,
-      cancelInfo: {
-        cancelReasonId: reasons.find((item: any) => item.title == reason.type)
-          ?.id,
-        note: reason.notes,
-      },
-    });
-
     const isEligible =
-      data.scheduleDetailInfo.startPeriodTimestamp <=
-      Date.now() + 2 * 60 * 60 * 1000;
+      selectedItem.scheduleDetailInfo.startPeriodTimestamp - Date.now() >=
+      2 * 60 * 60 * 1000;
     if (isEligible) {
       const res = await bookingService.cancelBooking({
         data: {
-          scheduleDetailId: data.id,
+          scheduleDetailId: selectedItem.id,
           cancelInfo: {
             cancelReasonId: reasons.find(
               (item: any) => item.title == reason.type,
@@ -110,73 +111,70 @@ const ScheduleItem = (props: Props) => {
       setIsOpenCancelModal(false);
       onChangeRefresh();
     } else {
-      console.log('Chỉ hủy được 2 tiếng trước khi học');
+      Toast.success('Chỉ hủy được 2 tiếng trước khi học');
+    }
+  };
+
+  const renderSession = () => {
+    if (isSingle) {
+      return (
+        <ScheduleInfo
+          data={data}
+          onOpenCancelModal={setIsOpenCancelModal}
+          onOpenRequestModal={setIsOpenRequestModal}
+          onChangeSelectedItem={onChangeSelectedItem}
+        />
+      );
+    } else {
+      return data.map((item: any, index: number) => {
+        return (
+          <>
+            <ScheduleInfo
+              key={item.id}
+              data={item}
+              orderSession={index + 1}
+              onOpenCancelModal={setIsOpenCancelModal}
+              onOpenRequestModal={setIsOpenRequestModal}
+              onChangeSelectedItem={onChangeSelectedItem}
+            />
+          </>
+        );
+      });
     }
   };
 
   useEffect(() => {
-    data && setStudentRequest(data?.studentRequest);
+    const isReadyForMeeting = isAllowedToJoinMeeting();
+    setIsReadyMeeting(isReadyForMeeting);
   }, [data]);
-  return (
-    <Lesson data={data}>
-      <View style={styles.requestContainer}>
-        <View style={styles.requestHeader}>
-          <Text className="text-base font-medium text-black">
-            {renderStartAndEndHourOnLearning(
-              scheduleDetailInfo.startPeriodTimestamp,
-              scheduleDetailInfo.endPeriodTimestamp,
-            )}
-          </Text>
-          <TouchableOpacity
-            style={styles.cancelBtn}
-            onPress={() => setIsOpenCancelModal(true)}>
-            <MaterialIcons
-              name="cancel-presentation"
-              size={18}
-              color={colors.error}
-            />
-            <Text style={{marginLeft: 4, color: colors.error}}>
-              {t('schedule.cancel')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.requestTime}>
-          <TouchableOpacity
-            onPress={() => toggleOpenRequest()}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Entypo name="chevron-small-right" size={24} color="black" />
-            {/* <Entypo name='chevron-small-down' size={24} color='black' /> */}
-            <Text style={{fontSize: 14}}>{t('schedule.requestForLesson')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setIsOpenRequestModal(!isOpenRequestModal)}>
-            <Text style={styles.requestBtn}>{t('schedule.editRequest')}</Text>
-          </TouchableOpacity>
-        </View>
-        {isOpenRequest && (
-          <View style={{paddingHorizontal: 12, marginTop: 8}}>
-            <Text style={styles.requestText}>
-              {data.studentRequest !== null
-                ? data.studentRequest
-                : t('schedule.request')}
-            </Text>
-          </View>
-        )}
-      </View>
 
+  return (
+    <Lesson
+      data={isSingle ? data : data[0]}
+      numberOfLesson={isSingle ? 1 : data.length}>
+      {!isSingle && (
+        <Text className="text-lg font-normal mb-2 text-black">
+          Lesson time:{' '}
+          {renderStartAndEndHourOnLearning(
+            data[0].scheduleDetailInfo.startPeriodTimestamp,
+            data[data.length - 1].scheduleDetailInfo.endPeriodTimestamp,
+          )}
+        </Text>
+      )}
+      {renderSession()}
       <TouchableOpacity
-        disabled={!isAllowedToJoinMeeting()}
+        disabled={!isReadyMeeting}
         style={[
           styles.goMeetingBtn,
-          !isAllowedToJoinMeeting() && {
+          !isReadyMeeting && {
             borderColor: colors.grey350,
           },
         ]}
         onPress={() => {
-          if (isAllowedToJoinMeeting()) {
-            console.log('GO MEETING');
-          } else {
-            console.log('CAN NOT ENTER');
+          if (isReadyMeeting) {
+            navigation.navigate('VideoCall', {
+              data: data?.length > 1 ? data[0] : data,
+            });
           }
         }}>
         <Text
@@ -206,7 +204,7 @@ const ScheduleItem = (props: Props) => {
                 marginVertical: 2,
                 color: colors.black,
               }}>
-              Kebby
+              {selectedItem?.scheduleDetailInfo?.scheduleInfo?.tutorInfo?.name}
             </Text>
             <Text
               style={{
@@ -218,7 +216,9 @@ const ScheduleItem = (props: Props) => {
             </Text>
             <Text
               style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
-              Thu, 26 Oct 23
+              {new Date(
+                selectedItem?.scheduleDetailInfo?.startPeriodTimestamp,
+              ).toDateString()}
             </Text>
           </View>
           <View
@@ -249,7 +249,7 @@ const ScheduleItem = (props: Props) => {
             <DropdownMenu
               isOpen={isOpenMenu}
               onChangeOpen={setIsOpenMenu}
-              onChangeSelected={onChangeSelectedItem}
+              onChangeSelected={onChangeReason}
               data={reasons}
               selectedItem={reason.type}>
               <Pressable onPress={() => setIsOpenMenu(!isOpenMenu)}>

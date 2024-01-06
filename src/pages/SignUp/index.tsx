@@ -86,66 +86,65 @@ const SignUp = () => {
   }, [notification]);
 
   return (
-    <ScrollView
-      className="bg-white"
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={[0]}>
-      <Header backIcon={<BackButton />} />
-      <View style={styles.inner}>
-        <Image source={images.banner} style={styles.banner} />
-        <View className="px-6">
-          <Text style={styles.heading}>{t('signup.longTitle')}</Text>
-          <Text style={styles.des}>{t('signup.description')}</Text>
-          <FormGroup
-            title={t('email')}
-            type="email"
-            field="email"
-            placeholder="example@email.com"
-            value={user.email}
-            onChange={onChangeDataOfUser}
-          />
-          <FormGroup
-            title={t('password')}
-            type="password"
-            field="password"
-            value={user.password}
-            onChange={onChangeDataOfUser}
-          />
-          {notification.message.length > 0 && (
-            <Text
-              style={[
-                styles.notification,
-                notification.type === 'error' ? styles.error : styles.success,
-              ]}>
-              {notification.message}
-            </Text>
-          )}
-          <TouchableOpacity
-            style={[styles.loginBtn, !validate() && styles.disable]}
-            disabled={!validate()}
-            onPress={() => handleSubmit()}>
-            {loading && (
-              <ActivityIndicator
-                className="mr-4"
-                size="small"
-                color={colors.white}
-              />
+    <View className="flex-1 bg-white">
+      <Header style={{zIndex: 50}} backIcon={<BackButton />} />
+      <ScrollView className="bg-white" showsVerticalScrollIndicator={false}>
+        <View style={styles.inner}>
+          <Image source={images.banner} style={styles.banner} />
+          <View className="px-6">
+            <Text style={styles.heading}>{t('signup.longTitle')}</Text>
+            <Text style={styles.des}>{t('signup.description')}</Text>
+            <FormGroup
+              title={t('email')}
+              type="email"
+              field="email"
+              placeholder="example@email.com"
+              value={user.email}
+              onChange={onChangeDataOfUser}
+            />
+            <FormGroup
+              title={t('password')}
+              type="password"
+              field="password"
+              value={user.password}
+              onChange={onChangeDataOfUser}
+            />
+            {notification.message.length > 0 && (
+              <Text
+                style={[
+                  styles.notification,
+                  notification.type === 'error' ? styles.error : styles.success,
+                ]}>
+                {notification.message}
+              </Text>
             )}
-            <Text className="text-white text-base font-medium">
-              {t('signup.title')}
+            <TouchableOpacity
+              style={[styles.loginBtn, !validate() && styles.disable]}
+              disabled={!validate()}
+              onPress={() => handleSubmit()}>
+              {loading && (
+                <ActivityIndicator
+                  className="mr-4"
+                  size="small"
+                  color={colors.white}
+                />
+              )}
+              <Text className="text-white text-base font-medium">
+                {t('signup.title')}
+              </Text>
+            </TouchableOpacity>
+            <Text style={styles.signupText}>
+              {t('signup.other')}{' '}
+              <Text
+                style={styles.signupLink}
+                onPress={() => navigation.navigate('SignIn')}>
+                {t('signin.title')}
+              </Text>
             </Text>
-          </TouchableOpacity>
-          <Text style={styles.signupText}>
-            {t('signup.other')}{' '}
-            <Text
-              style={styles.signupLink}
-              onPress={() => navigation.navigate('SignIn')}>
-              {t('signin.title')}
-            </Text>
-          </Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

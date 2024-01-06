@@ -42,6 +42,7 @@ import MessageIcon from '@/components/MessageIcon';
 import * as userService from '@/services/userService';
 import * as utilService from '@/services/utilService';
 import {images} from '@/assets';
+import {RefreshControl} from 'react-native';
 const LEVELS = [
   {
     id: 1,
@@ -100,6 +101,7 @@ const Profile = () => {
   });
   const [curName, setCurName] = useState('');
   const [specialties, setSpecialties] = useState<any[]>([]);
+  const [refresh, setRefresh] = useState(false);
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
@@ -110,6 +112,7 @@ const Profile = () => {
         return {...prev, birthday: currentDate?.toDateString()};
       });
     }
+    setAvatar(true);
   };
 
   const onChangeProfile = useCallback((key: string, value: any) => {
@@ -182,6 +185,7 @@ const Profile = () => {
                   };
                 }
               });
+              setIsChange(true);
             }}>
             <AntDesign
               name="close"
@@ -253,6 +257,22 @@ const Profile = () => {
     setIsOpenUploadModal(false);
   };
 
+  const fetchInfo = async () => {
+    const res = await userService.getUserInfo();
+    if (res.success) {
+      const {user} = res.data;
+      setProfile(user);
+      setAvatar({fileCopyUri: user.avatar, isChange: false});
+      setCurName(user.name);
+    }
+  };
+
+  const handleRefresh = () => {
+    setRefresh(true);
+    fetchInfo();
+    setTimeout(() => setRefresh(false), 800);
+  };
+
   useEffect(() => {
     fetch('https://api.first.org/data/v1/countries')
       .then(response => {
@@ -270,16 +290,6 @@ const Profile = () => {
         _countries.sort((a, b) => a.key.localeCompare(b.key));
         setCountries(_countries);
       });
-
-    const fetchInfo = async () => {
-      const res = await userService.getUserInfo();
-      if (res.success) {
-        const {user} = res.data;
-        setProfile(user);
-        setAvatar({fileCopyUri: user.avatar, isChange: false});
-        setCurName(user.name);
-      }
-    };
 
     const fetchSpecialties = async () => {
       const learnTopics = await utilService.getLearnTopics();
@@ -303,12 +313,18 @@ const Profile = () => {
   }, []);
 
   return (
-    <>
+    <View className="flex-1">
+      <Header style={{zIndex: 50}} drawerBtn={renderDrawerButton} />
       <ScrollView
         className="bg-white"
         showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[0]}>
-        <Header drawerBtn={renderDrawerButton} />
+        refreshControl={
+          <RefreshControl
+            refreshing={refresh}
+            colors={[colors.primary]}
+            onRefresh={handleRefresh}
+          />
+        }>
         <View
           style={styles.inner}
           className="border border-gray-300 rounded-md mx-4 my-8">
@@ -350,8 +366,8 @@ const Profile = () => {
             <Text className="font-medium text-blue-500 text-3xl text-center mt-2">
               {curName}
             </Text>
-            <Text className="text-base text-grey-500 mt-1">
-              Account ID: f569c202-7bbf-4620-af77-ecc1419a6b28
+            <Text className="text-base text-grey-500 mt-1" numberOfLines={1}>
+              Account ID: {profile?.id}
             </Text>
             <TouchableOpacity
               onPress={() => setIsOpenReviewModal(true)}
@@ -699,10 +715,18 @@ const Profile = () => {
             </View>
           </View>
         </ModalPopper>
-        <ToastManager {...toastConfig} width={width - 24} />
       </ScrollView>
+      <ToastManager
+        {...toastConfig}
+        width={width - 24}
+        style={{
+          position: 'absolute',
+          top: 50,
+          zIndex: 1000,
+        }}
+      />
       <MessageIcon />
-    </>
+    </View>
   );
 };
 

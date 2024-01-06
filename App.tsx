@@ -11,12 +11,6 @@ import MainStackRouter from '@/router/MainStackRouter';
 import React from 'react';
 import {LogBox} from 'react-native';
 import {GlobalProvider} from '@/store';
-import Tutor from '@/pages/Tutor';
-import TutorDetail from '@/pages/TutorDetail';
-import Courses from '@/pages/Courses';
-import Profile from '@/pages/Profile';
-import BecomeTutor from '@/pages/BecomeTutor';
-import Schedule from '@/pages/Schedule';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 function App(): React.JSX.Element {

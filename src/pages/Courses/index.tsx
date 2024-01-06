@@ -361,12 +361,9 @@ const Courses = () => {
     }
   };
   return (
-    <>
-      <ScrollView
-        style={styles.container}
-        stickyHeaderIndices={[0]}
-        showsVerticalScrollIndicator={false}>
-        <Header style={{zIndex: 10}} drawerBtn={<DrawerButton />} />
+    <View className="flex-1">
+      <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.intro}>
           <Image source={images.course} style={{width: 100, height: 100}} />
           <View>
@@ -599,7 +596,7 @@ const Courses = () => {
         )}
       </ScrollView>
       <MessageIcon />
-    </>
+    </View>
   );
 };
 

@@ -13,11 +13,12 @@ type Props = {
   children: any;
   data: any;
   history?: boolean;
+  numberOfLesson?: number;
 };
 
 const Lesson = (props: Props) => {
   const navigation = useNavigation<StackProps>();
-  const {children, data, history} = props;
+  const {children, data, history, numberOfLesson} = props;
   const {scheduleDetailInfo} = data;
   const {scheduleInfo} = scheduleDetailInfo;
   const {t} = useTranslations();
@@ -46,7 +47,9 @@ const Lesson = (props: Props) => {
           <Text style={{fontSize: 14, color: colors.text}}>
             {history === true
               ? getDateAgo(scheduleDetailInfo?.startPeriodTimestamp, Date.now())
-              : t('lesson')}
+              : numberOfLesson == 1
+              ? `1 ${t('lesson')}`
+              : `${numberOfLesson} consecutive lessons`}
           </Text>
         </View>
         <View style={styles.info}>

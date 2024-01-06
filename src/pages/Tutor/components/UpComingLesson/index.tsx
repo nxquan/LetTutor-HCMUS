@@ -16,7 +16,13 @@ import {colors} from '@/constants';
 import * as utilService from '@/services/utilService';
 import * as bookingService from '@/services/bookingService';
 
-const UpComingLesson = () => {
+type Props = {
+  refresh?: boolean;
+};
+
+const UpComingLesson = (props: Props) => {
+  const {refresh: refreshPage} = props;
+
   const {t} = useTranslations();
   const navigation = useNavigation<StackProps>();
   const [hourTotal, setHourTotal] = useState(0);
@@ -25,6 +31,7 @@ const UpComingLesson = () => {
     useState<number>(0);
   const [teachingTime, setTeachingTime] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUpComingLesson = async () => {
@@ -38,7 +45,12 @@ const UpComingLesson = () => {
       if (resNextBookings.success) {
         const {data} = resNextBookings.data;
         if (data.length > 0) {
-          let nearestLesson = data[0];
+          let nearestLesson: any = data.find(
+            (item: any) =>
+              item.scheduleDetailInfo.startPeriodTimestamp >=
+              Date.now() - 25 * 60 * 1000,
+          );
+
           data.forEach((item: any) => {
             const {scheduleDetailInfo} = item;
             if (
@@ -85,7 +97,7 @@ const UpComingLesson = () => {
     };
 
     fetchUpComingLesson();
-  }, []);
+  }, [refresh, refreshPage]);
 
   useEffect(() => {
     const timerId = setInterval(() => {
@@ -104,11 +116,16 @@ const UpComingLesson = () => {
   useEffect(() => {
     if (remainingTimeForUpcomingLesson === 0) {
       const timerId = setInterval(() => {
+        if (teachingTime === 25 * 60 * 1000) {
+          clearInterval(timerId);
+          setRefresh(!refresh);
+          return;
+        }
         setTeachingTime(prev => prev + 1);
       }, 1000);
       return () => clearInterval(timerId);
     }
-  }); //remainingTimeForUpcomingLesson
+  });
 
   return (
     <LinearGradient
