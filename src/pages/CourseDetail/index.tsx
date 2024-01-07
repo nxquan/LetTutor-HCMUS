@@ -19,6 +19,7 @@ import BackButton from '@/components/BackButton';
 import {useTranslations} from '@/hooks';
 import * as courseService from '@/services/courseService';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {useColorScheme} from 'nativewind';
 
 const levels = [
   {
@@ -75,6 +76,7 @@ const CourseDetail = (props: any) => {
   const navigation = useNavigation<DrawerProps>();
   const route: any = useRoute();
   const [course, setCourse] = useState<any>({});
+  const {colorScheme} = useColorScheme();
 
   useEffect(() => {
     const fetchCourseById = async () => {
@@ -99,9 +101,19 @@ const CourseDetail = (props: any) => {
   return (
     <View className="flex-1">
       <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="bg-white dark:bg-black">
         <View style={styles.inner}>
-          <View style={styles.intro}>
+          <View
+            style={[
+              styles.intro,
+              {
+                shadowColor:
+                  colorScheme === 'light' ? colors.black : colors.white,
+              },
+            ]}
+            className="bg-white dark:bg-black">
             <Image
               source={{
                 uri:
@@ -111,8 +123,12 @@ const CourseDetail = (props: any) => {
               style={styles.image}
             />
             <View style={styles.info}>
-              <Text style={styles.title}>{course?.name}</Text>
-              <Text style={styles.des}>{course?.description}</Text>
+              <Text className="text-black dark:text-white" style={styles.title}>
+                {course?.name}
+              </Text>
+              <Text className="text-text dark:text-white" style={styles.des}>
+                {course?.description}
+              </Text>
               <TouchableOpacity
                 style={styles.discoverBtn}
                 activeOpacity={0.7}
@@ -122,16 +138,18 @@ const CourseDetail = (props: any) => {
                     selectedTopic: undefined,
                   });
                 }}>
-                <Text style={{fontSize: 16, color: colors.white}}>
-                  {t('discover')}
-                </Text>
+                <Text className="text-base text-white">{t('discover')}</Text>
               </TouchableOpacity>
             </View>
           </View>
           <View style={styles.detail}>
             <View style={styles.detailContent}>
               <View style={styles.detailHeading}>
-                <Text style={styles.heading}>{t('courseDetail.overview')}</Text>
+                <Text
+                  style={styles.heading}
+                  className="text-black dark:text-white">
+                  {t('courseDetail.overview')}
+                </Text>
                 <View style={styles.line} />
               </View>
               <View style={styles.detailItem}>
@@ -141,11 +159,17 @@ const CourseDetail = (props: any) => {
                     size={18}
                     color={colors.error}
                   />
-                  <Text style={styles.detailItemHeading}>
+                  <Text
+                    style={styles.detailItemHeading}
+                    className="text-black dark:text-white">
                     {t('courseDetail.question1')}
                   </Text>
                 </View>
-                <Text style={styles.detailItemText}>{course?.reason}</Text>
+                <Text
+                  style={styles.detailItemText}
+                  className="text-text dark:text-white">
+                  {course?.reason}
+                </Text>
               </View>
               <View style={styles.detailItem}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -154,16 +178,24 @@ const CourseDetail = (props: any) => {
                     size={18}
                     color={colors.error}
                   />
-                  <Text style={styles.detailItemHeading}>
+                  <Text
+                    style={styles.detailItemHeading}
+                    className="text-black dark:text-white">
                     {t('courseDetail.question2')}
                   </Text>
                 </View>
-                <Text style={styles.detailItemText}>{course?.purpose}</Text>
+                <Text
+                  style={styles.detailItemText}
+                  className="text-text dark:text-white">
+                  {course?.purpose}
+                </Text>
               </View>
             </View>
             <View style={styles.detailContent}>
               <View style={styles.detailHeading}>
-                <Text style={styles.heading}>
+                <Text
+                  style={styles.heading}
+                  className="text-black dark:text-white">
                   {t('courseDetail.experienceLevel')}
                 </Text>
                 <View style={styles.line}></View>
@@ -175,7 +207,9 @@ const CourseDetail = (props: any) => {
                     size={20}
                     color={colors.primary}
                   />
-                  <Text style={styles.detailItemHeading}>
+                  <Text
+                    style={styles.detailItemHeading}
+                    className="text-black dark:text-white">
                     {getLevelName(course?.level)}
                   </Text>
                 </View>
@@ -183,7 +217,9 @@ const CourseDetail = (props: any) => {
             </View>
             <View style={styles.detailContent}>
               <View style={styles.detailHeading}>
-                <Text style={styles.heading}>
+                <Text
+                  style={styles.heading}
+                  className="text-black dark:text-white">
                   {t('courseDetail.courseLength')}
                 </Text>
                 <View style={styles.line}></View>
@@ -191,7 +227,9 @@ const CourseDetail = (props: any) => {
               <View style={styles.detailItem}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <AntDesign name="book" size={18} color={colors.primary} />
-                  <Text style={styles.detailItemHeading}>
+                  <Text
+                    style={styles.detailItemHeading}
+                    className="text-black dark:text-white">
                     {course?.topics?.length} {t('topics')}
                   </Text>
                 </View>
@@ -199,7 +237,9 @@ const CourseDetail = (props: any) => {
             </View>
             <View style={styles.detailContent}>
               <View style={styles.detailHeading}>
-                <Text style={styles.heading}>
+                <Text
+                  style={styles.heading}
+                  className="text-black dark:text-white">
                   {t('courseDetail.listTopics')}
                 </Text>
                 <View style={styles.line}></View>
@@ -209,6 +249,7 @@ const CourseDetail = (props: any) => {
                   return (
                     <TouchableOpacity
                       key={topic.id}
+                      className="bg-white dark:bg-black"
                       style={styles.topicItem}
                       activeOpacity={0.7}
                       onPress={() =>
@@ -217,7 +258,9 @@ const CourseDetail = (props: any) => {
                           selectedTopic: topic,
                         })
                       }>
-                      <Text style={[styles.detailItemHeading, styles.topic]}>
+                      <Text
+                        style={[styles.detailItemHeading, styles.topic]}
+                        className="text-black dark:text-white">
                         {topic?.orderCourse + 1}. {topic?.name}
                       </Text>
                     </TouchableOpacity>
@@ -228,7 +271,9 @@ const CourseDetail = (props: any) => {
             {course?.users?.length > 0 && (
               <View style={styles.detailContent}>
                 <View style={styles.detailHeading}>
-                  <Text style={styles.heading}>
+                  <Text
+                    style={styles.heading}
+                    className="text-black dark:text-white">
                     {t('courseDetail.suggestedTutors')}
                   </Text>
                   <View style={styles.line} />
@@ -243,6 +288,7 @@ const CourseDetail = (props: any) => {
                           color={colors.primary}
                         />
                         <Text
+                          className="text-black dark:text-white"
                           style={[styles.detailItemHeading, {fontSize: 18}]}>
                           {user.name}
                         </Text>

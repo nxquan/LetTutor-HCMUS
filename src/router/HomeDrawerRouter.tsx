@@ -135,15 +135,19 @@ const HomeDrawerRouter = () => {
         drawerItemStyle: {
           marginRight: 0,
         },
+        drawerActiveBackgroundColor:
+          colorScheme === 'light'
+            ? colors.backgroundActive
+            : 'rgba(255,255,255,0.4)',
+        drawerLabelStyle: {
+          color: colorScheme == 'light' ? colors.black : colors.white,
+        },
       }}>
       <Drawer.Screen
         name="Tutor"
         component={Tutor}
         options={{
           drawerLabel: 'Tutor',
-          drawerLabelStyle: {
-            color: colorScheme == 'light' ? colors.primary : colors.white,
-          },
           title: 'Tutor',
           drawerIcon: () => (
             <TutorIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -155,9 +159,6 @@ const HomeDrawerRouter = () => {
         component={Schedule}
         options={{
           drawerLabel: 'Schedule',
-          drawerLabelStyle: {
-            color: colorScheme == 'light' ? colors.primary : colors.white,
-          },
           title: 'Schedule',
           drawerIcon: () => (
             <ScheduleIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -169,9 +170,7 @@ const HomeDrawerRouter = () => {
         component={History}
         options={{
           drawerLabel: 'History',
-          drawerLabelStyle: {
-            color: colorScheme == 'light' ? colors.primary : colors.white,
-          },
+
           title: 'History',
           drawerIcon: () => (
             <HistoryIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -183,9 +182,7 @@ const HomeDrawerRouter = () => {
         component={Courses}
         options={{
           drawerLabel: 'Courses',
-          drawerLabelStyle: {
-            color: colorScheme == 'light' ? colors.primary : colors.white,
-          },
+
           title: 'Courses',
           drawerIcon: () => (
             <CoursesIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -197,9 +194,7 @@ const HomeDrawerRouter = () => {
         component={MyCourse}
         options={{
           drawerLabel: 'My Course',
-          drawerLabelStyle: {
-            color: colorScheme == 'light' ? colors.primary : colors.white,
-          },
+
           title: 'My Course',
           drawerIcon: () => (
             <MyCourseIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -219,9 +214,7 @@ const HomeDrawerRouter = () => {
         component={BecomeTutor}
         options={{
           drawerLabel: 'Become a tutor',
-          drawerLabelStyle: {
-            color: colorScheme == 'light' ? colors.primary : colors.white,
-          },
+
           title: 'Become a tutor',
           drawerIcon: () => (
             <BecomeTutorIcon

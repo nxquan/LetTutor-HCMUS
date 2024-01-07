@@ -91,7 +91,7 @@ const Lesson = (props: Props) => {
             </View>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('Message');
+                navigation.navigate('Messages');
               }}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <AntDesign

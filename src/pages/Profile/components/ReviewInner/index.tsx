@@ -12,6 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useTranslations} from '@/hooks';
 import * as tutorService from '@/services/tutorService';
 import {colors} from '@/constants';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   toggleModal: (value: boolean) => void;
@@ -24,7 +25,7 @@ const ReviewModal = (props: Props) => {
   const [reviews, setReviews] = React.useState<any>([]);
   const [loading, setLoading] = useState(false);
   const {t} = useTranslations();
-
+  const {colorScheme} = useColorScheme();
   const [page, setPage] = useState({
     currentPage: 1,
     totalItems: 0,
@@ -68,7 +69,7 @@ const ReviewModal = (props: Props) => {
   return (
     <View style={{width: '100%', maxHeight: height - 200}}>
       <View className="flex-row justify-between items-center">
-        <Text className="text-black text-base font-semibold">
+        <Text className="text-black dark:text-white text-base font-semibold">
           {t('tutorDetail.othersReview')}
         </Text>
 
@@ -76,7 +77,11 @@ const ReviewModal = (props: Props) => {
           onPress={() => {
             toggleModal(false);
           }}>
-          <AntDesign name="close" size={24} color="black" />
+          <AntDesign
+            name="close"
+            size={24}
+            color={colorScheme == 'light' ? colors.black : colors.white}
+          />
         </TouchableOpacity>
       </View>
       <View className="h-px mt-4 bg-gray-300" />
@@ -84,7 +89,7 @@ const ReviewModal = (props: Props) => {
         {loading ? (
           <View className="py-4">
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text className="text-base text-center font-normal text-black">
+            <Text className="text-base text-center font-normal text-black dark:text-white">
               Loading feedback...
             </Text>
           </View>

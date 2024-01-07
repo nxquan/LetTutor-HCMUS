@@ -19,8 +19,10 @@ import {useNavigation} from '@react-navigation/native';
 import {DrawerProps} from '@/types/type';
 import DrawerButton from '@/components/DrawerButton';
 import useDebounce from '@/hooks/useDebound';
+import {useColorScheme} from 'nativewind';
 
 const Messages = () => {
+  const {colorScheme} = useColorScheme();
   const [state, dispatch] = useGlobalContext();
   const navigation = useNavigation<DrawerProps>();
   const [recipients, setRecipients] = React.useState([]);
@@ -81,11 +83,11 @@ const Messages = () => {
   // }, []);
 
   return (
-    <View className="bg-white flex-1 pt-1">
-      <View className="flex-row items-center justify-between px-3 py-1 bg-white">
+    <View className="bg-white dark:bg-black flex-1 pt-1">
+      <View className="flex-row items-center justify-between px-3 py-1 bg-white dark:bg-black">
         <View className="flex-row items-center">
           <BackButton />
-          <Text className="text-lg font-semibold text-black ml-1">
+          <Text className="text-lg font-semibold text-black dark:text-white ml-1">
             Communications
           </Text>
         </View>
@@ -103,12 +105,19 @@ const Messages = () => {
           <DrawerButton />
         </View>
       </View>
-      <View className="flex-row items-center bg-gray-200 mx-5 mt-3 px-3 py-0 rounded-full">
-        <Icon type="antdesign" name="search1" color={colors.grey500} />
+      <View className="flex-row items-center bg-gray-200 dark:bg-black mx-5 mt-3 px-3 py-0 rounded-full dark:border dark:border-gray-400">
+        <Icon
+          type="antdesign"
+          name="search1"
+          color={colorScheme == 'light' ? colors.grey500 : colors.white}
+        />
         <TextInput
           placeholder="Search"
+          placeholderTextColor={
+            colorScheme == 'light' ? colors.grey500 : colors.white
+          }
           cursorColor={colors.primary}
-          className="text-base text-black px-2 py-1.5 flex-1"
+          className="text-base text-black dark:text-white px-2 py-1.5 flex-1"
           value={searchValue}
           onChangeText={t => setSearchValue(t)}
         />
@@ -126,7 +135,7 @@ const Messages = () => {
           </Pressable>
         )}
       </View>
-      <ScrollView className="flex-1 bg-white mt-3">
+      <ScrollView className="flex-1 bg-white dark:bg-black mt-3">
         {recipients.length > 0 &&
           recipients.map((recipient: any) => {
             return <RecipientItem key={recipient.id} data={recipient} />;
@@ -134,7 +143,9 @@ const Messages = () => {
         {loading && (
           <View>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text className="text-base text-black text-center">Loading...</Text>
+            <Text className="text-base text-black dark:text-white text-center">
+              Loading...
+            </Text>
           </View>
         )}
       </ScrollView>

@@ -28,6 +28,7 @@ import * as courseService from '@/services/courseService';
 import BEPagination from '@/components/BEPagination';
 import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
+import {useColorScheme} from 'nativewind';
 
 const levels = [
   {
@@ -117,7 +118,7 @@ const Courses = () => {
     sortByLevel: {},
     courseName: '',
   });
-
+  const {colorScheme} = useColorScheme();
   const onChangeSearchValue = (type: string, item: any) => {
     setSearchValue((prev: any) => {
       if (type !== 'sortByLevel') {
@@ -161,7 +162,9 @@ const Courses = () => {
             marginLeft: 4,
             marginTop: 4,
           }}>
-          <Text style={{fontSize: 14, color: colors.text}}>{item.title}</Text>
+          <Text className="text-sm text-text dark:text-white">
+            {item.title}
+          </Text>
           <TouchableWithoutFeedback
             onPress={() => {
               setIsOpenCategoriesMenu(false);
@@ -175,7 +178,11 @@ const Courses = () => {
             <AntDesign
               name="close"
               size={20}
-              color="rgba(0,0,0,0.8)"
+              color={
+                colorScheme == 'light'
+                  ? 'rgba(0,0,0,0.8)'
+                  : 'rgba(255,255,255,0.6)'
+              }
               style={{marginLeft: 4}}
             />
           </TouchableWithoutFeedback>
@@ -198,7 +205,11 @@ const Courses = () => {
         if (_courses.length > 0) {
           components.push(
             <View style={styles.courseSection} key={category.id}>
-              <Text style={styles.courseHeading}>{category.title}</Text>
+              <Text
+                style={styles.courseHeading}
+                className="text-black dark:text-white">
+                {category.title}
+              </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.courseList}>
                   {_courses.map((item: any) => (
@@ -363,16 +374,25 @@ const Courses = () => {
   return (
     <View className="flex-1">
       <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="bg-white dark:bg-black"
+        showsVerticalScrollIndicator={false}>
         <View style={styles.intro}>
           <Image source={images.course} style={{width: 100, height: 100}} />
           <View>
-            <Text style={styles.headingText}>{t('courses.title')}</Text>
+            <Text
+              className="text-black dark:text-white"
+              style={styles.headingText}>
+              {t('courses.title')}
+            </Text>
             <View style={styles.courseSearch}>
               <TextInput
-                placeholderTextColor={colors.text}
+                placeholderTextColor={
+                  colorScheme == 'light' ? colors.text : colors.white
+                }
                 placeholder={t('courses.searchCourse')}
                 style={styles.courseInput}
+                className="text-text dark:text-white"
                 onChangeText={text => {
                   setSearchValue((prev: any) => {
                     return {
@@ -388,18 +408,24 @@ const Courses = () => {
                 onPress={() => {
                   handleSearch();
                 }}
-                underlayColor="rgba(0,0,0,0.1)"
+                underlayColor={
+                  colorScheme == 'light'
+                    ? 'rgba(0,0,0,0.1)'
+                    : 'rgba(255,255,255,0.4)'
+                }
                 activeOpacity={0.8}>
                 <EvilIcons
                   name="search"
                   size={24}
-                  color={colors.text}
+                  color={colorScheme == 'light' ? colors.text : colors.white}
                   style={{marginTop: -5}}
                 />
               </TouchableHighlight>
             </View>
           </View>
-          <Text style={styles.text}>{t('courses.des')}</Text>
+          <Text className="text-sm text-justify text-text dark:text-white">
+            {t('courses.des')}
+          </Text>
         </View>
 
         <View style={styles.search}>
@@ -415,16 +441,15 @@ const Courses = () => {
               onPress={() => setIsOpenLevelMenu(!isOpenLevelMenu)}
               style={styles.dropdownMenuBtn}>
               <View
+                className="flex-row flex-wrap"
                 style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
                   marginLeft: -4,
                   marginTop: -4,
                 }}>
                 {searchValue.levels.length > 0 ? (
                   renderSearchItems('levels')
                 ) : (
-                  <Text style={{fontSize: 14, color: colors.text}}>
+                  <Text className="text-sm text-text dark:text-white">
                     {t('profile.selectLevel')}
                   </Text>
                 )}
@@ -434,14 +459,14 @@ const Courses = () => {
                   name="chevron-small-down"
                   style={{marginLeft: -20}}
                   size={24}
-                  color="black"
+                  color={colorScheme == 'light' ? colors.black : colors.white}
                 />
               ) : (
                 <Entypo
                   name="chevron-small-right"
                   style={{marginLeft: -20}}
                   size={24}
-                  color="black"
+                  color={colorScheme == 'light' ? colors.black : colors.white}
                 />
               )}
             </Pressable>
@@ -461,16 +486,15 @@ const Courses = () => {
               }}
               style={styles.dropdownMenuBtn}>
               <View
+                className="flex-row flex-wrap"
                 style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
                   marginLeft: -4,
                   marginTop: -4,
                 }}>
                 {searchValue.categories.length > 0 ? (
                   renderSearchItems('categories')
                 ) : (
-                  <Text style={{fontSize: 14, color: colors.text}}>
+                  <Text className="text-text dark:text-white text-sm">
                     {t('courses.selectCategories')}
                   </Text>
                 )}
@@ -480,14 +504,14 @@ const Courses = () => {
                   name="chevron-small-down"
                   style={{marginLeft: -12}}
                   size={24}
-                  color="black"
+                  color={colorScheme == 'light' ? colors.black : colors.white}
                 />
               ) : (
                 <Entypo
                   name="chevron-small-right"
                   style={{marginLeft: -12}}
                   size={24}
-                  color="black"
+                  color={colorScheme == 'light' ? colors.black : colors.white}
                 />
               )}
             </Pressable>
@@ -504,15 +528,23 @@ const Courses = () => {
             <Pressable
               onPress={() => setIsOpenSortMenu(!isOpenSortMenu)}
               style={styles.dropdownMenuBtn}>
-              <Text style={{fontSize: 14, color: colors.text}}>
+              <Text className="text-sm text-text dark:text-white">
                 {searchValue.sortByLevel?.title?.length > 0
                   ? searchValue.sortByLevel?.title
                   : t('courses.sortByLevel')}
               </Text>
               {isOpenSortMenu ? (
-                <Entypo name="chevron-small-down" size={24} color="black" />
+                <Entypo
+                  name="chevron-small-down"
+                  size={24}
+                  color={colorScheme == 'light' ? colors.black : colors.white}
+                />
               ) : (
-                <Entypo name="chevron-small-right" size={24} color="black" />
+                <Entypo
+                  name="chevron-small-right"
+                  size={24}
+                  color={colorScheme == 'light' ? colors.black : colors.white}
+                />
               )}
             </Pressable>
           </DropdownMenu>
@@ -523,6 +555,7 @@ const Courses = () => {
             activeOpacity={0.7}
             onPress={() => setTab('course')}>
             <Text
+              className="text-text dark:text-white"
               style={[
                 styles.courseTabText,
                 tab === 'course' && {color: colors.primary},
@@ -534,6 +567,7 @@ const Courses = () => {
             activeOpacity={0.7}
             onPress={() => setTab('e-book')}>
             <Text
+              className="text-text dark:text-white"
               style={[
                 styles.courseTabText,
                 tab === 'e-book' && {color: colors.primary},
@@ -545,6 +579,7 @@ const Courses = () => {
             activeOpacity={0.7}
             onPress={() => setTab('interactive e-book')}>
             <Text
+              className="text-text dark:text-white"
               style={[
                 styles.courseTabText,
                 tab === 'interactive e-book' && {color: colors.primary},
@@ -562,7 +597,9 @@ const Courses = () => {
                   size="large"
                   color={colors.primary}
                 />
-                <Text className="text-base font-normal">Loading...</Text>
+                <Text className="text-base text-black dark:text-white font-normal">
+                  Loading...
+                </Text>
               </View>
             ) : (
               renderCourses()

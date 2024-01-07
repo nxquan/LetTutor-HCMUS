@@ -83,7 +83,7 @@ const History = () => {
     <View className="flex-1">
       <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
       <ScrollView
-        style={styles.container}
+        className="bg-white dark:bg-black"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -97,14 +97,18 @@ const History = () => {
         <View style={styles.intro}>
           <Image source={images.history} style={{width: 120, height: 120}} />
           <View>
-            <Text style={styles.heading}>{t('history.title')}</Text>
+            <Text style={styles.heading} className="text-black dark:text-white">
+              {t('history.title')}
+            </Text>
             <View
               style={{
                 borderLeftWidth: 2,
                 borderLeftColor: colors.grey400,
                 paddingLeft: 10,
               }}>
-              <Text style={styles.text}>{t('history.description')}</Text>
+              <Text style={styles.text} className="text-text dark:text-white">
+                {t('history.description')}
+              </Text>
             </View>
           </View>
         </View>
@@ -117,7 +121,9 @@ const History = () => {
                 size="large"
                 color={colors.primary}
               />
-              <Text className="text-base font-normal">Loading...</Text>
+              <Text className="text-base font-normal text-black dark:text-white">
+                Loading...
+              </Text>
             </View>
           ) : schedules.length > 0 ? (
             schedules.map((item, index) => {

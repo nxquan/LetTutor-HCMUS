@@ -25,6 +25,7 @@ import DrawerButton from '@/components/DrawerButton';
 import BackButton from '@/components/BackButton';
 import {useRoute} from '@react-navigation/native';
 import {useTranslations} from '@/hooks';
+import {useColorScheme} from 'nativewind';
 
 const defaultSource = {
   uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
@@ -37,6 +38,7 @@ const CourseTopic = () => {
   const [course, setCourse] = useState<any>({});
   const [selectedTopic, setSelectedTopic] = useState<any>({});
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const {colorScheme} = useColorScheme();
 
   const onChangeShowModal = () => {
     setIsOpenModal(!isOpenModal);
@@ -46,7 +48,7 @@ const CourseTopic = () => {
     setCourse(route.params?.course);
     if (route.params?.selectedTopic != undefined) {
       setSelectedTopic(route.params?.selectedTopic);
-      setIsOpenModal(true);
+      // setIsOpenModal(true);
     } else {
       const topic = route.params?.course?.topics.find(
         (item: any) => item.orderCourse === 0,
@@ -62,9 +64,19 @@ const CourseTopic = () => {
         drawerBtn={<DrawerButton />}
         backIcon={<BackButton />}
       />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="bg-white dark:bg-black"
+        showsVerticalScrollIndicator={false}>
         <View style={styles.inner}>
-          <View style={styles.courseInfo}>
+          <View
+            style={[
+              styles.courseInfo,
+              {
+                shadowColor:
+                  colorScheme === 'light' ? colors.black : colors.white,
+              },
+            ]}
+            className="bg-white dark:bg-black">
             <Image
               source={{
                 uri:
@@ -74,11 +86,17 @@ const CourseTopic = () => {
               style={styles.image}
             />
             <View style={styles.info}>
-              <Text style={styles.title}>{course?.name}</Text>
-              <Text style={styles.des}>{course?.description}</Text>
+              <Text className="text-black dark:text-white" style={styles.title}>
+                {course?.name}
+              </Text>
+              <Text className="text-black dark:text-white" style={styles.des}>
+                {course?.description}
+              </Text>
             </View>
             <View style={styles.topicList}>
-              <Text style={styles.topicHeading}>
+              <Text
+                style={styles.topicHeading}
+                className="text-black dark:text-white">
                 {t('courseDetail.listTopics')}
               </Text>
               {course?.topics?.map((topic: any) => {
@@ -103,13 +121,7 @@ const CourseTopic = () => {
           onChangeShowModal={() => {}}
           modalInnerStyle={{height: '100%', width: '100%', padding: 8}}>
           <View style={styles.pdfContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 12,
-                marginLeft: 12,
-              }}>
+            <View className="flex-row items-center mb-3 ml-3">
               <TouchableOpacity
                 onPress={() => {
                   setIsOpenModal(false);
@@ -118,28 +130,29 @@ const CourseTopic = () => {
                 <Entypo
                   name="chevron-with-circle-left"
                   size={30}
-                  color={colors.black}
+                  color={colorScheme == 'light' ? colors.black : colors.white}
                 />
               </TouchableOpacity>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: 18,
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  marginLeft: 16,
-                }}>
+              <Text className="text-black dark:text-white text-lg text-medium text-center ml-4">
                 {selectedTopic?.orderCourse + 1}. {selectedTopic?.name}
               </Text>
             </View>
-            <View style={styles.pdfHeader}>
+            <View style={styles.pdfHeader} className="bg-[#eee] dark:bg-black">
               <View style={styles.pdfActions}>
                 <TouchableHighlight
                   style={[styles.pdfBtn, {marginRight: 6}]}
                   activeOpacity={0.7}
-                  underlayColor="rgba(0,0,0,0.3)"
+                  underlayColor={
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.3)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {}}>
-                  <Feather name="chevron-up" size={20} color={colors.text} />
+                  <Feather
+                    name="chevron-up"
+                    size={20}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
+                  />
                 </TouchableHighlight>
                 <TextInput
                   placeholderTextColor={colors.black}
@@ -155,58 +168,94 @@ const CourseTopic = () => {
                     textAlign: 'center',
                   }}
                 />
-                <Text style={{fontSize: 14, color: colors.black}}>/17</Text>
+                <Text className="text-black dark:text-white text-sm">/17</Text>
                 <TouchableHighlight
                   style={[styles.pdfBtn, {marginLeft: 6}]}
                   activeOpacity={0.7}
-                  underlayColor="rgba(0,0,0,0.3)"
+                  underlayColor={
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.3)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {}}>
-                  <Feather name="chevron-down" size={20} color={colors.text} />
+                  <Feather
+                    name="chevron-down"
+                    size={20}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
+                  />
                 </TouchableHighlight>
               </View>
               <View style={styles.pdfActions}>
                 <TouchableHighlight
                   style={styles.pdfBtn}
                   activeOpacity={0.7}
-                  underlayColor="rgba(0,0,0,0.3)"
+                  underlayColor={
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.3)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {}}>
-                  <Feather name="zoom-in" size={20} color={colors.text} />
+                  <Feather
+                    name="zoom-in"
+                    size={20}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
+                  />
                 </TouchableHighlight>
                 <View style={[styles.pdfActions, {marginHorizontal: 4}]}>
-                  <Text style={{color: colors.black}}>100%</Text>
+                  <Text className="text-black dark:text-white">100%</Text>
                   <Feather
                     name="chevron-down"
                     size={20}
-                    color={colors.text}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
                     style={{marginLeft: 4}}
                   />
                 </View>
                 <TouchableHighlight
                   style={styles.pdfBtn}
                   activeOpacity={0.7}
-                  underlayColor="rgba(0,0,0,0.3)"
+                  underlayColor={
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.3)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {}}>
-                  <Feather name="zoom-out" size={20} color={colors.text} />
+                  <Feather
+                    name="zoom-out"
+                    size={20}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
+                  />
                 </TouchableHighlight>
               </View>
               <View style={styles.pdfActions}>
                 <TouchableHighlight
                   style={styles.pdfBtn}
                   activeOpacity={0.7}
-                  underlayColor="rgba(0,0,0,0.3)"
+                  underlayColor={
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.3)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {}}>
                   <MaterialIcons
                     name="zoom-out-map"
                     size={20}
-                    color={colors.text}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
                   />
                 </TouchableHighlight>
                 <TouchableHighlight
                   style={[styles.pdfBtn, {marginLeft: 4}]}
                   activeOpacity={0.7}
-                  underlayColor="rgba(0,0,0,0.3)"
+                  underlayColor={
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.3)'
+                      : 'rgba(255,255,255,0.4)'
+                  }
                   onPress={() => {}}>
-                  <AntDesign name="download" size={20} color={colors.text} />
+                  <AntDesign
+                    name="download"
+                    size={20}
+                    color={colorScheme == 'light' ? colors.text : colors.white}
+                  />
                 </TouchableHighlight>
               </View>
             </View>
@@ -216,9 +265,19 @@ const CourseTopic = () => {
                   <TouchableHighlight
                     style={[styles.pdfBtn]}
                     activeOpacity={0.7}
-                    underlayColor="rgba(0,0,0,0.3)"
+                    underlayColor={
+                      colorScheme == 'light'
+                        ? 'rgba(0,0,0,0.3)'
+                        : 'rgba(255,255,255,0.4)'
+                    }
                     onPress={() => {}}>
-                    <Feather name="book" size={20} color={colors.text} />
+                    <Feather
+                      name="book"
+                      size={20}
+                      color={
+                        colorScheme == 'light' ? colors.text : colors.white
+                      }
+                    />
                   </TouchableHighlight>
                 </View>
               </View>

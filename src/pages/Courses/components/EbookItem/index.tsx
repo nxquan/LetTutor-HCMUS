@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import styles from './styles';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   data: any;
@@ -63,6 +64,7 @@ const levels = [
 
 const EbookItem = (props: Props) => {
   const {data} = props;
+  const {colorScheme} = useColorScheme();
   const getLevelName = (level: number) => {
     return levels.find((item: any) => item.id === Number(level))?.title;
   };
@@ -77,14 +79,29 @@ const EbookItem = (props: Props) => {
   };
   return (
     <TouchableOpacity
-      style={styles.container}
+      className="bg-white dark:bg-black"
+      style={[
+        styles.container,
+        {
+          borderColor:
+            colorScheme == 'light'
+              ? 'rgba(0,0,0,0.15)'
+              : 'rgba(255,255,255,0.4)',
+        },
+      ]}
       activeOpacity={0.8}
       onPress={() => handleOpenUrl()}>
       <Image source={{uri: data.imageUrl}} style={styles.image} />
       <View style={styles.info}>
-        <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.des}>{data.description}</Text>
-        <Text style={styles.addition}>{getLevelName(data.level)}</Text>
+        <Text className="text-black dark:text-white" style={styles.title}>
+          {data.name}
+        </Text>
+        <Text className="text-text dark:text-white" style={styles.des}>
+          {data.description}
+        </Text>
+        <Text className="text-black dark:text-white" style={styles.addition}>
+          {getLevelName(data.level)}
+        </Text>
       </View>
     </TouchableOpacity>
   );

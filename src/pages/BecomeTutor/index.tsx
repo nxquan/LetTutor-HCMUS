@@ -45,6 +45,7 @@ import ModalPopper from '@/components/ModalPopper';
 import ToastManager, {Toast} from 'toastify-react-native';
 import {toastConfig} from '@/config';
 import MessageIcon from '@/components/MessageIcon';
+import {useColorScheme} from 'nativewind';
 
 const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
 const CERTIFICATE_TYPES = [
@@ -136,6 +137,7 @@ const BecomeTutor = () => {
   const [countries, setCountries] = useState<any[]>([]);
   const [languageForMenu, setLanguageForMenu] = useState<any[]>([]);
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
+  const {colorScheme} = useColorScheme();
 
   const handleChangeGeneralInfo = (key: string, value: any) => {
     setGeneralInfo((prev: any) => {
@@ -377,7 +379,7 @@ const BecomeTutor = () => {
   return (
     <View className="flex-1">
       <Header style={{zIndex: 50}} drawerBtn={<DrawerButton />} />
-      <ScrollView className="bg-white">
+      <ScrollView className="bg-white dark:bg-black">
         <View className="flex-column mt-4 px-2.5">
           <View className="flex-row items-center">
             <Text
@@ -396,7 +398,7 @@ const BecomeTutor = () => {
               )}
             </Text>
             <Text
-              className="ml-2.5 text-black text-base"
+              className="ml-2.5 text-black dark:text-white text-base"
               style={tab == 1 && {fontWeight: '500'}}>
               {t('becomeTutor.tab1')}
             </Text>
@@ -422,10 +424,16 @@ const BecomeTutor = () => {
               )}
             </Text>
             <Text
-              className="ml-2.5 text-gray-400 text-base"
+              className="ml-2.5 text-gray-400 dark:text-white text-base"
               style={[
-                tab === 2 && {fontWeight: '500', color: colors.black},
-                tab == 3 && {fontWeight: '400', color: colors.black},
+                tab === 2 && {
+                  fontWeight: '500',
+                  color: colorScheme == 'light' ? colors.black : colors.white,
+                },
+                tab == 3 && {
+                  fontWeight: '400',
+                  color: colorScheme == 'light' ? colors.black : colors.white,
+                },
               ]}>
               {t('becomeTutor.tab2')}
             </Text>
@@ -443,8 +451,13 @@ const BecomeTutor = () => {
               3
             </Text>
             <Text
-              className="ml-2.5 text-gray-400 text-base"
-              style={[tab === 3 && {fontWeight: '500', color: colors.black}]}>
+              className="ml-2.5 text-gray-400  text-base"
+              style={[
+                tab === 3 && {
+                  fontWeight: '500',
+                  color: colorScheme == 'light' ? colors.black : colors.white,
+                },
+              ]}>
               {t('becomeTutor.tab3')}
             </Text>
           </View>
@@ -456,20 +469,20 @@ const BecomeTutor = () => {
                 source={images.becomeTutor}
                 style={{width: 140, height: 140}}
               />
-              <Text className="text-gray-700 text-xl font-bold mt-1">
+              <Text className="text-gray-700 dark:text-white text-xl font-bold mt-1">
                 {t('becomeTutor.title')}
               </Text>
-              <Text className="text-base text-gray-700 text-justify">
+              <Text className="text-base text-gray-700 dark:text-white text-justify">
                 {t('becomeTutor.description1')}
               </Text>
-              <Text className="text-base text-gray-700 mt-4 text-justify">
+              <Text className="text-base text-gray-700 dark:text-white mt-4 text-justify">
                 {t('becomeTutor.description2')}
               </Text>
             </View>
             <View className="px-2.5 mb-8">
               <View className="flex-row items-center mt-2">
                 <View className="h-px bg-gray-300 w-6" />
-                <Text className="text-gray-700 text-xl font-bold px-2">
+                <Text className="text-gray-700 dark:text-white text-xl font-bold px-2">
                   {t('becomeTutor.basicInfo')}
                 </Text>
                 <View className="ml-2 h-px bg-gray-300 flex-1" />
@@ -479,7 +492,7 @@ const BecomeTutor = () => {
                 style={{width: 200, height: 200}}
                 className="self-center my-2"
               />
-              <Text className="w-2/3 text-center text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
+              <Text className="w-2/3 text-center text-black dark:text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
                 {t('becomeTutor.noteForAvatar')}
               </Text>
 
@@ -492,7 +505,7 @@ const BecomeTutor = () => {
                   onChange={handleChangeGeneralInfo}
                 />
 
-                <Text className="text-base mb-1 text-black">
+                <Text className="text-base mb-1 text-black dark:text-white">
                   {t('becomeTutor.iAmFrom')}
                 </Text>
                 <DropdownMenu
@@ -507,7 +520,7 @@ const BecomeTutor = () => {
                     className="py-2.5"
                     onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
                     style={styles.dropdownMenuBtn}>
-                    <Text style={{fontSize: 14, color: colors.text}}>
+                    <Text className="text-sm text-text dark:text-white">
                       {generalInfo.country?.name ||
                         t('tutor.selectNationalities')}
                     </Text>
@@ -515,19 +528,23 @@ const BecomeTutor = () => {
                       <Entypo
                         name="chevron-small-down"
                         size={24}
-                        color="black"
+                        color={
+                          colorScheme == 'light' ? colors.black : colors.white
+                        }
                       />
                     ) : (
                       <Entypo
                         name="chevron-small-right"
                         size={24}
-                        color="black"
+                        color={
+                          colorScheme == 'light' ? colors.black : colors.white
+                        }
                       />
                     )}
                   </Pressable>
                 </DropdownMenu>
 
-                <Text className="text-base mb-1 text-black mt-2.5">
+                <Text className="text-base mb-1 text-black dark:text-white mt-2.5">
                   {t('birthday')}
                 </Text>
                 <Pressable onPress={() => setIsShowDatePicker(true)}>
@@ -539,7 +556,7 @@ const BecomeTutor = () => {
                         borderColor: colors.grey500,
                       },
                     ]}>
-                    <Text className="text-black py-0.5">
+                    <Text className="text-black dark:text-white py-0.5">
                       {!!generalInfo.birthday
                         ? formatDate(new Date(generalInfo.birthday))
                         : t('enterBirthday')}
@@ -554,7 +571,9 @@ const BecomeTutor = () => {
                       <FontAwesome
                         name="calendar"
                         size={18}
-                        color={colors.grey500}
+                        color={
+                          colorScheme == 'light' ? colors.grey500 : colors.white
+                        }
                         style={{marginLeft: 20}}
                       />
                     </TouchableWithoutFeedback>
@@ -575,19 +594,19 @@ const BecomeTutor = () => {
               <View className="px-2.5">
                 <View className="flex-row items-center mt-2">
                   <View className="h-px bg-gray-300 w-6" />
-                  <Text className="text-gray-700 text-xl font-bold px-2">
+                  <Text className="text-gray-700 dark:text-white text-xl font-bold px-2">
                     CV
                   </Text>
                   <View className="ml-2 h-px bg-gray-300 flex-1" />
                 </View>
-                <Text className="text-base text-gray-700 text-justify">
+                <Text className="text-base text-gray-700 dark:text-white text-justify">
                   {t('becomeTutor.desForCV')}
                 </Text>
-                <Text className="mt-2.5 text-center text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
+                <Text className="mt-2.5 text-center text-black  self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
                   {t('becomeTutor.noteForCV')}
                 </Text>
                 <View>
-                  <Text className="text-base mb-2 mt-4 text-black">
+                  <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                     {t('tutorDetail.interests')}
                   </Text>
                   <TextInput
@@ -599,7 +618,7 @@ const BecomeTutor = () => {
                     textAlignVertical="top"
                     placeholder="Những điều thú vị, sở thích, những trải nghiệm đáng nhớ hoặc bất cứ điều gì mà bạn muốn chia sẻ."
                     placeholderTextColor={colors.grey500}
-                    className="text-black text-left text-base px-3 rounded-md border"
+                    className="text-black dark:text-white text-left text-base px-3 rounded-md border"
                     style={{
                       borderRadius: 6,
                       borderColor: colors.grey300,
@@ -608,7 +627,7 @@ const BecomeTutor = () => {
                   </TextInput>
                 </View>
                 <View>
-                  <Text className="text-base mb-2 mt-4 text-black">
+                  <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                     {t('tutorDetail.education')}
                   </Text>
                   <TextInput
@@ -620,7 +639,7 @@ const BecomeTutor = () => {
                     textAlignVertical="top"
                     placeholder='Ví dụ: "Bằng cử nghệ thuật của đại học Cambly; Chứng nhận huấn luyện viên Yoga, Chứng chỉ Tiếp thu và Giảng dạy Ngôn ngữ Thứ hai (SLAT) của Đại học Cambly"'
                     placeholderTextColor={colors.grey500}
-                    className="text-black text-left text-base px-3 rounded-md border"
+                    className="text-black dark:text-white text-left text-base px-3 rounded-md border"
                     style={{
                       borderRadius: 6,
                       borderColor: colors.grey300,
@@ -629,7 +648,7 @@ const BecomeTutor = () => {
                   </TextInput>
                 </View>
                 <View>
-                  <Text className="text-base mb-2 mt-4 text-black">
+                  <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                     {t('becomeTutor.experience')}
                   </Text>
                   <TextInput
@@ -640,7 +659,7 @@ const BecomeTutor = () => {
                     numberOfLines={8}
                     textAlignVertical="top"
                     placeholderTextColor={colors.grey500}
-                    className="text-black text-left text-base px-3 rounded-md border"
+                    className="text-black dark:text-white text-left text-base px-3 rounded-md border"
                     style={{
                       borderRadius: 6,
                       borderColor: colors.grey300,
@@ -649,7 +668,7 @@ const BecomeTutor = () => {
                   </TextInput>
                 </View>
                 <View>
-                  <Text className="text-base mb-2 mt-4 text-black">
+                  <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                     {t('becomeTutor.previousProfession')}
                   </Text>
                   <TextInput
@@ -658,7 +677,7 @@ const BecomeTutor = () => {
                     numberOfLines={8}
                     textAlignVertical="top"
                     placeholderTextColor={colors.grey500}
-                    className="text-black text-left text-base px-3 rounded-md border"
+                    className="text-black dark:text-white text-left text-base px-3 rounded-md border"
                     style={{
                       borderRadius: 6,
                       borderColor: colors.grey300,
@@ -667,7 +686,7 @@ const BecomeTutor = () => {
                   </TextInput>
                 </View>
                 <View>
-                  <Text className="text-base mb-2 mt-4 text-black">
+                  <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                     {t('becomeTutor.certificate')}
                   </Text>
                   <View className="mb-4">
@@ -763,13 +782,13 @@ const BecomeTutor = () => {
               <View className="px-2.5">
                 <View className="flex-row items-center mt-2">
                   <View className="h-px bg-gray-300 w-6" />
-                  <Text className="text-gray-700 text-xl font-bold px-2">
+                  <Text className="text-gray-700 dark:text-white text-xl font-bold px-2">
                     {t('becomeTutor.myLanguages')}
                   </Text>
                   <View className="ml-2 h-px bg-gray-300 flex-1" />
                 </View>
                 <View>
-                  <Text className="text-base mb-2 mt-4 text-black">
+                  <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                     {t('tutorDetail.languages')}
                   </Text>
                 </View>
@@ -788,7 +807,7 @@ const BecomeTutor = () => {
                       {languages.length > 0 ? (
                         renderLanguageItems()
                       ) : (
-                        <Text style={{fontSize: 14, color: colors.text}}>
+                        <Text className="text-sm text-text dark:text-white">
                           Ví dụ: Tiếng Anh, Tiếng Việt, Tiếng Trung, Tiếng Hàn
                         </Text>
                       )}
@@ -798,14 +817,18 @@ const BecomeTutor = () => {
                         style={{marginLeft: -16}}
                         name="chevron-small-down"
                         size={24}
-                        color="black"
+                        color={
+                          colorScheme == 'light' ? colors.black : colors.white
+                        }
                       />
                     ) : (
                       <Entypo
                         style={{marginLeft: -16}}
                         name="chevron-small-right"
                         size={24}
-                        color="black"
+                        color={
+                          colorScheme == 'light' ? colors.black : colors.white
+                        }
                       />
                     )}
                   </Pressable>
@@ -815,7 +838,7 @@ const BecomeTutor = () => {
               <View className="px-2.5">
                 <View className="flex-row items-center mt-2">
                   <View className="h-px bg-gray-300 w-6" />
-                  <Text className="text-gray-700 text-xl font-bold px-2">
+                  <Text className="text-gray-700 dark:text-white text-xl font-bold px-2">
                     {t('becomeTutor.whoITeach')}
                   </Text>
                   <View className="ml-2 h-px bg-gray-300 flex-1" />
@@ -823,7 +846,7 @@ const BecomeTutor = () => {
                 <Text className="mt-2.5 text-center text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
                   {t('becomeTutor.noteForTeach')}
                 </Text>
-                <Text className="text-base mb-2 mt-4 text-black">
+                <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                   {t('becomeTutor.introduction')}
                 </Text>
                 <TextInput
@@ -833,14 +856,14 @@ const BecomeTutor = () => {
                   textAlignVertical="top"
                   placeholder='Ví dụ: "Tôi là bác sĩ, năm nay 35 tuổi và có thể giúp bạn thực hành tiếng Anh thương mại và y tế. Tôi cũng thích dạy cho người mới bắt đầu vì có tính kiên nhẫn và luôn nói chậm, rõ ràng. '
                   placeholderTextColor={colors.grey500}
-                  className="text-black text-left text-base px-3 rounded-md border"
+                  className="text-black dark:text-white text-left text-base px-3 rounded-md border"
                   style={{
                     borderRadius: 6,
                     borderColor: colors.grey300,
                   }}>
                   {teaching.intro}
                 </TextInput>
-                <Text className="text-base mb-2 mt-4 text-black">
+                <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                   {t('becomeTutor.whoStudents')}
                 </Text>
                 <View>
@@ -855,17 +878,22 @@ const BecomeTutor = () => {
                         color={
                           teaching.skill.id === item.id
                             ? colors.success
-                            : 'rgba(0,0,0,0.4)'
+                            : colorScheme == 'light'
+                            ? 'rgba(0,0,0,0.4)'
+                            : 'rgba(255,255,255,0.4)'
                         }
                         selected={teaching.skill.id === item.id}
                         labelStyle={{
-                          color: colors.black,
+                          color:
+                            colorScheme == 'light'
+                              ? colors.black
+                              : colors.white,
                           fontSize: 15,
                         }}></RadioButton>
                     );
                   })}
                 </View>
-                <Text className="text-base mb-2 mt-4 text-black">
+                <Text className="text-base mb-2 mt-4 text-black dark:text-white">
                   {t('becomeTutor.mySpecialties')}
                 </Text>
                 {SPECIALTIES.map((item, index) => {
@@ -881,10 +909,13 @@ const BecomeTutor = () => {
                         )}
                         tintColors={{
                           true: colors.primary,
-                          false: 'rgba(0,0,0,0.5)',
+                          false:
+                            colorScheme == 'light'
+                              ? 'rgba(0,0,0,0.5)'
+                              : 'rgba(255,255,255,0.5)',
                         }}
                       />
-                      <Text className="text-base text-black ml-2">
+                      <Text className="text-base text-black dark:text-white ml-2">
                         {t(item.key)}
                       </Text>
                     </View>
@@ -916,10 +947,10 @@ const BecomeTutor = () => {
                 source={images.becomeTutor2}
                 style={{width: 120, height: 120}}
               />
-              <Text className="text-gray-700 text-xl font-bold my-2">
+              <Text className="text-gray-700 dark:text-white text-xl font-bold my-2">
                 {t('becomeTutor.introMySelf')}
               </Text>
-              <Text className="text-base text-gray-700 text-justify">
+              <Text className="text-base text-gray-700 dark:text-white text-justify">
                 {t('becomeTutor.desForIntroMySelf')}
               </Text>
             </View>
@@ -927,13 +958,13 @@ const BecomeTutor = () => {
               <View className="px-2.5">
                 <View className="flex-row items-center mt-2">
                   <View className="h-px bg-gray-300 w-6" />
-                  <Text className="text-gray-700 text-xl font-bold px-2">
+                  <Text className="text-gray-700 dark:text-white text-xl font-bold px-2">
                     {t('becomeTutor.titleVideo')}
                   </Text>
                   <View className="ml-2 h-px bg-gray-300 flex-1" />
                 </View>
 
-                <Text className="mt-2.5 text-black self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
+                <Text className="mt-2.5 text-black  self-center text-base border border-blue-300 p-4 bg-blue-50 rounded-md">
                   {t('becomeTutor.trick')} {'\n  '}
                   {t('becomeTutor.trick1')} {'\n  '}
                   {t('becomeTutor.trick2')}
@@ -996,7 +1027,7 @@ const BecomeTutor = () => {
                   title={t('finish')}
                   onPress={() => {
                     handleSubmitApplication();
-                    // setTab(3);
+                    setTab(3);
                   }}
                   style={{
                     backgroundColor: colors.primary,
@@ -1013,7 +1044,7 @@ const BecomeTutor = () => {
         {tab == 3 && (
           <View className="px-2.5 mt-4 items-center">
             <FontAwesome name="smile-o" size={120} color={colors.primary} />
-            <Text className="text-gray-700 text-xl mt-1 px-8 text-center">
+            <Text className="text-gray-700 dark:text-white text-xl mt-1 px-8 text-center">
               {t('becomeTutor.finishSubmission')}
             </Text>
             <Button
@@ -1032,19 +1063,17 @@ const BecomeTutor = () => {
 
         <ModalPopper visible={isOpenModalCertificate} transparent={true}>
           <View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignContent: 'center',
-              }}>
-              <Text
-                style={{color: colors.black, fontSize: 16, fontWeight: '500'}}>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-black text-base dark:text-white text-medium">
                 Add certificate
               </Text>
               <TouchableOpacity
                 onPress={() => setIsOpenModalCertificate(false)}>
-                <AntDesign name="close" size={24} color="black" />
+                <AntDesign
+                  name="close"
+                  size={24}
+                  color={colorScheme == 'light' ? colors.black : colors.white}
+                />
               </TouchableOpacity>
             </View>
             <View
@@ -1075,15 +1104,23 @@ const BecomeTutor = () => {
                 className="py-2.5 mb-2.5"
                 onPress={() => setIsOpenCertificateMenu(!isOpenCertificateMenu)}
                 style={styles.dropdownMenuBtn}>
-                <Text style={{fontSize: 14, color: colors.text}}>
+                <Text className="text-text text-sm dark:text-white">
                   {currentCertificate.certificateType === ''
                     ? 'Select certificate type'
                     : currentCertificate.certificateType}
                 </Text>
                 {isOpenCertificateMenu ? (
-                  <Entypo name="chevron-small-down" size={24} color="black" />
+                  <Entypo
+                    name="chevron-small-down"
+                    size={24}
+                    color={colorScheme == 'light' ? colors.black : colors.white}
+                  />
                 ) : (
-                  <Entypo name="chevron-small-right" size={24} color="black" />
+                  <Entypo
+                    name="chevron-small-right"
+                    size={24}
+                    color={colorScheme == 'light' ? colors.black : colors.white}
+                  />
                 )}
               </Pressable>
             </DropdownMenu>
@@ -1144,11 +1181,16 @@ const BecomeTutor = () => {
                     paddingVertical: 10,
                     paddingHorizontal: 16,
                     borderWidth: 1,
-                    borderColor: 'rgba(0,0,0,0.1)',
+                    borderColor:
+                      colorScheme == 'light'
+                        ? 'rgba(0,0,0,0.1)'
+                        : 'rgba(255,255,255,0.4)',
                     borderRadius: 6,
                     zIndex: -1,
                   }}>
-                  <Text style={{fontSize: 14, color: colors.text}}>Cancel</Text>
+                  <Text className="text-text text-sm dark:text-white">
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {

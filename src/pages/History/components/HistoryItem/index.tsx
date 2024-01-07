@@ -23,6 +23,7 @@ import * as bookingService from '@/services/bookingService';
 import * as lessonReportService from '@/services/lessonReportService';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {Toast} from 'toastify-react-native';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   data: any;
@@ -52,6 +53,7 @@ const HistoryItem = (props: Props) => {
     note: '',
     bookingId: '',
   });
+  const {colorScheme} = useColorScheme();
 
   const onChangeSelected = (item: any) => {
     setCurrentReport((prev: any) => {
@@ -163,7 +165,7 @@ const HistoryItem = (props: Props) => {
   return (
     <Lesson data={data} history={true}>
       <View style={styles.requestHeader}>
-        <Text style={styles.timeText}>
+        <Text className="text-base text-medium text-black dark:text-white">
           {t('history.lessonTime')}{' '}
           {padNumber(
             new Date(scheduleDetailInfo.startPeriodTimestamp).getHours(),
@@ -186,26 +188,48 @@ const HistoryItem = (props: Props) => {
         {data?.studentRequest ? (
           <>
             <TouchableOpacity
-              style={styles.lessonBar}
+              style={[
+                styles.lessonBar,
+                {
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.grey200 : colors.grey800,
+                },
+              ]}
               onPress={() => setIsOpenRequest(!isOpenRequest)}>
-              <Text style={{fontSize: 14, color: colors.black}}>
+              <Text className="text-sm text-black dark:text-white">
                 {t('schedule.requestForLesson')}
               </Text>
               {!isOpenRequest ? (
-                <Entypo name="chevron-small-right" size={24} color="black" />
+                <Entypo
+                  name="chevron-small-right"
+                  size={24}
+                  color={colorScheme == 'light' ? 'black' : 'white'}
+                />
               ) : (
-                <Entypo name="chevron-small-down" size={24} color="black" />
+                <Entypo
+                  name="chevron-small-down"
+                  size={24}
+                  color={colorScheme == 'light' ? 'black' : 'white'}
+                />
               )}
             </TouchableOpacity>
             {isOpenRequest && (
               <View style={{marginTop: 8, paddingHorizontal: 12}}>
-                <Text style={styles.commentText}>{data?.studentRequest}</Text>
+                <Text
+                  style={styles.commentText}
+                  className="text-text dark:text-white">
+                  {data?.studentRequest}
+                </Text>
               </View>
             )}
           </>
         ) : (
           <View style={{marginTop: 8, paddingHorizontal: 12}}>
-            <Text style={styles.commentText}>No request for lesson</Text>
+            <Text
+              style={styles.commentText}
+              className="text-text dark:text-white">
+              No request for lesson
+            </Text>
           </View>
         )}
       </View>
@@ -232,7 +256,11 @@ const HistoryItem = (props: Props) => {
           </>
         ) : (
           <View style={{marginTop: 8, paddingHorizontal: 12}}>
-            <Text style={styles.commentText}>Tutor haven't reviewed yet</Text>
+            <Text
+              style={styles.commentText}
+              className="text-text dark:text-white">
+              Tutor haven't reviewed yet
+            </Text>
           </View>
         )}
       </View>
@@ -251,7 +279,9 @@ const HistoryItem = (props: Props) => {
                     paddingTop: 12,
                   }}>
                   <View className="flex-row items-center">
-                    <Text className="text-black text-md">Rating: </Text>
+                    <Text className="text-black dark:text-white text-md">
+                      Rating:{' '}
+                    </Text>
                     <RenderRating size={14} rating={feedback?.rating} />
                   </View>
                   <View className="flex-row items-center">
@@ -310,7 +340,11 @@ const HistoryItem = (props: Props) => {
           <TouchableOpacity
             style={{alignSelf: 'flex-end', padding: 8}}
             onPress={() => setIsOpenModal(null)}>
-            <AntDesign name="close" size={20} color="black" />
+            <AntDesign
+              name="close"
+              size={20}
+              color={colorScheme == 'light' ? 'black' : 'white'}
+            />
           </TouchableOpacity>
           <View style={styles.modalInfo}>
             <Image
@@ -318,19 +352,13 @@ const HistoryItem = (props: Props) => {
               src={scheduleInfo?.tutorInfo?.avatar}
               style={styles.avatar}
             />
-            <Text className="text-xl text-black font-semibold mx-1">
+            <Text className="text-xl text-black dark:text-white font-semibold mx-1">
               {data?.scheduleDetailInfo?.scheduleInfo?.tutorInfo?.name}
             </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.black,
-                marginVertical: 4,
-              }}>
+            <Text className="text-black dark:text-ellipsis text-sm mx-1">
               {t('history.lessonTime')}
             </Text>
-            <Text
-              style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
+            <Text className="text-base text-medium text-black dark:text-white">
               {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
               ,{' '}
               {renderStartAndEndHourOnLearning(
@@ -349,19 +377,13 @@ const HistoryItem = (props: Props) => {
 
           {isOpenModal === 'report' ? (
             <View style={styles.modalBody}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  marginBottom: 8,
-                  color: colors.black,
-                }}>
+              <Text className="text-medium mb-2 text-black dark:text-white">
                 <Text
                   style={{
                     color: colors.error,
                     fontWeight: '600',
                   }}>
-                  *
+                  *{' '}
                 </Text>
                 {t('history.reason')}
               </Text>
@@ -382,12 +404,7 @@ const HistoryItem = (props: Props) => {
                       styles.dropdownBtn,
                       isOpenMenu && {borderColor: colors.primary},
                     ]}>
-                    <Text
-                      style={{
-                        flex: 1,
-                        textAlign: 'center',
-                        color: colors.text,
-                      }}>
+                    <Text className="text-text dark:text-white flex-1 text-center">
                       {
                         reasons.find(
                           (item: any) => item.id === currentReport.reasonId,
@@ -420,19 +437,13 @@ const HistoryItem = (props: Props) => {
                 onChangeText={t =>
                   setCurrentReport((prev: any) => ({...prev, note: t}))
                 }
+                className="text-black dark:text-white text-left p-2 border rounded-md mt-4"
                 style={{
-                  textAlign: 'left',
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
                   borderColor: colors.grey350,
-                  borderWidth: 1,
-                  borderRadius: 6,
-                  marginTop: 16,
                   zIndex: -1,
                   fontSize: 15,
                 }}
               />
-
               <View
                 style={{
                   flexDirection: 'row',
@@ -455,7 +466,7 @@ const HistoryItem = (props: Props) => {
                     paddingHorizontal: 12,
                     zIndex: -1,
                   }}>
-                  <Text style={{fontSize: 14, color: colors.text}}>
+                  <Text className="text-sm text-text dark:text-white">
                     {t('later')}
                   </Text>
                 </TouchableOpacity>
@@ -463,6 +474,11 @@ const HistoryItem = (props: Props) => {
                   onPress={() => {
                     handleReport();
                     setIsOpenModal(null);
+                    setCurrentReport({
+                      note: '',
+                      bookingId: '',
+                      reasonId: -1,
+                    });
                   }}
                   style={{
                     backgroundColor: colors.primary,
@@ -478,20 +494,13 @@ const HistoryItem = (props: Props) => {
             </View>
           ) : (
             <View style={styles.modalBody}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '500',
-                  marginBottom: 8,
-                  textAlign: 'center',
-                  color: colors.black,
-                }}>
+              <Text className="text-medium text-center text-base mb-2 text-black dark:text-white">
                 <Text
                   style={{
                     color: colors.error,
                     fontWeight: '600',
                   }}>
-                  *
+                  *{' '}
                 </Text>
                 {t('history.ratingQuestion')} {scheduleInfo.tutorInfo.name}
               </Text>
@@ -516,17 +525,11 @@ const HistoryItem = (props: Props) => {
                 placeholder={t('history.contentReview')}
                 placeholderTextColor={colors.grey500}
                 onBlur={() => {}}
+                className="text-black dark:text-white text-left p-2 border rounded-md mt-4"
                 style={{
-                  textAlign: 'left',
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
                   borderColor: colors.grey350,
-                  borderWidth: 1,
-                  borderRadius: 6,
-                  marginTop: 16,
                   zIndex: -1,
                   fontSize: 15,
-                  color: 'black',
                 }}
                 value={currentRating.content}
                 onChangeText={t =>
@@ -551,7 +554,7 @@ const HistoryItem = (props: Props) => {
                     paddingHorizontal: 12,
                     zIndex: -1,
                   }}>
-                  <Text style={{fontSize: 14, color: colors.text}}>
+                  <Text className="text-sm text-text dark:text-white">
                     {t('later')}
                   </Text>
                 </TouchableOpacity>

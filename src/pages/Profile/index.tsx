@@ -43,6 +43,8 @@ import * as userService from '@/services/userService';
 import * as utilService from '@/services/utilService';
 import {images} from '@/assets';
 import {RefreshControl} from 'react-native';
+import {useColorScheme} from 'nativewind';
+
 const LEVELS = [
   {
     id: 1,
@@ -102,6 +104,7 @@ const Profile = () => {
   const [curName, setCurName] = useState('');
   const [specialties, setSpecialties] = useState<any[]>([]);
   const [refresh, setRefresh] = useState(false);
+  const {colorScheme} = useColorScheme();
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
@@ -144,7 +147,10 @@ const Profile = () => {
   }, []);
 
   const renderSpecialties = () => {
-    if (profile?.testPreparations || profile?.learnTopics) {
+    if (
+      profile?.testPreparations.length > 0 ||
+      profile?.learnTopics.length > 0
+    ) {
       const specialties = [
         ...profile?.testPreparations,
         ...profile?.learnTopics,
@@ -153,14 +159,19 @@ const Profile = () => {
         <View
           key={item.key}
           style={{
-            backgroundColor: 'rgba(0,0,0,0.1)',
+            backgroundColor:
+              colorScheme == 'light'
+                ? 'rgba(0,0,0,0.1)'
+                : 'rgba(255,255,255,0.3)',
             borderRadius: 4,
             flexDirection: 'row',
             padding: 2,
             marginLeft: 4,
             marginTop: 4,
           }}>
-          <Text style={{fontSize: 14, color: colors.text}}>{item.name}</Text>
+          <Text className="text-black text-sm dark:text-white">
+            {item.name}
+          </Text>
           <TouchableWithoutFeedback
             onPress={() => {
               setIsOpenSpecialtyMenu(false);
@@ -190,14 +201,22 @@ const Profile = () => {
             <AntDesign
               name="close"
               size={20}
-              color="rgba(0,0,0,0.8)"
+              color={
+                colorScheme == 'light'
+                  ? 'rgba(0,0,0,0.8)'
+                  : 'rgba(255,255,255,0.3)'
+              }
               style={{marginLeft: 4}}
             />
           </TouchableWithoutFeedback>
         </View>
       ));
     } else {
-      return <Text className="text-sm text-gray-800">Select levels</Text>;
+      return (
+        <Text className="text-sm text-gray-800 dark:text-white">
+          Select levels
+        </Text>
+      );
     }
   };
 
@@ -316,7 +335,7 @@ const Profile = () => {
     <View className="flex-1">
       <Header style={{zIndex: 50}} drawerBtn={renderDrawerButton} />
       <ScrollView
-        className="bg-white"
+        className="bg-white dark:bg-black"
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -345,7 +364,10 @@ const Profile = () => {
                   width: 140,
                   height: 140,
                   borderWidth: 1,
-                  borderColor: 'rgba(0,0,0,0.1)',
+                  borderColor:
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.1)'
+                      : 'rgba(255,255,255,0.4)',
                 }}
               />
               <TouchableOpacity
@@ -366,7 +388,9 @@ const Profile = () => {
             <Text className="font-medium text-blue-500 text-3xl text-center mt-2">
               {curName}
             </Text>
-            <Text className="text-base text-grey-500 mt-1" numberOfLines={1}>
+            <Text
+              className="text-base text-grey-500 dark:text-white mt-1"
+              numberOfLines={1}>
               Account ID: {profile?.id}
             </Text>
             <TouchableOpacity
@@ -382,7 +406,7 @@ const Profile = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-base text-black font-medium p-3 bg-gray-200">
+          <Text className="text-base text-black dark:text-white font-medium p-3 bg-gray-200 dark:bg-gray-800">
             {t('profile.account')}
           </Text>
           <View className="px-6 pt-6 pb-9">
@@ -401,7 +425,7 @@ const Profile = () => {
               onChange={onChangeProfile}
             />
 
-            <Text className="text-base mb-1 font-normal text-gray-800">
+            <Text className="text-base mb-1 font-normal text-gray-800 dark:text-white">
               <Text className="text-red-500">* </Text>
               {t('profile.country')}
             </Text>
@@ -417,7 +441,7 @@ const Profile = () => {
                 className="py-2.5 mb-2.5"
                 onPress={() => setIsOpenCountryModal(!isOpenCountryModal)}
                 style={styles.dropdownMenuBtn}>
-                <Text style={{fontSize: 14, color: colors.text}}>
+                <Text className="text-text dark:text-white text-sm">
                   {countries.find((country: any) => {
                     if (profile?.country?.key) {
                       return country.key === profile?.country?.key;
@@ -426,9 +450,17 @@ const Profile = () => {
                   })?.name || t('tutor.selectNationalities')}
                 </Text>
                 {isOpenCountryModal ? (
-                  <Entypo name="chevron-small-down" size={24} color="black" />
+                  <Entypo
+                    name="chevron-small-down"
+                    size={24}
+                    color={colorScheme == 'light' ? colors.black : colors.white}
+                  />
                 ) : (
-                  <Entypo name="chevron-small-right" size={24} color="black" />
+                  <Entypo
+                    name="chevron-small-right"
+                    size={24}
+                    color={colorScheme == 'light' ? colors.black : colors.white}
+                  />
                 )}
               </Pressable>
             </DropdownMenu>
@@ -447,7 +479,7 @@ const Profile = () => {
                 Verified
               </Text>
             )}
-            <Text className="text-base font-normal text-gray-800">
+            <Text className="text-base font-normal text-gray-800 dark:text-white">
               <Text className="text-red-500">* </Text>
               {t('birthday')}
             </Text>
@@ -460,7 +492,7 @@ const Profile = () => {
                     borderColor: colors.grey500,
                   },
                 ]}>
-                <Text className="text-black py-0.5">
+                <Text className="text-black dark:text-white py-0.5">
                   {profile?.birthday
                     ? formatDate(new Date(profile?.birthday))
                     : t('tutor.selectADay')}
@@ -487,7 +519,7 @@ const Profile = () => {
               </View>
             </Pressable>
 
-            <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
+            <Text className="text-base font-normal text-gray-800 dark:text-white mt-2.5 mb-1.5">
               <Text className="text-red-500">* </Text>
               {t('profile.myLevel')}
             </Text>
@@ -510,7 +542,7 @@ const Profile = () => {
                     marginLeft: -4,
                     marginTop: -4,
                   }}>
-                  <Text className="text-sm text-gray-800">
+                  <Text className="text-sm text-gray-800 dark:text-white">
                     {profile?.level
                       ? LEVELS.find(
                           (level: any) => level.key === profile?.level,
@@ -519,14 +551,22 @@ const Profile = () => {
                   </Text>
                 </View>
                 {isOpenLevelMenu ? (
-                  <Entypo name="chevron-small-down" size={24} color="black" />
+                  <Entypo
+                    name="chevron-small-down"
+                    size={24}
+                    color={colorScheme == 'light' ? colors.black : colors.white}
+                  />
                 ) : (
-                  <Entypo name="chevron-small-right" size={24} color="black" />
+                  <Entypo
+                    name="chevron-small-right"
+                    size={24}
+                    color={colorScheme == 'light' ? colors.black : colors.white}
+                  />
                 )}
               </Pressable>
             </DropdownMenu>
 
-            <Text className="text-base font-normal text-gray-800 mt-2.5 mb-1.5">
+            <Text className="text-base font-normal text-gray-800 dark:text-white mt-2.5 mb-1.5">
               <Text className="text-red-500">* </Text>
               {t('profile.wantToLearn')}
             </Text>
@@ -544,9 +584,8 @@ const Profile = () => {
                 className="flex-row justify-between items-center w-full px-3 py-2.5 rounded-md border"
                 style={styles.dropdownMenuBtn}>
                 <View
+                  className="flex-row flex-wrap"
                   style={{
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
                     marginLeft: -4,
                     marginTop: -4,
                   }}>
@@ -556,7 +595,7 @@ const Profile = () => {
                   <Entypo
                     name="chevron-small-down"
                     size={24}
-                    color="black"
+                    color={colorScheme == 'light' ? colors.black : colors.white}
                     style={{marginLeft: -22}}
                   />
                 ) : (
@@ -564,14 +603,14 @@ const Profile = () => {
                     style={{marginLeft: -22}}
                     name="chevron-small-right"
                     size={24}
-                    color="black"
+                    color={colorScheme == 'light' ? colors.black : colors.white}
                   />
                 )}
               </Pressable>
             </DropdownMenu>
 
             <View className="mt-3">
-              <Text className="text-base text-gray-800 font-normal mb-1.5">
+              <Text className="text-base text-gray-800 dark:text-white font-normal mb-1.5">
                 <Text className="text-red-500">* </Text>
                 {t('profile.studySchedule')}
               </Text>
@@ -581,7 +620,7 @@ const Profile = () => {
                 textAlignVertical="top"
                 placeholder={t('profile.noteForStudySchedule')}
                 placeholderTextColor={colors.grey600}
-                className="text-black text-left py-3 px-2.5 border rounded-md text-base"
+                className="text-black dark:text-white text-left py-3 px-2.5 border rounded-md text-base"
                 onChangeText={text => onChangeProfile('studySchedule', text)}
                 style={{
                   borderColor: colors.grey350,
@@ -617,14 +656,18 @@ const Profile = () => {
         <ModalPopper visible={isOpenUploadModal} transparent={true}>
           <View style={{width: '100%'}}>
             <View className="flex-row items-center justify-between">
-              <Text className="text-black text-lg font-semibold">
+              <Text className="text-black dark:text-white text-lg font-semibold">
                 Upload avatar
               </Text>
               <TouchableOpacity
                 onPress={() => {
                   setIsOpenUploadModal(false);
                 }}>
-                <AntDesign name="close" size={24} color="black" />
+                <AntDesign
+                  name="close"
+                  size={24}
+                  color={colorScheme == 'light' ? colors.black : colors.white}
+                />
               </TouchableOpacity>
             </View>
             <View
@@ -639,20 +682,21 @@ const Profile = () => {
               style={{width: 200, height: 200, marginVertical: 20}}
               className="self-center">
               <Image
-                className="self-center rounded-full"
+                className="w-[160px] h-[160px] self-center rounded-full"
                 resizeMode="cover"
                 resizeMethod="auto"
                 src={avatar?.fileCopyUri}
+                style={{
+                  borderColor:
+                    colorScheme == 'light'
+                      ? 'rgba(0,0,0,0.1)'
+                      : 'rgba(255,255,255,0.4)',
+                  borderWidth: 1,
+                }}
                 source={{
                   uri:
                     avatar?.fileCopyUri ||
                     'https://sandbox.api.lettutor.com/avatar/f569c202-7bbf-4620-af77-ecc1419a6b28avatar1700296337596.jpg',
-                }}
-                style={{
-                  width: 160,
-                  height: 160,
-                  borderWidth: 1,
-                  borderColor: 'rgba(0,0,0,0.1)',
                 }}
               />
               <TouchableOpacity

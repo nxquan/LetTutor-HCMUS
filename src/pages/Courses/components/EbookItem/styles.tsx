@@ -6,8 +6,6 @@ const width = Dimensions.get('window').width; //full width
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.15)',
-    backgroundColor: colors.white,
     borderRadius: 8,
     width: width * 0.8,
     marginTop: 16,
@@ -29,16 +27,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
-    color: colors.black,
   },
   des: {
     fontSize: 14,
-    color: colors.text,
     marginBottom: 16,
   },
   addition: {
     fontSize: 14,
-    color: colors.black,
   },
 });
 

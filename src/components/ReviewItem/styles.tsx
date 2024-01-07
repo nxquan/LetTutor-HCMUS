@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 14,
-    color: colors.text,
   },
   stars: {
     flexDirection: 'row',
@@ -27,7 +26,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: colors.black,
   },
 });
 

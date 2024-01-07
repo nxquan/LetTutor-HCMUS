@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Button from '@/components/Button';
 import * as authService from '@/services/authService';
 import {Toast} from 'toastify-react-native';
+import {useColorScheme} from 'nativewind';
 
 type Props = {
   toggleModal: (value: boolean) => void;
@@ -15,7 +16,7 @@ type Props = {
 
 const ChangePasswordInner = (props: Props) => {
   const {toggleModal} = props;
-
+  const {colorScheme} = useColorScheme();
   const {t} = useTranslations();
 
   const [passwordState, setPasswordState] = useState({
@@ -52,14 +53,18 @@ const ChangePasswordInner = (props: Props) => {
   return (
     <View style={{width: '100%'}}>
       <View className="flex-row justify-between items-center">
-        <Text className="text-black text-base font-semibold">
+        <Text className="text-black dark:text-white text-base font-semibold">
           {t('signin.changePassword')}
         </Text>
         <TouchableOpacity
           onPress={() => {
             toggleModal(false);
           }}>
-          <AntDesign name="close" size={24} color="black" />
+          <AntDesign
+            name="close"
+            size={24}
+            color={colorScheme == 'light' ? colors.black : colors.white}
+          />
         </TouchableOpacity>
       </View>
       <View className="h-px mt-4 bg-gray-300" />

@@ -5,6 +5,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 12,
   },
+  text: {
+    fontSize: 16,
+    lineHeight: 20,
+    textAlign: 'justify',
+  },
   bookContainer: {
     paddingHorizontal: 20,
     marginVertical: 16,
@@ -24,6 +29,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: colors.grey300,
   },
+
   scheduleList: {
     paddingHorizontal: 20,
     marginTop: 12,

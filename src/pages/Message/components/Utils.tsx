@@ -12,6 +12,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {View} from 'react-native';
 import {colors} from '@/constants';
+import {useColorScheme} from 'nativewind';
 
 export const renderBubble = (props: any) => {
   return (
@@ -90,6 +91,8 @@ export const renderComposer = (props: any) => {
 };
 
 export const renderInputToolbar = (props: any) => {
+  const {colorScheme} = useColorScheme();
+
   return (
     <InputToolbar
       {...props}
@@ -98,6 +101,7 @@ export const renderInputToolbar = (props: any) => {
         alignItems: 'center',
         borderWidth: 0,
         height: 54,
+        backgroundColor: colorScheme == 'light' ? colors.white : colors.black,
       }}
       renderActions={renderActions}
       renderSend={renderSend}

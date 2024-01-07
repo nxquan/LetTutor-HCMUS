@@ -46,7 +46,7 @@ const FormGroup = (props: Props) => {
             style={styles.icon}
             name="eye-outline"
             size={24}
-            color="black"
+            color={colorScheme == 'light' ? colors.black : colors.white}
           />
         );
       } else {
@@ -58,7 +58,7 @@ const FormGroup = (props: Props) => {
             style={styles.icon}
             name="eye-off-outline"
             size={24}
-            color="black"
+            color={colorScheme == 'light' ? colors.black : colors.white}
           />
         );
       }
@@ -149,16 +149,23 @@ const FormGroup = (props: Props) => {
         style={[
           styles.textControl,
           {borderColor: borderBottomColor},
-          editable === false && {backgroundColor: colors.grey200},
+          {
+            backgroundColor:
+              colorScheme == 'light' ? colors.white : colors.black,
+          },
+          editable === false && {
+            backgroundColor:
+              colorScheme == 'light' ? colors.grey200 : colors.black,
+          },
         ]}>
         <TextInput
           style={[
             styles.textInput,
-            editable === false && {
-              color: colorScheme == 'light' ? colors.grey700 : colors.white,
-            },
             {
               color: colorScheme == 'light' ? colors.black : colors.white,
+            },
+            editable === false && {
+              color: colors.grey700,
             },
           ]}
           cursorColor={colors.primary}

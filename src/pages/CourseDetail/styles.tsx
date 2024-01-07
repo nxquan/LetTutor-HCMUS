@@ -2,18 +2,13 @@ import {colors} from '@/constants';
 import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-  },
   inner: {
     paddingHorizontal: 24,
   },
   intro: {
     elevation: 12,
-    shadowColor: 'black',
     shadowRadius: 8,
     borderRadius: 8,
-    backgroundColor: colors.white,
     marginTop: 16,
     marginBottom: 12,
   },
@@ -33,11 +28,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     marginBottom: 6,
-    color: colors.black,
   },
   des: {
     fontSize: 14,
-    color: colors.text,
     marginBottom: 24,
   },
   discoverBtn: {
@@ -61,7 +54,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     marginRight: 12,
-    color: colors.black,
   },
   line: {
     height: 1,
@@ -75,11 +67,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginLeft: 6,
-    color: colors.black,
   },
   detailItemText: {
     fontSize: 15,
-    color: colors.text,
     marginLeft: 32,
   },
   topicItem: {
@@ -88,7 +78,6 @@ const styles = StyleSheet.create({
     shadowColor: 'rgba(0,0,0,0.4)',
     shadowRadius: 4,
     borderRadius: 4,
-    backgroundColor: colors.white,
     paddingHorizontal: 8,
     marginTop: 12,
     borderWidth: 1,

@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 16,
   },
-  timeText: {color: colors.black, fontSize: 16, fontWeight: '500'},
   lessonBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -20,7 +19,6 @@ const styles = StyleSheet.create({
   },
   commentText: {
     fontSize: 14,
-    color: colors.text,
     paddingBottom: 12,
     paddingRight: 12,
   },

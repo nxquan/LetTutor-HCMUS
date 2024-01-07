@@ -1,9 +1,6 @@
 import {colors} from '@/constants';
 import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-  },
   intro: {
     paddingHorizontal: 20,
     marginTop: 12,
@@ -11,14 +8,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   heading: {
-    color: colors.black,
     fontSize: 30,
     fontWeight: '500',
     marginBottom: 8,
   },
   text: {
     fontSize: 15,
-    color: colors.text,
     lineHeight: 20,
     textAlign: 'justify',
   },

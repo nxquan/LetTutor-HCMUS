@@ -19,7 +19,9 @@ const ReviewItem = (props: Props) => {
         style={styles.avatar}
       />
       <View style={styles.info}>
-        <Text style={styles.name}>{data?.firstInfo?.name}</Text>
+        <Text style={styles.name} className="text-text dark:text-white">
+          {data?.firstInfo?.name}
+        </Text>
         <View style={styles.stars}>
           <RenderRating rating={data?.rating} size={16} />
           <Text style={{color: '#ccc', fontSize: 13, marginLeft: 12}}>
@@ -27,7 +29,11 @@ const ReviewItem = (props: Props) => {
           </Text>
         </View>
         {data?.content && (
-          <Text style={styles.description}>{data?.content}</Text>
+          <Text
+            style={styles.description}
+            className="text-black dark:text-white">
+            {data?.content}
+          </Text>
         )}
       </View>
     </View>

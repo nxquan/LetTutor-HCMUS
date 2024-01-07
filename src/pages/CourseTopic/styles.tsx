@@ -4,17 +4,12 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-  },
   inner: {
     alignItems: 'center',
   },
   courseInfo: {
     elevation: 6,
-    shadowColor: 'rgba(0,0,0,0.5)',
     shadowRadius: 8,
-    backgroundColor: colors.white,
     borderRadius: 8,
     width: width * 0.95,
     marginTop: 12,
@@ -37,11 +32,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     marginBottom: 8,
-    color: colors.black,
   },
   des: {
     fontSize: 14,
-    color: colors.black,
   },
   topicList: {
     paddingHorizontal: 20,
@@ -50,7 +43,6 @@ const styles = StyleSheet.create({
   topicHeading: {
     fontSize: 20,
     fontWeight: '500',
-    color: colors.black,
   },
   pdfContainer: {
     marginTop: 4,
@@ -59,7 +51,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#eee',
     paddingVertical: 6,
     borderColor: 'rgba(0,0,0,0.1)',
     borderWidth: 1,

@@ -9,11 +9,14 @@ import {
 } from 'react-native';
 
 // import uuid from 'react-native-uuid';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {Composer, GiftedChat, InputToolbar} from 'react-native-gifted-chat';
 
 import {
+  renderActions,
   renderBubble,
+  renderComposer,
   renderInputToolbar,
+  renderSend,
   scrollToBottomComponent,
 } from './components/Utils';
 import {colors} from '@/constants';
@@ -24,8 +27,10 @@ import BackButton from '@/components/BackButton';
 import {Avatar} from 'react-native-elements';
 import {Icon} from '@rneui/base';
 import StackProps from '@/types/type';
+import {useColorScheme} from 'nativewind';
 
 const Message = () => {
+  const {colorScheme} = useColorScheme();
   const route: any = useRoute();
   const [state, dispatch] = useGlobalContext();
   const navigation = useNavigation<StackProps>();
@@ -131,7 +136,9 @@ const Message = () => {
 
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-row items-center px-3 py-1.5 border-b bg-white border-b-gray-300">
+      <View
+        className="flex-row items-center px-3 py-1.5 bg-white dark:bg-black border-b-gray-300"
+        style={{borderBottomWidth: 0.5}}>
         <View className="flex-1 flex-row items-center">
           <BackButton />
           <TouchableOpacity
@@ -153,7 +160,7 @@ const Message = () => {
                 containerStyle={{marginLeft: 4}}
               />
               <Text
-                className="text-left text-lg text-black font-bold ml-3 flex-1"
+                className="text-left text-base text-black dark:text-white font-medium ml-3 flex-1"
                 numberOfLines={1}>
                 {recipient?.name}
               </Text>
@@ -201,7 +208,8 @@ const Message = () => {
         <GiftedChat
           messagesContainerStyle={{
             paddingVertical: 24,
-            backgroundColor: 'white',
+            backgroundColor:
+              colorScheme == 'light' ? colors.white : colors.black,
           }}
           //Required
           onSend={messages => onSend(messages)}
@@ -213,7 +221,39 @@ const Message = () => {
           }}
           //Optional
           renderBubble={renderBubble}
-          renderInputToolbar={renderInputToolbar}
+          renderInputToolbar={(props: any) => {
+            return (
+              <InputToolbar
+                {...props}
+                containerStyle={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  borderWidth: 0,
+                  height: 54,
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.white : colors.black,
+                }}
+                renderActions={renderActions}
+                renderSend={renderSend}
+                renderComposer={(props: any) => {
+                  return (
+                    <Composer
+                      {...props}
+                      textInputStyle={{
+                        fontSize: 15,
+                        backgroundColor:
+                          colorScheme == 'light' ? '#f3f3f5' : 'white',
+                        borderRadius: 10,
+                        paddingHorizontal: 12,
+                        marginLeft: -16,
+                        marginRight: 6,
+                      }}
+                    />
+                  );
+                }}
+              />
+            );
+          }}
           showUserAvatar
           alwaysShowSend={true}
           showAvatarForEveryMessage={false}
