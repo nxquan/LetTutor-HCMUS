@@ -1,11 +1,14 @@
-import {View, Text, Dimensions} from 'react-native';
+import {View, Text} from 'react-native';
 import React from 'react';
 import Header from '@/components/Header';
 import BackButton from '@/components/BackButton';
 import DrawerButton from '@/components/DrawerButton';
 import MessageIcon from '@/components/MessageIcon';
+import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
 
 const MyCourse = () => {
+  const {colorScheme} = useColorScheme();
   return (
     <>
       <View className="flex-1">
@@ -17,6 +20,7 @@ const MyCourse = () => {
         </View>
       </View>
       <MessageIcon />
+      <CStatusBar type={colorScheme} />
     </>
   );
 };

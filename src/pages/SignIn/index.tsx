@@ -18,6 +18,8 @@ import {REACT_APP_WEB_CLIENT_ID} from '@env';
 
 import FormGroup from '@/components/FormGroup';
 import Header from '@/components/Header';
+import CStatusBar from '@/components/CStatusBar';
+
 import {useNavigation} from '@react-navigation/native';
 import Props from '@/types/type';
 import {colors} from '@/constants';
@@ -400,9 +402,8 @@ const SignIn = () => {
             </View>
           </View>
         )}
-
-        <StatusBar barStyle={'dark-content'} backgroundColor={colors.white} />
       </ScrollView>
+      <CStatusBar type={colorScheme} />
     </View>
   );
 };

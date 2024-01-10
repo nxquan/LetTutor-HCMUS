@@ -20,6 +20,8 @@ import {useTranslations} from '@/hooks';
 import * as courseService from '@/services/courseService';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useColorScheme} from 'nativewind';
+import MessageIcon from '@/components/MessageIcon';
+import CStatusBar from '@/components/CStatusBar';
 
 const levels = [
   {
@@ -317,6 +319,8 @@ const CourseDetail = (props: any) => {
           </View>
         </View>
       </ScrollView>
+      <CStatusBar type={colorScheme} />
+      <MessageIcon />
     </View>
   );
 };

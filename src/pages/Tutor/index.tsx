@@ -37,6 +37,8 @@ import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
 import {useColorScheme} from 'nativewind';
 import {color} from '@rneui/base';
+import {StatusBar} from 'react-native';
+import CStatusBar from '@/components/CStatusBar';
 
 const typesOfTutor = [
   {
@@ -249,146 +251,149 @@ const Tutor = () => {
     });
   };
 
-  const fetchForSearchingTutors = useCallback(async () => {
-    let session: any;
-    try {
-      session = await EncryptedStorage.getItem('user_session');
-    } catch (error) {
-      throw error;
-    }
-    const _filters: any = {
-      date: filters.date,
-      specialties:
-        filters.specialty.key == 'all' ? [] : [filters.specialty.key],
-      nationality: {},
-      tutoringTimeAvailable: [null, null],
-    };
+  const fetchForSearchingTutors = useCallback(
+    async (isLoadingPage = false) => {
+      let session: any;
+      try {
+        session = await EncryptedStorage.getItem('user_session');
+      } catch (error) {
+        throw error;
+      }
+      const _filters: any = {
+        date: filters.date,
+        specialties:
+          filters.specialty.key == 'all' ? [] : [filters.specialty.key],
+        nationality: {},
+        tutoringTimeAvailable: [null, null],
+      };
 
-    const isVietNamese = filters.nationalities.some(
-      (item: any) => item.key === 'vietnamese-tutor',
-    );
-    if (isVietNamese) {
-      _filters.nationality.isVietNamese = true;
-    }
-
-    const isNative = filters.nationalities.some(
-      (item: any) => item.key === 'native-english-tutor',
-    );
-    if (isNative) {
-      _filters.nationality.isNative = true;
-    }
-
-    if (
-      filters.nationalities.length === nationalities.length ||
-      filters.nationalities.length === 0
-    ) {
-      _filters.nationality = {};
-    } else {
-      const isForeignTutor = filters.nationalities.some(
-        (item: any) => item.key === 'foreign-tutor',
+      const isVietNamese = filters.nationalities.some(
+        (item: any) => item.key === 'vietnamese-tutor',
       );
-      if (isForeignTutor) {
-        if (isVietNamese) {
-          _filters.nationality = {
-            isNative: false,
-          };
-        } else if (isNative) {
-          _filters.nationality = {
-            isVietNamese: false,
-          };
-        } else {
-          _filters.nationality = {
-            isVietNamese: false,
-            isNative: false,
-          };
+      if (isVietNamese) {
+        _filters.nationality.isVietNamese = true;
+      }
+
+      const isNative = filters.nationalities.some(
+        (item: any) => item.key === 'native-english-tutor',
+      );
+      if (isNative) {
+        _filters.nationality.isNative = true;
+      }
+
+      if (
+        filters.nationalities.length === nationalities.length ||
+        filters.nationalities.length === 0
+      ) {
+        _filters.nationality = {};
+      } else {
+        const isForeignTutor = filters.nationalities.some(
+          (item: any) => item.key === 'foreign-tutor',
+        );
+        if (isForeignTutor) {
+          if (isVietNamese) {
+            _filters.nationality = {
+              isNative: false,
+            };
+          } else if (isNative) {
+            _filters.nationality = {
+              isVietNamese: false,
+            };
+          } else {
+            _filters.nationality = {
+              isVietNamese: false,
+              isNative: false,
+            };
+          }
         }
       }
-    }
 
-    if (_filters.date != null) {
-      if (!!filters.startTime && !!filters.endTime) {
-        _filters.tutoringTimeAvailable = [
-          filters.startTime.getTime(),
-          filters.endTime.getTime(),
-        ];
-      } else if (!!filters.startTime) {
-        const currentDate = new Date();
-        _filters.tutoringTimeAvailable = [
-          filters.startTime.getTime(),
-          new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth() - 1,
-            currentDate.getDate(),
-            23,
-            59,
-            0,
-          ).getTime(),
-        ];
-      } else if (filters.endTime) {
-        const currentDate = new Date();
-        _filters.tutoringTimeAvailable = [
-          new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth() - 1,
-            currentDate.getDate(),
-            0,
-            0,
-            0,
-          ).getTime(),
-          filters.endTime.getTime(),
-        ];
+      if (_filters.date != null) {
+        if (!!filters.startTime && !!filters.endTime) {
+          _filters.tutoringTimeAvailable = [
+            filters.startTime.getTime(),
+            filters.endTime.getTime(),
+          ];
+        } else if (!!filters.startTime) {
+          const currentDate = new Date();
+          _filters.tutoringTimeAvailable = [
+            filters.startTime.getTime(),
+            new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth() - 1,
+              currentDate.getDate(),
+              23,
+              59,
+              0,
+            ).getTime(),
+          ];
+        } else if (filters.endTime) {
+          const currentDate = new Date();
+          _filters.tutoringTimeAvailable = [
+            new Date(
+              currentDate.getFullYear(),
+              currentDate.getMonth() - 1,
+              currentDate.getDate(),
+              0,
+              0,
+              0,
+            ).getTime(),
+            filters.endTime.getTime(),
+          ];
+        }
       }
-    }
-    try {
-      setLoading(true);
-      const res = await tutorService.searchTutors(
-        {
-          search: filters.tutorName,
-          filters: _filters,
-          perPage: 12,
-          page: page.currentPage,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+      try {
+        isLoadingPage && setLoading(true);
+        const res = await tutorService.searchTutors(
+          {
+            search: filters.tutorName,
+            filters: _filters,
+            perPage: 12,
+            page: page.currentPage,
           },
-        },
-      );
-      if (res.success) {
-        let rawData = res.data.rows;
-        const favoriteTutors: any[] = rawData.filter(
-          (item: any) => item.isFavoriteTutor === true,
+          {
+            headers: {
+              Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+            },
+          },
         );
-        favoriteTutors.sort((a, b) => b.rating - a.rating);
+        if (res.success) {
+          let rawData = res.data.rows;
+          const favoriteTutors: any[] = rawData.filter(
+            (item: any) => item.isFavoriteTutor === true,
+          );
+          favoriteTutors.sort((a, b) => b.rating - a.rating);
 
-        const unfavoriteTutors = rawData.filter(
-          (item: any) => !item.isFavoriteTutor,
-        );
-        unfavoriteTutors.sort((a: any, b: any) => b.rating - a.rating);
-        rawData = [...favoriteTutors, ...unfavoriteTutors];
-        setTutors(rawData);
-        setPage((prev: any) => {
-          return {
-            ...prev,
-            totalItems: res.data.count,
-          };
-        });
-        setLoading(false);
-      } else {
-        console.error('error', res);
+          const unfavoriteTutors = rawData.filter(
+            (item: any) => !item.isFavoriteTutor,
+          );
+          unfavoriteTutors.sort((a: any, b: any) => b.rating - a.rating);
+          rawData = [...favoriteTutors, ...unfavoriteTutors];
+          setTutors(rawData);
+          setPage((prev: any) => {
+            return {
+              ...prev,
+              totalItems: res.data.count,
+            };
+          });
+          isLoadingPage && setLoading(false);
+        } else {
+          console.error('error', res);
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      throw error;
-    }
-  }, [
-    page.currentPage,
-    debouncedSearchTutorName,
-    filters.date,
-    filters.endTime,
-    filters.startTime,
-    filters.nationalities,
-    filters.specialty,
-  ]);
+    },
+    [
+      page.currentPage,
+      debouncedSearchTutorName,
+      filters.date,
+      filters.endTime,
+      filters.startTime,
+      filters.nationalities,
+      filters.specialty,
+    ],
+  );
 
   const handleRefresh = async () => {
     setRefresh(true);
@@ -407,7 +412,7 @@ const Tutor = () => {
   }, [page.currentPage]);
 
   useEffect(() => {
-    fetchForSearchingTutors();
+    fetchForSearchingTutors(true);
   }, [
     page.currentPage,
     debouncedSearchTutorName,
@@ -695,6 +700,7 @@ const Tutor = () => {
           </View>
         </Modal>
       </ScrollView>
+      <CStatusBar type={colorScheme} />
       <MessageIcon />
     </View>
   );

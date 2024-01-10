@@ -8,6 +8,8 @@ import {
   RefreshControl,
 } from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
+import {useColorScheme} from 'nativewind';
+import {useNavigation} from '@react-navigation/native';
 
 import Header from '@/components/Header';
 import styles from './styles';
@@ -18,16 +20,17 @@ import DrawerButton from '@/components/DrawerButton';
 import {useTranslations} from '@/hooks';
 import Button from '@/components/Button';
 import BEPagination from '@/components/BEPagination';
-import * as bookingService from '@/services/bookingService';
 import ToastManager from 'toastify-react-native';
 import {toastConfig} from '@/config';
-import {useNavigation} from '@react-navigation/native';
 import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
+import CStatusBar from '@/components/CStatusBar';
 
+import * as bookingService from '@/services/bookingService';
 const width = Dimensions.get('window').width;
 const History = () => {
   const {t} = useTranslations();
+  const {colorScheme} = useColorScheme();
   const navigation: any = useNavigation<StackProps>();
   const [loading, setLoading] = useState(false);
 
@@ -173,6 +176,7 @@ const History = () => {
         }}
       />
       <MessageIcon />
+      <CStatusBar type={colorScheme} />
     </View>
   );
 };

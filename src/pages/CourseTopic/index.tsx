@@ -26,6 +26,8 @@ import BackButton from '@/components/BackButton';
 import {useRoute} from '@react-navigation/native';
 import {useTranslations} from '@/hooks';
 import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
+import MessageIcon from '@/components/MessageIcon';
 
 const defaultSource = {
   uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
@@ -294,7 +296,8 @@ const CourseTopic = () => {
             </View>
           </View>
         </ModalPopper>
-        <StatusBar backgroundColor={colors.white} barStyle={'dark-content'} />
+        <CStatusBar type={colorScheme} />
+        <MessageIcon />
       </ScrollView>
     </View>
   );

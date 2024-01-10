@@ -29,6 +29,7 @@ import BEPagination from '@/components/BEPagination';
 import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
 import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
 
 const levels = [
   {
@@ -633,6 +634,7 @@ const Courses = () => {
         )}
       </ScrollView>
       <MessageIcon />
+      <CStatusBar type={colorScheme} />
     </View>
   );
 };

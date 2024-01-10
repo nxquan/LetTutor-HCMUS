@@ -46,6 +46,7 @@ import ToastManager, {Toast} from 'toastify-react-native';
 import {toastConfig} from '@/config';
 import MessageIcon from '@/components/MessageIcon';
 import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
 
 const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
 const CERTIFICATE_TYPES = [
@@ -1229,6 +1230,7 @@ const BecomeTutor = () => {
         <ToastManager {...toastConfig} width={width - 24} />
       </ScrollView>
       <MessageIcon />
+      <CStatusBar type={colorScheme} />
     </View>
   );
 };

@@ -8,8 +8,6 @@ const styles = StyleSheet.create({
     maxHeight: 360,
     shadowColor: 'rgba(0,0,0,0.5)',
     elevation: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.04)',
     marginTop: 4,
     zIndex: 10,
     borderRadius: 6,

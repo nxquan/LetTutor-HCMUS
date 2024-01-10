@@ -19,15 +19,17 @@ import {
   renderSend,
   scrollToBottomComponent,
 } from './components/Utils';
-import {colors} from '@/constants';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import {useColorScheme} from 'nativewind';
+
+import {colors} from '@/constants';
 import * as messageService from '@/services/messageService';
 import {useGlobalContext} from '@/hooks';
 import BackButton from '@/components/BackButton';
 import {Avatar} from 'react-native-elements';
 import {Icon} from '@rneui/base';
 import StackProps from '@/types/type';
-import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
 
 const Message = () => {
   const {colorScheme} = useColorScheme();
@@ -281,6 +283,7 @@ const Message = () => {
           }}
         />
       </View>
+      <CStatusBar type={colorScheme} />
     </SafeAreaView>
   );
 };

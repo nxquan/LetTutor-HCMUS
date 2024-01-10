@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useCallback, useState, useEffect, useMemo} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -44,6 +45,8 @@ import * as utilService from '@/services/utilService';
 import {images} from '@/assets';
 import {RefreshControl} from 'react-native';
 import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
+import {Modal} from 'react-native';
 
 const LEVELS = [
   {
@@ -105,6 +108,7 @@ const Profile = () => {
   const [specialties, setSpecialties] = useState<any[]>([]);
   const [refresh, setRefresh] = useState(false);
   const {colorScheme} = useColorScheme();
+  const [loading, setLoading] = useState(false);
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
@@ -276,7 +280,8 @@ const Profile = () => {
     setIsOpenUploadModal(false);
   };
 
-  const fetchInfo = async () => {
+  const fetchInfo = async (isLoadingPage = false) => {
+    isLoadingPage && setLoading(true);
     const res = await userService.getUserInfo();
     if (res.success) {
       const {user} = res.data;
@@ -284,6 +289,7 @@ const Profile = () => {
       setAvatar({fileCopyUri: user.avatar, isChange: false});
       setCurName(user.name);
     }
+    isLoadingPage && setLoading(false);
   };
 
   const handleRefresh = () => {
@@ -327,7 +333,7 @@ const Profile = () => {
 
       setSpecialties(_specialties);
     };
-    fetchInfo();
+    fetchInfo(true);
     fetchSpecialties();
   }, []);
 
@@ -444,9 +450,9 @@ const Profile = () => {
                 <Text className="text-text dark:text-white text-sm">
                   {countries.find((country: any) => {
                     if (profile?.country?.key) {
-                      return country.key === profile?.country?.key;
+                      return country.key == profile?.country?.key;
                     }
-                    return country.key === profile?.country;
+                    return profile?.country == country.key;
                   })?.name || t('tutor.selectNationalities')}
                 </Text>
                 {isOpenCountryModal ? (
@@ -770,6 +776,25 @@ const Profile = () => {
         }}
       />
       <MessageIcon />
+      <CStatusBar type={colorScheme} />
+      {loading && (
+        <Modal visible={loading} transparent>
+          <View
+            className="flex-1 justify-center items-center"
+            style={{backgroundColor: 'rgba(255,255,255,0.5)'}}>
+            <View className="self-center justify-center">
+              <ActivityIndicator
+                className="mb-2 mt-5"
+                size="large"
+                color={colors.primary}
+              />
+              <Text className="text-base font-normal text-black dark:text-white">
+                Loading...
+              </Text>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };

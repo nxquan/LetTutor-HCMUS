@@ -27,6 +27,5 @@ function App(): React.JSX.Element {
   );
 }
 
-LogBox.ignoreLogs(['Invalid prop textStyle of type array supplied to Cell']);
-
+LogBox.ignoreAllLogs();
 export default App;

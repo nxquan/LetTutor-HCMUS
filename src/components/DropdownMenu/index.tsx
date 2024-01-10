@@ -54,8 +54,18 @@ function DropdownMenu(props: {
             maxHeight: 400,
           }}>
           <ScrollView
-            className="bg-white dark:bg-black"
-            style={[styles.dropdownMenu, styleMenu]}
+            className="bg-white dark:bg-black border border-white"
+            style={[
+              styles.dropdownMenu,
+              {
+                borderWidth: 1,
+                borderColor:
+                  colorScheme == 'light'
+                    ? 'rgba(0,0,0,0.04)'
+                    : 'rgba(255,255,255,0.4)',
+              },
+              styleMenu,
+            ]}
             showsVerticalScrollIndicator={true}
             nestedScrollEnabled={true}>
             {data.map((item: any, index: number) => {

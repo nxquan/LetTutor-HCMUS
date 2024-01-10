@@ -20,6 +20,7 @@ import {DrawerProps} from '@/types/type';
 import DrawerButton from '@/components/DrawerButton';
 import useDebounce from '@/hooks/useDebound';
 import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
 
 const Messages = () => {
   const {colorScheme} = useColorScheme();
@@ -149,6 +150,7 @@ const Messages = () => {
           </View>
         )}
       </ScrollView>
+      <CStatusBar type={colorScheme} />
     </View>
   );
 };

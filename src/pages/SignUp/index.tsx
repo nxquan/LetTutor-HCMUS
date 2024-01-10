@@ -9,12 +9,14 @@ import {
 import {useNavigation} from '@react-navigation/native';
 
 import React, {useCallback, useEffect, useState} from 'react';
+import {useColorScheme} from 'nativewind';
 import styles from './styles';
 import {images} from '@/assets';
 import FormGroup from '@/components/FormGroup';
 import Header from '@/components/Header';
 import StackProps from '@/types/type';
 import BackButton from '@/components/BackButton';
+import CStatusBar from '@/components/CStatusBar';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import {isEmail, isPassword} from '@/utils';
 import * as AuthService from '@/services/authService';
@@ -24,6 +26,7 @@ import {colors} from '@/constants';
 const SignUp = () => {
   const navigation = useNavigation<StackProps>();
   const {t} = useTranslations();
+  const {colorScheme} = useColorScheme();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({
     email: '',
@@ -152,6 +155,7 @@ const SignUp = () => {
           </View>
         </View>
       </ScrollView>
+      <CStatusBar type={colorScheme} />
     </View>
   );
 };

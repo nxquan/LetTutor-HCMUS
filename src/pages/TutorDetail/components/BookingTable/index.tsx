@@ -134,7 +134,7 @@ const BookingTable = (props: Props) => {
       }
     } else {
       //AVAILABLE
-      if (item?.startTimestamp - (Date.now() + 7 * 60 * 60 * 1000) < 0) {
+      if (item?.startTimestamp - (Date.now() + 2 * 60 * 60 * 1000) < 0) {
         ResultComponent = (
           <Button
             style={{
