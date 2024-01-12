@@ -57,7 +57,7 @@ const SignUp = () => {
       password: user.password,
     });
 
-    if (res.success) {
+    if (res.success && res.data) {
       setNotification({
         type: 'success',
         message: 'Đăng ký thành công. Đã gửi email kích hoạt tài khoản!',

@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 
 import * as utilService from '@/services/utilService';
 import {Toast} from 'toastify-react-native';
+import {useColorScheme} from 'nativewind';
 
 const REPORTS = [
   'This tutor is annoying me',
@@ -19,6 +20,7 @@ type Props = {
   toggleModal: (value: boolean) => void;
 };
 const ReportForm = (props: Props) => {
+  const {colorScheme} = useColorScheme();
   const {tutorDetail, toggleModal} = props;
   const [reports, setReports] = useState<number[]>([]);
   const handleReport = async () => {
@@ -40,7 +42,7 @@ const ReportForm = (props: Props) => {
   return (
     <View className="w-full">
       <View className="flex-row justify-between items-center">
-        <Text className="text-black text-base font-medium">
+        <Text className="text-black dark:text-white text-base font-medium">
           Report {tutorDetail?.User?.name}
         </Text>
         <TouchableOpacity
@@ -48,7 +50,11 @@ const ReportForm = (props: Props) => {
             setReports([]);
             toggleModal(false);
           }}>
-          <AntDesign name="close" size={24} color="black" />
+          <AntDesign
+            name="close"
+            size={24}
+            color={colorScheme == 'light' ? colors.black : colors.white}
+          />
         </TouchableOpacity>
       </View>
       <View
@@ -65,13 +71,7 @@ const ReportForm = (props: Props) => {
             size={20}
             color={colors.primary}
           />
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: 14,
-              fontWeight: '500',
-              marginLeft: 6,
-            }}>
+          <Text className="text-black dark:text-white text-sm font-medium ml-1.5">
             Help us understand what's happening
           </Text>
         </View>
@@ -102,17 +102,15 @@ const ReportForm = (props: Props) => {
                       });
                     }}
                     tintColors={{
-                      true: colors.primary,
-                      false: 'rgba(0,0,0,0.5)',
+                      true:
+                        colorScheme == 'light' ? colors.primary : colors.white,
+                      false:
+                        colorScheme == 'light'
+                          ? 'rgba(0,0,0,0.5)'
+                          : colors.white,
                     }}
                   />
-                  <Text
-                    style={{
-                      color: 'rgba(0,0,0,0.85)',
-                      fontSize: 14,
-                      flex: 1,
-                      flexWrap: 'wrap',
-                    }}>
+                  <Text className="text-[rgba(0,0,0,0.85)] dark:text-white text-sm flex-1 flex-wrap">
                     {item}
                   </Text>
                 </View>
@@ -127,11 +125,10 @@ const ReportForm = (props: Props) => {
           textAlignVertical="top"
           placeholder="Please let us know details about your problem"
           placeholderTextColor={colors.grey500}
-          className="text-black text-sm text-left p-2 rounded-md mt-4 "
+          className="text-black dark:text-white text-sm text-left p-2 rounded-md mt-4"
           style={{
             borderColor: colors.grey350,
             borderWidth: 1,
-            borderRadius: 6,
             zIndex: -1,
           }}>
           {reports
@@ -148,8 +145,9 @@ const ReportForm = (props: Props) => {
               toggleModal(false);
             }}
             style={{
-              borderColor: colors.primary,
-              color: colors.primary,
+              borderColor:
+                colorScheme == 'light' ? colors.primary : colors.white,
+              color: colorScheme == 'light' ? colors.primary : colors.white,
             }}
           />
 

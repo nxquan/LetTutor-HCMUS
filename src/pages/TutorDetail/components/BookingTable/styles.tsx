@@ -1,5 +1,4 @@
-import {colors} from '@/constants';
-import {Dimensions, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   table: {},
@@ -7,14 +6,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   firstCell: {
-    backgroundColor: '#f9f9f9',
     width: 100,
   },
   cell: {
     width: 90,
     height: 40,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
+    borderWidth: 0.5,
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',

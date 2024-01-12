@@ -11,7 +11,9 @@ const InfoPart = (props: Props) => {
   const {title, children} = props;
   return (
     <View style={styles.infoPart}>
-      <Text style={styles.infoTitle}>{title}</Text>
+      <Text style={styles.infoTitle} className="text-black dark:text-white">
+        {title}
+      </Text>
       {children}
     </View>
   );

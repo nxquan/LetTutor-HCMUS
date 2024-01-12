@@ -18,7 +18,6 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import CheckBox from '@react-native-community/checkbox';
 import {colors} from '@/constants';
 
 import * as scheduleService from '@/services/scheduleService';
@@ -27,6 +26,7 @@ import * as bookingService from '@/services/bookingService';
 import {useGlobalContext, useTranslations} from '@/hooks';
 import Button from '@/components/Button';
 import ModalPopper from '@/components/ModalPopper';
+import {useColorScheme} from 'nativewind';
 
 const timers = [
   '00:00 - 00:25',
@@ -87,6 +87,7 @@ const BookingTable = (props: Props) => {
   const {tutorId} = props;
   const [state, dispatch] = useGlobalContext();
   const {t} = useTranslations();
+  const {colorScheme} = useColorScheme();
 
   const [schedules, setSchedules] = useState<{distance: number; data: Date[]}>(
     () => {
@@ -106,8 +107,10 @@ const BookingTable = (props: Props) => {
 
   const renderTimerItem = (data: any) => {
     return (
-      <View style={[[styles.cell, styles.firstCell]]}>
-        <Text style={{fontWeight: '600', color: colors.black}}>
+      <View
+        className="bg-[#f9f9f9] dark:bg-black border-[rgba(0,0,0,0.1)] dark:border-white"
+        style={[[styles.cell, styles.firstCell]]}>
+        <Text className="text-black dark:text-white font-semibold">
           {data.item}
         </Text>
       </View>
@@ -130,7 +133,14 @@ const BookingTable = (props: Props) => {
         );
       } else {
         //OTHER BOOKINGS
-        ResultComponent = <Text style={{color: colors.grey600}}>Reserved</Text>;
+        ResultComponent = (
+          <Text
+            style={{
+              color: colorScheme == 'light' ? colors.grey600 : colors.white,
+            }}>
+            Reserved
+          </Text>
+        );
       }
     } else {
       //AVAILABLE
@@ -139,9 +149,10 @@ const BookingTable = (props: Props) => {
           <Button
             style={{
               borderWidth: 1,
-              borderColor: colors.grey600,
+              borderColor:
+                colorScheme == 'light' ? colors.grey600 : colors.white,
               backgroundColor: colors.white,
-              color: colors.grey600,
+              color: colorScheme == 'light' ? colors.grey600 : colors.white,
               paddingVertical: 2,
               paddingHorizontal: 12,
               borderRadius: 99,
@@ -170,7 +181,10 @@ const BookingTable = (props: Props) => {
     }
 
     return (
-      <View key={index} style={[[styles.cell]]}>
+      <View
+        key={index}
+        style={[[styles.cell]]}
+        className="border-[rgba(0,0,0,0.1)] dark:border-white">
         {ResultComponent}
       </View>
     );
@@ -271,7 +285,9 @@ const BookingTable = (props: Props) => {
         <TouchableHighlight
           style={[styles.actionBtn, {marginLeft: 12}]}
           activeOpacity={0.7}
-          underlayColor="rgba(0,0,0,0.3)"
+          underlayColor={
+            colorScheme == 'light' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)'
+          }
           disabled={schedules.distance === 0}
           onPress={() => {
             setSchedules(prev => {
@@ -282,12 +298,18 @@ const BookingTable = (props: Props) => {
               };
             });
           }}>
-          <Entypo name="chevron-small-left" size={24} color="black" />
+          <Entypo
+            name="chevron-small-left"
+            size={24}
+            color={colorScheme == 'light' ? colors.black : colors.white}
+          />
         </TouchableHighlight>
         <TouchableHighlight
           style={[styles.actionBtn, {marginHorizontal: 12}]}
           activeOpacity={0.7}
-          underlayColor="rgba(0,0,0,0.3)"
+          underlayColor={
+            colorScheme == 'light' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)'
+          }
           onPress={() => {
             setSchedules(prev => {
               const newDistance = prev.distance + 7;
@@ -297,9 +319,13 @@ const BookingTable = (props: Props) => {
               };
             });
           }}>
-          <Entypo name="chevron-small-right" size={24} color="black" />
+          <Entypo
+            name="chevron-small-right"
+            size={24}
+            color={colorScheme == 'light' ? colors.black : colors.white}
+          />
         </TouchableHighlight>
-        <Text style={{fontSize: 16, color: colors.text, fontWeight: '500'}}>
+        <Text className="text-text dark:text-white font-medium text-base">
           {getEnglishNameOfMonth(new Date(schedules.data[0]).getMonth() + 1)}
           {new Date(schedules.data[0]).getMonth() !==
             new Date(schedules.data[6]).getMonth() &&
@@ -314,6 +340,7 @@ const BookingTable = (props: Props) => {
         <View style={styles.table}>
           <View style={styles.header}>
             <View
+              className="border-[rgba(0,0,0,0.1)] dark:border-white"
               style={[
                 styles.cell,
                 styles.firstCell,
@@ -327,6 +354,7 @@ const BookingTable = (props: Props) => {
               return (
                 <View
                   key={index}
+                  className="border-[rgba(0,0,0,0.1)] dark:border-white"
                   style={[
                     styles.cell,
                     {
@@ -362,21 +390,19 @@ const BookingTable = (props: Props) => {
       </ScrollView>
       <ModalPopper visible={isOpenBookingModal} transparent={true}>
         <View style={{width: '100%'}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignContent: 'center',
-            }}>
-            <Text
-              style={{color: colors.black, fontSize: 16, fontWeight: '600'}}>
+          <View className="flex-row justify-between items-center">
+            <Text className="text-black dark:text-white text-base font-semibold">
               Booking Details
             </Text>
             <TouchableOpacity
               onPress={() => {
                 setIsOpenBookingModal(false);
               }}>
-              <AntDesign name="close" size={24} color="black" />
+              <AntDesign
+                name="close"
+                size={24}
+                color={colorScheme == 'light' ? colors.black : colors.white}
+              />
             </TouchableOpacity>
           </View>
           <View
@@ -407,10 +433,10 @@ const BookingTable = (props: Props) => {
                     borderRadius: 999,
                   }}
                 />
-                <Text className="font-bold text-xl text-black mx-5">
+                <Text className="font-bold text-xl text-black dark:text-white mx-5">
                   Booking success
                 </Text>
-                <Text className="text-gray-400 text-base">
+                <Text className="text-gray-400 dark:text-white text-base">
                   Check your mail's inbox to see detail order
                 </Text>
               </View>
@@ -440,7 +466,8 @@ const BookingTable = (props: Props) => {
               <View
                 style={{
                   borderWidth: 1,
-                  borderColor: colors.grey200,
+                  borderColor:
+                    colorScheme == 'light' ? colors.grey200 : colors.black,
                   borderRadius: 6,
                 }}>
                 <Text
@@ -560,32 +587,21 @@ const BookingTable = (props: Props) => {
                   textAlignVertical="top"
                   placeholder="Please let us know details about your problem"
                   placeholderTextColor={colors.grey500}
-                  style={{
-                    color: colors.black,
-                    textAlign: 'left',
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    borderRadius: 6,
-                    marginTop: 8,
-                    fontSize: 14,
-                  }}
+                  className="text-black dark:text-white text-left mx-1 my-2 rounded-md mt-2 text-sm"
                 />
               </View>
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignSelf: 'flex-end',
-                  marginTop: 16,
-                }}>
+              <View className="flex-row self-end mt-4">
                 <Button
                   title="Cancel"
                   onPress={() => {
                     setIsOpenBookingModal(false);
                   }}
                   style={{
-                    borderColor: colors.primary,
-                    color: colors.primary,
+                    borderColor:
+                      colorScheme == 'light' ? colors.primary : colors.white,
+                    color:
+                      colorScheme == 'light' ? colors.primary : colors.white,
                   }}
                 />
                 <Button

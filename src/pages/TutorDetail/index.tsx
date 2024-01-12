@@ -36,14 +36,18 @@ import * as tutorService from '@/services/tutorService';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import BookingTable from './components/BookingTable';
 import ReportForm from './components/ReportForm';
-import ToastManager from 'toastify-react-native';
+import ToastManager, {Toast} from 'toastify-react-native';
 import {toastConfig} from '@/config';
+import {useColorScheme} from 'nativewind';
+import CStatusBar from '@/components/CStatusBar';
+import MessageIcon from '@/components/MessageIcon';
 
 const LANGUAGES = CATEGORIES[0].categories;
 const SPECIALTIES = [...LEARN_TOPICS, ...TEST_PREPARATIONS];
 const width = Dimensions.get('window').width;
 
 const TutorDetail = () => {
+  const {colorScheme} = useColorScheme();
   const route: any = useRoute();
   const {t} = useTranslations();
   const [loadingPagination, setLoadingPagination] = useState(false);
@@ -88,6 +92,8 @@ const TutorDetail = () => {
         <ButtonItem
           key={index}
           title={item}
+          activeOpacity={1}
+          onPress={() => {}}
           style={{
             paddingVertical: 6,
             paddingHorizontal: 10,
@@ -95,7 +101,8 @@ const TutorDetail = () => {
             marginBottom: 8,
             borderRadius: 99,
             color: colors.primary,
-            backgroundColor: colors.backgroundActive,
+            backgroundColor:
+              colorScheme == 'light' ? colors.backgroundActive : colors.white,
           }}
         />
       );
@@ -123,6 +130,7 @@ const TutorDetail = () => {
       tutorId: tutorDetail.User.id,
     });
     if (res.success) {
+      Toast.success('Add favorite successfully');
       setTutorDetail((prev: any) => {
         return {
           ...prev,
@@ -183,162 +191,163 @@ const TutorDetail = () => {
   }, [route.params?.tutorId, page.currentPage]);
 
   return (
-    <ScrollView
-      nestedScrollEnabled={true}
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={isFullscreen ? [] : [0]}>
+    <>
       <Header drawerBtn={<DrawerButton />} backIcon={<BackButton />} />
-      <View style={styles.inner}>
-        <View style={styles.info}>
-          <View style={{flexDirection: 'row', paddingHorizontal: 10}}>
-            <Image
-              src={tutorDetail.User?.avatar}
-              source={images.defaultAvatar}
-              style={styles.avatar}
+      <ScrollView
+        nestedScrollEnabled={true}
+        className="bg-white dark:bg-black"
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.inner}>
+          <View style={styles.info}>
+            <View style={{flexDirection: 'row', paddingHorizontal: 10}}>
+              <Image
+                src={tutorDetail.User?.avatar}
+                source={images.defaultAvatar}
+                style={styles.avatar}
+              />
+              <View>
+                <Text
+                  className="text-black dark:text-white font-medium"
+                  style={{fontSize: 22}}>
+                  {tutorDetail?.User?.name}
+                </Text>
+                <View style={{flexDirection: 'row', marginVertical: 4}}>
+                  <RenderRating rating={tutorDetail?.rating} size={18} />
+                  <Text
+                    style={{
+                      marginLeft: 6,
+                      color:
+                        colorScheme == 'light' ? colors.grey700 : colors.white,
+                      fontStyle: 'italic',
+                    }}>
+                    ({tutorDetail?.totalFeedback})
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Image
+                    src={country.flag}
+                    source={languageImages.vietNam}
+                    style={{width: 20, height: 15}}
+                  />
+                  <Text className="text-text dark:text-white text-sm ml-1.5">
+                    {country.name}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <Text className="text-text text-justify dark:text-white pt-4 mb-3 text-sm px-2.5">
+              {tutorDetail?.bio}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                paddingHorizontal: 10,
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  handleAddFavorite();
+                }}
+                style={{padding: 8}}
+                activeOpacity={0.7}>
+                <View style={{alignItems: 'center'}}>
+                  {!!tutorDetail?.isFavorite ? (
+                    <AntDesign name="heart" size={24} color={colors.error} />
+                  ) : (
+                    <AntDesign name="hearto" size={24} color={colors.primary} />
+                  )}
+                  <Text
+                    style={{
+                      marginTop: 4,
+                      color: !!tutorDetail?.isFavorite
+                        ? colors.error
+                        : colors.primary,
+                    }}>
+                    Favorite
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsOpenReport(!isOpenReport);
+                }}
+                style={{padding: 8}}
+                activeOpacity={0.7}>
+                <View style={{alignItems: 'center', marginLeft: 54}}>
+                  <AntDesign
+                    name="exclamationcircleo"
+                    size={24}
+                    color={colors.primary}
+                  />
+                  <Text style={{marginTop: 4, color: colors.primary}}>
+                    Report
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <CustomVideo
+              uri={tutorDetail?.video}
+              isFullscreen={isFullscreen}
+              onChangeOrientation={setIsFullscreen}
             />
-            <View>
-              <Text
-                style={{color: colors.black, fontSize: 22, fontWeight: '500'}}>
-                {tutorDetail?.User?.name}
+
+            <InfoPart title={t('tutorDetail.education')}>
+              <Text className="text-text dark:text-white ml-3">
+                {tutorDetail?.education}
               </Text>
-              <View style={{flexDirection: 'row', marginVertical: 4}}>
-                <RenderRating rating={tutorDetail?.rating} size={18} />
-                <Text
-                  style={{
-                    marginLeft: 6,
-                    color: colors.grey700,
-                    fontStyle: 'italic',
-                  }}>
-                  ({tutorDetail?.totalFeedback})
-                </Text>
+            </InfoPart>
+            <InfoPart title={t('tutorDetail.languages')}>
+              <View style={{flexDirection: 'row'}}>
+                {renderItem(getLanguagesName(String(tutorDetail?.languages)))}
               </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Image
-                  src={country.flag}
-                  source={languageImages.vietNam}
-                  style={{width: 20, height: 15}}
-                />
-                <Text style={{fontSize: 14, color: colors.text, marginLeft: 6}}>
-                  {country.name}
-                </Text>
-              </View>
-            </View>
-          </View>
-          <Text
-            style={{
-              paddingTop: 15,
-              marginBottom: 12,
-              textAlign: 'justify',
-              fontSize: 15,
-              color: colors.text,
-              paddingHorizontal: 10,
-            }}>
-            {tutorDetail?.bio}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              paddingHorizontal: 10,
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                handleAddFavorite();
-              }}
-              style={{padding: 8}}
-              activeOpacity={0.7}>
-              <View style={{alignItems: 'center'}}>
-                {!!tutorDetail?.isFavorite ? (
-                  <AntDesign name="heart" size={24} color={colors.error} />
-                ) : (
-                  <AntDesign name="hearto" size={24} color={colors.primary} />
+            </InfoPart>
+            <InfoPart title={t('tutorDetail.specialties')}>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                {renderItem(
+                  getSpecialtyNames(String(tutorDetail?.specialties)),
                 )}
-                <Text
-                  style={{
-                    marginTop: 4,
-                    color: !!tutorDetail?.isFavorite
-                      ? colors.error
-                      : colors.primary,
-                  }}>
-                  Favorite
-                </Text>
               </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsOpenReport(!isOpenReport);
-              }}
-              style={{padding: 8}}
-              activeOpacity={0.7}>
-              <View style={{alignItems: 'center', marginLeft: 54}}>
-                <AntDesign
-                  name="exclamationcircleo"
-                  size={24}
-                  color={colors.primary}
-                />
-                <Text style={{marginTop: 4, color: colors.primary}}>
-                  Report
-                </Text>
-              </View>
-            </TouchableOpacity>
+            </InfoPart>
+            <InfoPart title={t('tutorDetail.interests')}>
+              <Text className="text-text text-sm dark:text-white ml-2.5">
+                {tutorDetail?.interests}
+              </Text>
+            </InfoPart>
+            <InfoPart title={t('tutorDetail.teachingExperience')}>
+              <Text className="text-text text-sm dark:text-white ml-2.5">
+                {tutorDetail?.experience}
+              </Text>
+            </InfoPart>
+            <InfoPart title={t('tutorDetail.othersReview')}>
+              <ReviewList
+                data={feedbacks}
+                totalItems={page.totalItems}
+                currentPage={page.currentPage}
+                onChangePage={onChangePage}
+                loading={loadingPagination}
+              />
+            </InfoPart>
           </View>
-
-          <CustomVideo
-            uri={tutorDetail?.video}
-            isFullscreen={isFullscreen}
-            onChangeOrientation={setIsFullscreen}
-          />
-
-          <InfoPart title={t('tutorDetail.education')}>
-            <Text style={{fontSize: 14, color: colors.text, marginLeft: 12}}>
-              {tutorDetail?.education}
-            </Text>
-          </InfoPart>
-          <InfoPart title={t('tutorDetail.languages')}>
-            <View style={{flexDirection: 'row'}}>
-              {renderItem(getLanguagesName(String(tutorDetail?.languages)))}
-            </View>
-          </InfoPart>
-          <InfoPart title={t('tutorDetail.specialties')}>
-            <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-              {renderItem(getSpecialtyNames(String(tutorDetail?.specialties)))}
-            </View>
-          </InfoPart>
-          <InfoPart title={t('tutorDetail.interests')}>
-            <Text style={{marginLeft: 10, fontSize: 14, color: colors.text}}>
-              {tutorDetail?.interests}
-            </Text>
-          </InfoPart>
-          <InfoPart title={t('tutorDetail.teachingExperience')}>
-            <Text style={{marginLeft: 10, fontSize: 14, color: colors.text}}>
-              {tutorDetail?.experience}
-            </Text>
-          </InfoPart>
-          <InfoPart title={t('tutorDetail.othersReview')}>
-            <ReviewList
-              data={feedbacks}
-              totalItems={page.totalItems}
-              currentPage={page.currentPage}
-              onChangePage={onChangePage}
-              loading={loadingPagination}
-            />
-          </InfoPart>
+          <BookingTable tutorId={route.params?.tutorId} />
         </View>
-        <BookingTable tutorId={route.params?.tutorId} />
-      </View>
 
-      <ModalPopper visible={isOpenReport} transparent={true}>
-        <ReportForm tutorDetail={tutorDetail} toggleModal={setIsOpenReport} />
-      </ModalPopper>
-
-      <StatusBar
-        backgroundColor={colors.white}
-        barStyle={'dark-content'}
-        hidden={isFullscreen}
+        <ModalPopper visible={isOpenReport} transparent={true}>
+          <ReportForm tutorDetail={tutorDetail} toggleModal={setIsOpenReport} />
+        </ModalPopper>
+      </ScrollView>
+      <CStatusBar type={colorScheme} hidden={isFullscreen} />
+      <ToastManager
+        {...toastConfig}
+        width={width - 24}
+        style={{
+          position: 'absolute',
+          top: 50,
+          zIndex: 1000,
+        }}
       />
-      <ToastManager {...toastConfig} width={width - 30} />
-    </ScrollView>
+      <MessageIcon />
+    </>
   );
 };
 

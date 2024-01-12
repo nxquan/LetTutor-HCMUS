@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 17,
     fontWeight: '500',
-    color: colors.black,
     marginBottom: 6,
   },
 });

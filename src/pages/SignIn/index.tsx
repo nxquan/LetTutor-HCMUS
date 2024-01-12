@@ -94,7 +94,7 @@ const SignIn = () => {
       password: user.password,
     });
 
-    if (res.success) {
+    if (res.success && res.data) {
       const payload = res.data;
       dispatch(login(payload));
       navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
@@ -105,7 +105,7 @@ const SignIn = () => {
     } else {
       setNotification({
         type: 'error',
-        message: res.message,
+        message: res.message || 'Server error. Please try again!',
       });
     }
     setLoading(false);
