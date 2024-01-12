@@ -14,3 +14,6 @@ project(':react-native-video').projectDir = new File(rootProject.projectDir, '..
 
 include ':react-native-fbsdk-next'
 project(':react-native-fbsdk-next').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fbsdk-next/android')
+
+include ':react-native-config'
+project(':react-native-config').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-config/android')

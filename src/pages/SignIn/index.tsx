@@ -14,7 +14,7 @@ import {images} from '@/assets';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
-import {REACT_APP_WEB_CLIENT_ID} from '@env';
+import Config from 'react-native-config';
 
 import FormGroup from '@/components/FormGroup';
 import Header from '@/components/Header';
@@ -217,7 +217,7 @@ const SignIn = () => {
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: REACT_APP_WEB_CLIENT_ID,
+      webClientId: Config.REACT_APP_API_URL,
     });
   }, []);
   return (
