@@ -1,9 +1,6 @@
 import {colors} from '@/constants';
 import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-  },
   intro: {
     paddingHorizontal: 20,
     marginTop: 12,
@@ -12,13 +9,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '500',
     marginBottom: 8,
-    color: colors.black,
-  },
-  text: {
-    fontSize: 14,
-    color: colors.text,
-    lineHeight: 20,
-    textAlign: 'justify',
   },
   courseSearch: {
     flexDirection: 'row',
@@ -26,8 +16,9 @@ const styles = StyleSheet.create({
     borderColor: colors.grey300,
     paddingLeft: 12,
     marginBottom: 12,
+    borderRadius: 6,
   },
-  courseInput: {paddingVertical: 4, flex: 1, color: colors.text},
+  courseInput: {paddingVertical: 6, fontSize: 15, flex: 1},
   searchBtn: {
     borderColor: colors.grey300,
     borderLeftWidth: 1,
@@ -38,7 +29,6 @@ const styles = StyleSheet.create({
   },
   search: {
     paddingHorizontal: 20,
-    zIndex: 100,
   },
   dropdownMenuBtn: {
     flexDirection: 'row',
@@ -50,7 +40,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingLeft: 12,
     paddingRight: 6,
-    paddingVertical: 4,
+    paddingVertical: 8,
   },
   courseTabs: {
     flexDirection: 'row',
@@ -61,7 +51,6 @@ const styles = StyleSheet.create({
   courseTabText: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.text,
     marginLeft: 12,
     padding: 6,
   },
@@ -73,7 +62,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 24,
     fontWeight: '500',
-    color: colors.black,
   },
   courseList: {
     zIndex: -1,

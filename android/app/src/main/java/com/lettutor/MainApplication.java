@@ -1,5 +1,6 @@
 package com.lettutor;
 
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import android.app.Application;
 import com.facebook.react.PackageList;
@@ -24,7 +25,6 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          packages.add(new ReactVideoPackage());
           return packages;
         }
         @Override

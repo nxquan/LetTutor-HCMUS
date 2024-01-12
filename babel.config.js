@@ -1,7 +1,7 @@
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
   plugins: [
-    ['react-native-reanimated/plugin'],
+    'nativewind/babel',
     [
       'module-resolver',
       {
@@ -20,6 +20,16 @@ module.exports = {
         alias: {
           '@': './src',
         },
+      },
+    ],
+    'react-native-reanimated/plugin',
+    '@babel/plugin-proposal-export-namespace-from',
+    [
+      'module:react-native-dotenv',
+      {
+        envName: 'APP_ENV',
+        moduleName: '@env',
+        path: '.env',
       },
     ],
   ],

@@ -5,351 +5,581 @@ import {
   TextInput,
   Image,
   Pressable,
+  Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Lesson from '@/components/Lesson';
 import styles from './styles';
 import ModalPopper from '@/components/ModalPopper';
 import {colors} from '@/constants';
-import {images} from '@/assets';
 import DropdownMenu from '@/components/DropdownMenu';
+import {useTranslations} from '@/hooks';
+import {padNumber, renderStartAndEndHourOnLearning} from '@/utils';
+import RenderRating from '@/components/RenderRating';
+import {images} from '@/assets';
+import * as bookingService from '@/services/bookingService';
+import * as lessonReportService from '@/services/lessonReportService';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {Toast} from 'toastify-react-native';
+import {useColorScheme} from 'nativewind';
 
-const reasons = [
-  'Tutor was late',
-  'Tutor was absent',
-  'Network unstable',
-  'Other',
-];
+type Props = {
+  data: any;
+  onRefresh: () => void;
+};
 
-const HistoryItem = () => {
+const HistoryItem = (props: Props) => {
+  const {data, onRefresh} = props;
+  const {scheduleDetailInfo} = data;
+  const {scheduleInfo} = scheduleDetailInfo;
+  const {t} = useTranslations();
+
+  const [reasons, setReasons] = useState<any>([]);
   const [isOpenRequest, setIsOpenRequest] = useState(true);
   const [isOpenReview, setIsOpenReview] = useState(true);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState<null | string>(null);
 
-  const [reason, setReason] = useState({
-    type: 'Choose a reason',
-    notes: '',
+  const [currentRating, setCurrentRating] = useState<any>({
+    id: '',
+    rating: 1,
+    content: '',
   });
 
+  const [currentReport, setCurrentReport] = useState<any>({
+    reasonId: -1,
+    note: '',
+    bookingId: '',
+  });
+  const {colorScheme} = useColorScheme();
+
   const onChangeSelected = (item: any) => {
-    setReason((prev: any) => {
+    setCurrentReport((prev: any) => {
       return {
         ...prev,
-        type: item,
+        reasonId: item.id,
       };
     });
   };
 
+  const onChangeRating = (rating: number) => {
+    setCurrentRating((prev: any) => {
+      return {
+        ...prev,
+        rating,
+      };
+    });
+  };
+
+  const handleChangeFeedback = async () => {
+    const session: any = await EncryptedStorage.getItem('user_session');
+    if (currentRating.id === '') {
+      const res = await bookingService.addFeedback(
+        {
+          content: currentRating.content,
+          rating: currentRating.rating,
+          bookingId: data?.id,
+          userId: scheduleInfo.tutorInfo.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+          },
+        },
+      );
+      if (res.success) {
+        Toast.success('Add feedback successfully');
+      } else {
+        Toast.success(res.message);
+      }
+    } else {
+      const res = await bookingService.editFeedback(
+        {
+          content: currentRating.content,
+          rating: currentRating.rating,
+          id: currentRating.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+          },
+        },
+      );
+      if (res.success) {
+        Toast.success('Edit feedback successfully');
+      } else {
+        Toast.success(res.message);
+      }
+    }
+    onRefresh();
+    setCurrentRating({id: '', rating: 1, content: ''});
+  };
+
+  const handleReport = async () => {
+    const session: any = await EncryptedStorage.getItem('user_session');
+    const res = await lessonReportService.createReport(
+      {
+        bookingId: currentReport.bookingId,
+        note: currentReport.note,
+        reasonId: currentReport.reasonId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      },
+    );
+
+    if (res.success) {
+      Toast.success('Add report successfully');
+    } else {
+      Toast.success(res.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchReasons = async () => {
+      const session: any = await EncryptedStorage.getItem('user_session');
+      const res = await lessonReportService.getReasons({
+        headers: {
+          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
+        },
+      });
+      if (res.success) {
+        const _reason = res.data.rows.map((item: any) => {
+          return {
+            id: item.id,
+            title: item.reason,
+            key: item.reason,
+          };
+        });
+        setReasons(_reason);
+      }
+    };
+
+    fetchReasons();
+  }, []);
+
   return (
-    <Lesson>
+    <Lesson data={data} history={true}>
       <View style={styles.requestHeader}>
-        <Text style={styles.timeText}>Lesson Time: 01:00 - 01:25</Text>
+        <Text className="text-base text-medium text-black dark:text-white">
+          {t('history.lessonTime')}{' '}
+          {padNumber(
+            new Date(scheduleDetailInfo.startPeriodTimestamp).getHours(),
+          )}
+          :
+          {padNumber(
+            new Date(scheduleDetailInfo.startPeriodTimestamp).getMinutes(),
+          )}{' '}
+          -{' '}
+          {padNumber(
+            new Date(scheduleDetailInfo.endPeriodTimestamp).getHours(),
+          )}
+          :
+          {padNumber(
+            new Date(scheduleDetailInfo.endPeriodTimestamp).getMinutes(),
+          )}
+        </Text>
       </View>
       <View style={styles.lessonComment}>
-        <TouchableOpacity
-          style={styles.lessonBar}
-          onPress={() => setIsOpenRequest(!isOpenRequest)}>
-          <Text style={{fontSize: 14, color: colors.black}}>
-            Request for lesson
-          </Text>
-          {!isOpenRequest ? (
-            <Entypo name="chevron-small-right" size={24} color="black" />
-          ) : (
-            <Entypo name="chevron-small-down" size={24} color="black" />
-          )}
-        </TouchableOpacity>
-        {isOpenRequest && (
-          <View style={{marginTop: 8}}>
-            <Text style={styles.commentText}>
-              Currently there are no requests for this class. Please write down
-              any requests for the teacher.
+        {data?.studentRequest ? (
+          <>
+            <TouchableOpacity
+              style={[
+                styles.lessonBar,
+                {
+                  backgroundColor:
+                    colorScheme == 'light' ? colors.grey200 : colors.grey800,
+                },
+              ]}
+              onPress={() => setIsOpenRequest(!isOpenRequest)}>
+              <Text className="text-sm text-black dark:text-white">
+                {t('schedule.requestForLesson')}
+              </Text>
+              {!isOpenRequest ? (
+                <Entypo
+                  name="chevron-small-right"
+                  size={24}
+                  color={colorScheme == 'light' ? 'black' : 'white'}
+                />
+              ) : (
+                <Entypo
+                  name="chevron-small-down"
+                  size={24}
+                  color={colorScheme == 'light' ? 'black' : 'white'}
+                />
+              )}
+            </TouchableOpacity>
+            {isOpenRequest && (
+              <View style={{marginTop: 8, paddingHorizontal: 12}}>
+                <Text
+                  style={styles.commentText}
+                  className="text-text dark:text-white">
+                  {data?.studentRequest}
+                </Text>
+              </View>
+            )}
+          </>
+        ) : (
+          <View style={{marginTop: 8, paddingHorizontal: 12}}>
+            <Text
+              style={styles.commentText}
+              className="text-text dark:text-white">
+              No request for lesson
             </Text>
           </View>
         )}
       </View>
       <View style={styles.lessonComment}>
-        <TouchableOpacity
-          style={styles.lessonBar}
-          onPress={() => setIsOpenReview(!isOpenReview)}>
-          <Text style={{fontSize: 14, color: colors.black}}>
-            Review from tutor
-          </Text>
-          {!isOpenReview ? (
-            <Entypo name="chevron-small-right" size={24} color="black" />
-          ) : (
-            <Entypo name="chevron-small-down" size={24} color="black" />
-          )}
-        </TouchableOpacity>
-        {isOpenReview && (
-          <View style={{marginTop: 8}}>
-            <Text style={styles.commentText}>
-              Currently there are no requests for this class. Please write down
-              any requests for the teacher.
+        {data?.tutorReview ? (
+          <>
+            <TouchableOpacity
+              style={styles.lessonBar}
+              onPress={() => setIsOpenReview(!isOpenReview)}>
+              <Text style={{fontSize: 14, color: colors.black}}>
+                {t('history.reviewFromTutor')}
+              </Text>
+              {!isOpenReview ? (
+                <Entypo name="chevron-small-right" size={24} color="black" />
+              ) : (
+                <Entypo name="chevron-small-down" size={24} color="black" />
+              )}
+            </TouchableOpacity>
+            {isOpenReview && (
+              <View style={{marginTop: 8, paddingHorizontal: 12}}>
+                <Text style={styles.commentText}>{data?.tutorReview}</Text>
+              </View>
+            )}
+          </>
+        ) : (
+          <View style={{marginTop: 8, paddingHorizontal: 12}}>
+            <Text
+              style={styles.commentText}
+              className="text-text dark:text-white">
+              Tutor haven't reviewed yet
             </Text>
           </View>
         )}
       </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingTop: 12,
-        }}>
-        <TouchableOpacity onPress={() => setIsOpenModal('rating')}>
-          <Text style={styles.actionBtn}>Add a Rating</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setIsOpenModal('report');
-          }}>
-          <Text style={styles.actionBtn}>Report</Text>
-        </TouchableOpacity>
+      <View>
+        {data?.feedbacks.length > 0 ? (
+          <View>
+            {data?.feedbacks.map((feedback: any, index: number) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: 12,
+                  }}>
+                  <View className="flex-row items-center">
+                    <Text className="text-black dark:text-white text-md">
+                      Rating:{' '}
+                    </Text>
+                    <RenderRating size={14} rating={feedback?.rating} />
+                  </View>
+                  <View className="flex-row items-center">
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsOpenModal('rating');
+                        setCurrentRating({
+                          id: feedback.id,
+                          rating: feedback.rating,
+                          content: feedback.content,
+                        });
+                      }}
+                      className="mr-4">
+                      <Text style={styles.actionBtn}>Edit</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsOpenModal('report');
+                        setCurrentReport((prev: any) => {
+                          return {
+                            ...prev,
+                            bookingId: feedback.bookingId,
+                          };
+                        });
+                      }}>
+                      <Text style={styles.actionBtn}>{t('report')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: 12,
+            }}>
+            <TouchableOpacity onPress={() => setIsOpenModal('rating')}>
+              <Text style={styles.actionBtn}>{t('rating')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setIsOpenModal('report');
+              }}>
+              <Text style={styles.actionBtn}>{t('report')}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <ModalPopper visible={!!isOpenModal} transparent={true}>
-        <TouchableOpacity
-          style={{alignSelf: 'flex-end', padding: 8}}
-          onPress={() => setIsOpenModal(null)}>
-          <AntDesign name="close" size={20} color="black" />
-        </TouchableOpacity>
-        <View style={styles.modalInfo}>
-          <Image source={images.avatar} style={styles.avatar} />
-          <Text
+        <>
+          <TouchableOpacity
+            style={{alignSelf: 'flex-end', padding: 8}}
+            onPress={() => setIsOpenModal(null)}>
+            <AntDesign
+              name="close"
+              size={20}
+              color={colorScheme == 'light' ? 'black' : 'white'}
+            />
+          </TouchableOpacity>
+          <View style={styles.modalInfo}>
+            <Image
+              source={images.defaultAvatar}
+              src={scheduleInfo?.tutorInfo?.avatar}
+              style={styles.avatar}
+            />
+            <Text className="text-xl text-black dark:text-white font-semibold mx-1">
+              {data?.scheduleDetailInfo?.scheduleInfo?.tutorInfo?.name}
+            </Text>
+            <Text className="text-black dark:text-ellipsis text-sm mx-1">
+              {t('history.lessonTime')}
+            </Text>
+            <Text className="text-base text-medium text-black dark:text-white">
+              {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
+              ,{' '}
+              {renderStartAndEndHourOnLearning(
+                scheduleDetailInfo.startPeriodTimestamp,
+                scheduleDetailInfo.endPeriodTimestamp,
+              )}
+            </Text>
+          </View>
+          <View
             style={{
-              fontSize: 14,
-              color: colors.black,
-              marginVertical: 4,
-            }}>
-            Lesson time
-          </Text>
-          <Text style={{fontSize: 16, fontWeight: '500', color: colors.black}}>
-            Thu, 26 Oct 23
-          </Text>
-        </View>
-        <View
-          style={{
-            marginVertical: 16,
-            height: 1,
-            backgroundColor: colors.grey350,
-          }}
-        />
+              marginVertical: 16,
+              height: 1,
+              backgroundColor: colors.grey350,
+            }}
+          />
 
-        {isOpenModal === 'report' ? (
-          <View style={styles.modalBody}>
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: '500',
-                marginBottom: 8,
-                color: colors.black,
-              }}>
-              <Text
-                style={{
-                  color: colors.error,
-                  fontWeight: '600',
-                }}>
-                *
+          {isOpenModal === 'report' ? (
+            <View style={styles.modalBody}>
+              <Text className="text-medium mb-2 text-black dark:text-white">
+                <Text
+                  style={{
+                    color: colors.error,
+                    fontWeight: '600',
+                  }}>
+                  *{' '}
+                </Text>
+                {t('history.reason')}
               </Text>
-              What was the reason you cancel this booking?
-            </Text>
 
-            <DropdownMenu
-              isOpen={isOpenMenu}
-              onChangeOpen={setIsOpenMenu}
-              data={reasons}
-              selectedItem={reason.type}
-              onChangeSelected={onChangeSelected}>
-              <Pressable onPress={() => setIsOpenMenu(!isOpenMenu)}>
-                <View
-                  style={[
-                    styles.dropdownBtn,
-                    isOpenMenu && {borderColor: colors.primary},
-                  ]}>
-                  <Text
-                    style={{
-                      flex: 1,
-                      textAlign: 'center',
-                      color: colors.text,
-                    }}>
-                    {reason.type}
+              <DropdownMenu
+                isOpen={isOpenMenu}
+                onChangeOpen={setIsOpenMenu}
+                data={reasons}
+                selectedItem={{
+                  key: reasons.find(
+                    (item: any) => item.id === currentReport.reasonId,
+                  )?.key,
+                }}
+                onChangeSelected={onChangeSelected}>
+                <Pressable onPress={() => setIsOpenMenu(!isOpenMenu)}>
+                  <View
+                    style={[
+                      styles.dropdownBtn,
+                      isOpenMenu && {borderColor: colors.primary},
+                    ]}>
+                    <Text className="text-text dark:text-white flex-1 text-center">
+                      {
+                        reasons.find(
+                          (item: any) => item.id === currentReport.reasonId,
+                        )?.title
+                      }
+                    </Text>
+                    {isOpenMenu ? (
+                      <Entypo
+                        name="chevron-small-down"
+                        size={20}
+                        color={colors.grey300}
+                      />
+                    ) : (
+                      <Entypo
+                        name="chevron-small-right"
+                        size={20}
+                        color={colors.grey300}
+                      />
+                    )}
+                  </View>
+                </Pressable>
+              </DropdownMenu>
+              <TextInput
+                multiline={true}
+                numberOfLines={8}
+                textAlignVertical="top"
+                placeholder={t('history.additionalNote')}
+                onBlur={() => {}}
+                value={currentReport.note}
+                onChangeText={t =>
+                  setCurrentReport((prev: any) => ({...prev, note: t}))
+                }
+                className="text-black dark:text-white text-left p-2 border rounded-md mt-4"
+                style={{
+                  borderColor: colors.grey350,
+                  zIndex: -1,
+                  fontSize: 15,
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'flex-end',
+                  marginTop: 16,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsOpenModal(null);
+                    setCurrentReport({
+                      note: '',
+                      bookingId: '',
+                      reasonId: -1,
+                    });
+                  }}
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingVertical: 5,
+                    paddingHorizontal: 12,
+                    zIndex: -1,
+                  }}>
+                  <Text className="text-sm text-text dark:text-white">
+                    {t('later')}
                   </Text>
-                  {isOpenMenu ? (
-                    <Entypo
-                      name="chevron-small-down"
-                      size={20}
-                      color={colors.grey300}
-                    />
-                  ) : (
-                    <Entypo
-                      name="chevron-small-right"
-                      size={20}
-                      color={colors.grey300}
-                    />
-                  )}
-                </View>
-              </Pressable>
-            </DropdownMenu>
-            <TextInput
-              multiline={true}
-              numberOfLines={8}
-              textAlignVertical="top"
-              placeholder="Additional notes"
-              onBlur={() => {}}
-              style={{
-                textAlign: 'left',
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-                borderColor: colors.grey350,
-                borderWidth: 1,
-                borderRadius: 6,
-                marginTop: 16,
-                zIndex: -1,
-                fontSize: 15,
-              }}
-            />
-
-            <View
-              style={{
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                marginTop: 16,
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsOpenModal(null);
-                }}
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingVertical: 5,
-                  paddingHorizontal: 12,
-                  zIndex: -1,
-                }}>
-                <Text style={{fontSize: 14, color: colors.text}}>Later</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsOpenModal(null);
-                }}
-                style={{
-                  backgroundColor: colors.primary,
-                  paddingVertical: 5,
-                  paddingHorizontal: 12,
-                  borderRadius: 4,
-                  marginLeft: 16,
-                  zIndex: -1,
-                }}>
-                <Text style={{color: colors.white}}>Submit</Text>
-              </TouchableOpacity>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleReport();
+                    setIsOpenModal(null);
+                    setCurrentReport({
+                      note: '',
+                      bookingId: '',
+                      reasonId: -1,
+                    });
+                  }}
+                  style={{
+                    backgroundColor: colors.primary,
+                    paddingVertical: 5,
+                    paddingHorizontal: 12,
+                    borderRadius: 4,
+                    marginLeft: 16,
+                    zIndex: -1,
+                  }}>
+                  <Text style={{color: colors.white}}>{t('submit')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        ) : (
-          <View style={styles.modalBody}>
-            <Text
-              style={{
-                fontSize: 15,
-                fontWeight: '500',
-                marginBottom: 8,
-                textAlign: 'center',
-                color: colors.black,
-              }}>
-              <Text
-                style={{
-                  color: colors.error,
-                  fontWeight: '600',
-                }}>
-                *
+          ) : (
+            <View style={styles.modalBody}>
+              <Text className="text-medium text-center text-base mb-2 text-black dark:text-white">
+                <Text
+                  style={{
+                    color: colors.error,
+                    fontWeight: '600',
+                  }}>
+                  *{' '}
+                </Text>
+                {t('history.ratingQuestion')} {scheduleInfo.tutorInfo.name}
               </Text>
-              What is your rating for Keegan?
-            </Text>
 
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                marginVertical: 4,
-              }}>
-              <AntDesign name="star" size={20} color={colors.yellow} />
-              <AntDesign
-                name="star"
-                size={20}
-                color={colors.yellow}
-                style={{marginHorizontal: 4}}
-              />
-              <AntDesign
-                name="star"
-                size={20}
-                color={colors.yellow}
-                style={{marginHorizontal: 4}}
-              />
-              <AntDesign
-                name="star"
-                size={20}
-                color={colors.yellow}
-                style={{marginHorizontal: 4}}
-              />
-              <AntDesign name="staro" size={20} color={colors.yellow} />
-            </View>
-            <TextInput
-              multiline={true}
-              numberOfLines={8}
-              textAlignVertical="top"
-              placeholder="Content reviews"
-              onBlur={() => {}}
-              style={{
-                textAlign: 'left',
-                paddingHorizontal: 8,
-                paddingVertical: 4,
-                borderColor: colors.grey350,
-                borderWidth: 1,
-                borderRadius: 6,
-                marginTop: 16,
-                zIndex: -1,
-                fontSize: 14,
-              }}
-            />
-
-            <View
-              style={{
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                marginTop: 16,
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsOpenModal(null);
-                }}
+              <View
                 style={{
+                  flexDirection: 'row',
                   justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingVertical: 5,
-                  paddingHorizontal: 12,
-                  zIndex: -1,
+                  marginVertical: 4,
                 }}>
-                <Text style={{fontSize: 14, color: colors.text}}>Later</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsOpenModal(null);
-                }}
+                <RenderRating
+                  size={28}
+                  rating={currentRating.rating}
+                  interactive={true}
+                  onChangeRating={onChangeRating}
+                />
+              </View>
+              <TextInput
+                multiline={true}
+                numberOfLines={8}
+                textAlignVertical="top"
+                placeholder={t('history.contentReview')}
+                placeholderTextColor={colors.grey500}
+                onBlur={() => {}}
+                className="text-black dark:text-white text-left p-2 border rounded-md mt-4"
                 style={{
-                  backgroundColor: colors.primary,
-                  paddingVertical: 5,
-                  paddingHorizontal: 12,
-                  borderRadius: 4,
-                  marginLeft: 16,
+                  borderColor: colors.grey350,
                   zIndex: -1,
+                  fontSize: 15,
+                }}
+                value={currentRating.content}
+                onChangeText={t =>
+                  setCurrentRating((prev: any) => ({...prev, content: t}))
+                }
+              />
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'flex-end',
+                  marginTop: 16,
                 }}>
-                <Text style={{color: colors.white}}>Submit</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsOpenModal(null);
+                  }}
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingVertical: 5,
+                    paddingHorizontal: 12,
+                    zIndex: -1,
+                  }}>
+                  <Text className="text-sm text-text dark:text-white">
+                    {t('later')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (isOpenModal === 'rating') {
+                      handleChangeFeedback();
+                    } else if (isOpenModal === 'report') {
+                    }
+                    setIsOpenModal(null);
+                  }}
+                  style={{
+                    backgroundColor: colors.primary,
+                    paddingVertical: 5,
+                    paddingHorizontal: 12,
+                    borderRadius: 4,
+                    marginLeft: 16,
+                    zIndex: -1,
+                  }}>
+                  <Text style={{color: colors.white}}>{t('submit')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
+          )}
+        </>
       </ModalPopper>
     </Lesson>
   );

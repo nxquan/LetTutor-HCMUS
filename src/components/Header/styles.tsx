@@ -5,19 +5,22 @@ const width = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   nav: {
-    width: width,
-    height: 60,
-    backgroundColor: colors.white,
+    width: '100%',
+    height: 56,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomColor: colors.grey300,
-    borderBottomWidth: 1,
-    paddingHorizontal: 6,
-    zIndex: 999,
+    borderBottomWidth: 0.5,
+    paddingHorizontal: 12,
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
   },
   logo: {
-    width: '40%',
+    width: width * 0.35,
+    height: 56 * 0.8,
   },
   languageBtn: {
     justifyContent: 'center',
@@ -31,16 +34,6 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 12,
-  },
-  openSideMenu: {
-    padding: 8,
-    borderRadius: 8,
-    marginLeft: 8,
-  },
-  backBtn: {
-    padding: 8,
-    borderRadius: 999,
   },
 });
 

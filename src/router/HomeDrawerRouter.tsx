@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {DrawerItemList, createDrawerNavigator} from '@react-navigation/drawer';
 import {
   Image,
@@ -7,38 +7,65 @@ import {
   View,
   TouchableHighlight,
 } from 'react-native';
-import {DrawerProps} from '@/global/type';
+
 import Tutor from '@/pages/Tutor';
 import Schedule from '@/pages/Schedule';
 import History from '@/pages/History';
 import Courses from '@/pages/Courses';
-import CourseTopic from '@/pages/CourseTopic';
 import TutorDetail from '@/pages/TutorDetail';
+import CourseDetail from '@/pages/CourseDetail';
+import BecomeTutor from '@/pages/BecomeTutor';
+import Profile from '@/pages/Profile';
+import MyCourse from '@/pages/MyCourse';
+import Messages from '@/pages/Messages';
+import Message from '@/pages/Message';
+
+import {useGlobalContext} from '@/hooks';
+import {colors} from '@/constants';
+import {images} from '@/assets';
 import {
   BecomeTutorIcon,
   CoursesIcon,
   HistoryIcon,
   LogoutIcon,
   MyCourseIcon,
-  RecurringScheduleIcon,
   ScheduleIcon,
   TutorIcon,
 } from '@/assets/icons';
+import {logout} from '@/store';
+import {DrawerProps} from '@/types/type';
+import {useColorScheme} from 'nativewind';
 
-import {images} from '@/assets';
-import SignIn from '@/pages/SignIn';
 const Drawer = createDrawerNavigator<DrawerProps>();
 
 const HomeDrawerRouter = () => {
+  const [state, dispatch] = useGlobalContext();
+  const {colorScheme} = useColorScheme();
+  const [profile, setProfile] = useState<any>({});
+  const handleLogout = (navigation: any) => {
+    dispatch(logout());
+    navigation.navigate('SignIn');
+  };
+
+  useEffect(() => {
+    if (state?.currentUser) {
+      setProfile(state.currentUser);
+    }
+  }, []);
   return (
     <Drawer.Navigator
       drawerContent={(props: any) => {
+        const {navigation} = props;
         return (
-          <SafeAreaView>
+          <SafeAreaView className="bg-white dark:bg-black flex-1">
             <TouchableHighlight
               activeOpacity={0.8}
-              underlayColor="rgba(0,0,0,0.1)"
-              onPress={() => {}}
+              underlayColor={
+                colorScheme == 'light'
+                  ? 'rgba(0,0,0,0.1)'
+                  : 'rgba(255,255,255,0.4)'
+              }
+              onPress={() => navigation.navigate('Profile')}
               style={{
                 marginTop: 20,
                 marginBottom: 6,
@@ -53,7 +80,13 @@ const HomeDrawerRouter = () => {
                   paddingHorizontal: 12,
                 }}>
                 <Image
-                  source={images.avatar}
+                  src={
+                    profile?.avatar ==
+                    'https://www.alliancerehabmed.com/wp-content/uploads/icon-avatar-default.png'
+                      ? undefined
+                      : profile?.avatar
+                  }
+                  source={images.defaultAvatar}
                   style={{
                     width: 54,
                     height: 54,
@@ -63,15 +96,37 @@ const HomeDrawerRouter = () => {
                     marginRight: 12,
                   }}
                 />
-                <Text style={{fontSize: 16, fontWeight: '600'}}>
-                  Anna Phuong
+                <Text className="text-base font-semibold text-black dark:text-white">
+                  {profile?.name}
                 </Text>
               </View>
             </TouchableHighlight>
             <DrawerItemList {...props} />
+            <TouchableHighlight
+              onPress={() => handleLogout(navigation)}
+              underlayColor="rgba(0,0,0,0.2)"
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 12,
+                marginLeft: 6,
+                borderRadius: 4,
+              }}>
+              <View style={{flexDirection: 'row'}}>
+                <LogoutIcon style={{width: 24, height: 24, marginRight: -16}} />
+                <Text
+                  style={{
+                    marginLeft: 34,
+                    fontWeight: '500',
+                    color: colors.error,
+                  }}>
+                  Logout
+                </Text>
+              </View>
+            </TouchableHighlight>
           </SafeAreaView>
         );
       }}
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
         drawerStyle: {
@@ -80,20 +135,14 @@ const HomeDrawerRouter = () => {
         drawerItemStyle: {
           marginRight: 0,
         },
+        drawerActiveBackgroundColor:
+          colorScheme === 'light'
+            ? colors.backgroundActive
+            : 'rgba(255,255,255,0.4)',
+        drawerLabelStyle: {
+          color: colorScheme == 'light' ? colors.black : colors.white,
+        },
       }}>
-      <Drawer.Screen
-        name="RecurringLessonSchedule"
-        component={Tutor}
-        options={{
-          drawerLabel: 'Recurring Lesson Schedule',
-          title: 'Recurring Lesson Schedule',
-          drawerIcon: () => (
-            <RecurringScheduleIcon
-              style={{width: 24, height: 24, marginRight: -16}}
-            />
-          ),
-        }}
-      />
       <Drawer.Screen
         name="Tutor"
         component={Tutor}
@@ -121,6 +170,7 @@ const HomeDrawerRouter = () => {
         component={History}
         options={{
           drawerLabel: 'History',
+
           title: 'History',
           drawerIcon: () => (
             <HistoryIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -132,6 +182,7 @@ const HomeDrawerRouter = () => {
         component={Courses}
         options={{
           drawerLabel: 'Courses',
+
           title: 'Courses',
           drawerIcon: () => (
             <CoursesIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -139,10 +190,11 @@ const HomeDrawerRouter = () => {
         }}
       />
       <Drawer.Screen
-        name="CourseTopic"
-        component={CourseTopic}
+        name="MyCourse"
+        component={MyCourse}
         options={{
           drawerLabel: 'My Course',
+
           title: 'My Course',
           drawerIcon: () => (
             <MyCourseIcon style={{width: 24, height: 24, marginRight: -16}} />
@@ -150,10 +202,19 @@ const HomeDrawerRouter = () => {
         }}
       />
       <Drawer.Screen
-        name="TutorDetail"
-        component={TutorDetail}
+        name="CourseDetail"
+        component={CourseDetail}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="BecomeTutor"
+        component={BecomeTutor}
         options={{
           drawerLabel: 'Become a tutor',
+
           title: 'Become a tutor',
           drawerIcon: () => (
             <BecomeTutorIcon
@@ -162,15 +223,38 @@ const HomeDrawerRouter = () => {
           ),
         }}
       />
+
+      {/* Hide this page */}
       <Drawer.Screen
-        name="SignIn"
-        component={SignIn}
+        name="TutorDetail"
+        component={TutorDetail}
         options={{
-          drawerLabel: 'Logout',
-          title: 'Logout',
-          drawerIcon: () => (
-            <LogoutIcon style={{width: 24, height: 24, marginRight: -16}} />
-          ),
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="Messages"
+        component={Messages}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+      <Drawer.Screen
+        name="Message"
+        component={Message}
+        options={{
+          drawerLabel: () => null,
+          drawerItemStyle: {display: 'none'},
         }}
       />
     </Drawer.Navigator>

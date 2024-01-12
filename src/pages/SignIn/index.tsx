@@ -5,74 +5,406 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
+  Dimensions,
+  ActivityIndicator,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import styles from './styles';
 import {images} from '@/assets';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+import Config from 'react-native-config';
 
 import FormGroup from '@/components/FormGroup';
-import globalStyles from '@/global/globalStyles';
 import Header from '@/components/Header';
+import CStatusBar from '@/components/CStatusBar';
+
 import {useNavigation} from '@react-navigation/native';
-import Props from '@/global/type';
+import Props from '@/types/type';
 import {colors} from '@/constants';
+import {useGlobalContext, useTranslations} from '@/hooks';
+import {login} from '@/store';
+import * as authService from '@/services/authService';
+import {isEmail, isPassword} from '@/utils';
+import {useColorScheme} from 'nativewind';
 
 const SignIn = () => {
+  const {colorScheme, toggleColorScheme} = useColorScheme();
   const navigation = useNavigation<Props>();
+  const [state, dispatch] = useGlobalContext();
+  const {t} = useTranslations();
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [user, setUser] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [resetInfo, setResetInfo] = useState({
+    email: '',
+  });
+
+  const [notification, setNotification] = useState({
+    message: '',
+    type: '',
+  });
+
+  const onChangeDataOfUser = useCallback((key: string, value: string) => {
+    setUser(prev => {
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  }, []);
+
+  const onChangeDataOfResetPassword = useCallback(
+    (key: string, value: string) => {
+      setResetInfo(prev => {
+        return {
+          ...prev,
+          [key]: value,
+        };
+      });
+    },
+    [],
+  );
+
+  const validate = (
+    email: string,
+    password: string,
+    confirmPassword?: string,
+  ) => {
+    const isValidEmail = isEmail(email);
+    const isValidPassword = isPassword(password);
+    let isSamePassword = true;
+    if (confirmPassword) {
+      isSamePassword = password === confirmPassword;
+    }
+
+    return !!isValidEmail && !!isValidPassword && isSamePassword;
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const res = await authService.login({
+      email: String(user.email).trim().toLowerCase(),
+      password: user.password,
+    });
+
+    if (res.success && res.data) {
+      const payload = res.data;
+      dispatch(login(payload));
+      navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+      setUser({
+        email: '',
+        password: '',
+      });
+    } else {
+      setNotification({
+        type: 'error',
+        message: res.message || 'Server error. Please try again!',
+      });
+    }
+    setLoading(false);
+  };
+
+  const handleForgotPassword = async () => {
+    setLoading(true);
+    const res = await authService.forgotPassword({
+      email: resetInfo.email,
+    });
+    if (res.success) {
+      setResetInfo({
+        email: '',
+      });
+
+      setNotification({
+        type: 'success',
+        message:
+          'Kiểm tra hộp thư đến trong email để đặt lại mật khẩu của bạn.!',
+      });
+    } else {
+      setNotification({
+        type: 'error',
+        message: 'Email không tồn tại. Vui lòng đăng ký trước!',
+      });
+    }
+    setLoading(false);
+  };
+
+  const handleLoginByGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      await GoogleSignin.signIn();
+      const {accessToken} = await GoogleSignin.getTokens();
+      await GoogleSignin.signOut();
+      if (accessToken) {
+        setLoading(true);
+        const res = await authService.loginByGoogle({
+          access_token: accessToken,
+        });
+        if (res.success) {
+          const payload = res.data;
+          dispatch(login(payload));
+          navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+
+          setUser({
+            email: '',
+            password: '',
+          });
+        } else {
+          setNotification({
+            type: 'error',
+            message: res.message || 'Đăng nhập thất bại. Vui lòng thử lại!',
+          });
+        }
+        setLoading(false);
+      }
+    } catch (error) {
+      // console.error('error', error);
+    }
+  };
+
+  const handleLoginByFacebook = async () => {
+    // Attempt login with permissions
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
+
+    if (!result.isCancelled) {
+      const data = await AccessToken.getCurrentAccessToken();
+      if (data) {
+        setLoading(true);
+        const res = await authService.loginByFacebook({
+          access_token: data.accessToken,
+        });
+        if (res.success) {
+          const payload = res.data;
+          dispatch(login(payload));
+          navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
+
+          setUser({
+            email: '',
+            password: '',
+          });
+        } else {
+          setNotification({
+            type: 'error',
+            message: res.message || 'Đăng nhập thất bại. Vui lòng thử lại!',
+          });
+        }
+        setLoading(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    let timerId: any;
+    if (notification.message.length > 0) {
+      timerId = setTimeout(() => {
+        setNotification({
+          message: '',
+          type: '',
+        });
+      }, 15000);
+    }
+    return () => clearTimeout(timerId);
+  }, [notification]);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: Config.REACT_APP_API_URL,
+    });
+  }, []);
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={[0]}>
-      <Header />
-      <View style={styles.inner}>
-        <Image source={images.banner} style={styles.banner} />
-        <View style={styles.body}>
-          <Text style={styles.heading}>Đăng nhập</Text>
-          <Text style={styles.des}>
-            Phát triển kỹ năng tiếng Anh nhanh nhất bằng cách học 1 kèm 1 trực
-            tuyến theo mục tiêu và lộ trình dành cho riêng bạn.
-          </Text>
-          <FormGroup title="EMAIL" type="email" />
-          <FormGroup title="PASSWORD" type="password" />
-
-          <Text style={styles.forgetPassword}>Quên mật khẩu?</Text>
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() =>
-              navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'})
-            }>
-            <Text style={styles.loginBtnText}>Đăng nhập</Text>
-          </TouchableOpacity>
-          <Text style={styles.moreText}>Hoặc tiếp tục với</Text>
-          <View style={styles.loginList}>
-            <View style={styles.loginItem}>
-              <FontAwesome name="facebook" size={24} color="#0071F0" />
-            </View>
-            <View style={[globalStyles.ml16]}>
-              <Image
-                source={images.googleLogo}
-                style={{width: 36, height: 36}}
+    <View className="flex-1 bg-white dark:bg-black">
+      <Header style={{zIndex: 50}} />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {isForgotPassword ? (
+          <View style={{height: Dimensions.get('window').height - 56}}>
+            <View style={[styles.body]}>
+              <Text
+                style={[
+                  styles.heading,
+                  {
+                    marginTop: 24,
+                    color:
+                      colorScheme === 'light' ? colors.primary : colors.white,
+                  },
+                ]}>
+                {t('signin.resetPassword')}
+              </Text>
+              <Text
+                style={[
+                  styles.des,
+                  {
+                    fontWeight: '400',
+                    paddingHorizontal: 0,
+                    marginBottom: 8,
+                    color:
+                      colorScheme === 'light' ? colors.black : colors.white,
+                  },
+                ]}>
+                <Text style={{color: colors.error}}>*</Text>{' '}
+                {t('signin.enterEmail')}
+              </Text>
+              <FormGroup
+                title="Email"
+                type="email"
+                placeholder="Example@email.com"
+                field="email"
+                value={resetInfo.email}
+                onChange={onChangeDataOfResetPassword}
               />
-            </View>
-            <View style={[styles.loginItem, globalStyles.ml16]}>
-              <FontAwesome name="mobile-phone" size={26} color="#888888" />
+              {notification.message.length > 0 && (
+                <Text
+                  style={[
+                    styles.notification,
+                    notification.type === 'error'
+                      ? styles.error
+                      : styles.success,
+                  ]}>
+                  {notification.message}
+                </Text>
+              )}
+              <TouchableOpacity
+                style={[
+                  styles.loginBtn,
+                  !isEmail(resetInfo.email) && styles.disable,
+                ]}
+                disabled={!isEmail(resetInfo.email)}
+                onPress={() => handleForgotPassword()}>
+                {loading && (
+                  <ActivityIndicator
+                    className="mr-4"
+                    size="small"
+                    color={colors.white}
+                  />
+                )}
+                <Text style={styles.loginBtnText}>{t('sendResetLink')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsForgotPassword(false);
+                  setNotification({
+                    message: '',
+                    type: '',
+                  });
+                }}>
+                <Text
+                  style={{
+                    color: colors.primary,
+                    fontSize: 15,
+                    fontWeight: '500',
+                    marginTop: 12,
+                  }}>
+                  {t('back')}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <Text style={styles.signupText}>
-            Chưa có tài khoản?{' '}
-            <Text
-              style={styles.signupLink}
-              onPress={() => navigation.navigate('SignUp')}>
-              Đăng ký
-            </Text>
-          </Text>
-        </View>
-      </View>
-      <StatusBar barStyle={'dark-content'} backgroundColor={colors.white} />
-    </ScrollView>
+        ) : (
+          <View>
+            <Image source={images.banner} style={styles.banner} />
+            <View style={styles.body}>
+              <Text
+                style={styles.heading}
+                className="text-first dark:text-white">
+                {t('signin.longTitle')}
+              </Text>
+              <Text style={styles.des} className="text-black dark:text-white">
+                {t('signin.description')}
+              </Text>
+              <FormGroup
+                title={t('email')}
+                type="email"
+                field="email"
+                placeholder="Example@email.com"
+                value={user.email}
+                onChange={onChangeDataOfUser}
+              />
+              <FormGroup
+                title={t('password')}
+                type="password"
+                field="password"
+                value={user.password}
+                onChange={onChangeDataOfUser}
+              />
+
+              <TouchableOpacity onPress={() => setIsForgotPassword(true)}>
+                <Text style={[styles.forgetPassword]}>
+                  {t('signin.forgotPassword')}
+                </Text>
+              </TouchableOpacity>
+              {notification.message.length > 0 && (
+                <Text
+                  style={[
+                    notification.type === 'error'
+                      ? styles.error
+                      : styles.success,
+                    styles.notification,
+                  ]}>
+                  {notification.message}
+                </Text>
+              )}
+              <TouchableOpacity
+                style={[
+                  styles.loginBtn,
+                  !validate(user.email, user.password) && styles.disable,
+                ]}
+                disabled={!validate(user.email, user.password)}
+                onPress={() => handleSubmit()}>
+                {loading && (
+                  <ActivityIndicator
+                    className="mr-4"
+                    size="small"
+                    color={colors.white}
+                  />
+                )}
+                <Text style={styles.loginBtnText}>{t('signin.title')}</Text>
+              </TouchableOpacity>
+
+              <Text
+                style={styles.moreText}
+                className="text-black dark:text-white">
+                {t('signin.continueWith')}
+              </Text>
+              <View style={styles.loginList}>
+                <TouchableOpacity onPress={handleLoginByFacebook}>
+                  <View style={styles.loginItem}>
+                    <FontAwesome name="facebook" size={24} color="#0071F0" />
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLoginByGoogle}>
+                  <View className="ml-4">
+                    <Image
+                      source={images.googleLogo}
+                      style={{width: 40, height: 40}}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <Text
+                style={styles.signupText}
+                className="text-blur dark:text-white">
+                {t('signin.other')}{' '}
+                <Text
+                  style={styles.signupLink}
+                  className="text-first "
+                  onPress={() => navigation.navigate('SignUp')}>
+                  {t('signup.title')}
+                </Text>
+              </Text>
+            </View>
+          </View>
+        )}
+      </ScrollView>
+      <CStatusBar type={colorScheme} />
+    </View>
   );
 };
 

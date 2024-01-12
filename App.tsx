@@ -9,17 +9,23 @@ import {NavigationContainer} from '@react-navigation/native';
 import {EventProvider} from 'react-native-outside-press';
 import MainStackRouter from '@/router/MainStackRouter';
 import React from 'react';
-import {LogBox, View} from 'react-native';
+import {LogBox} from 'react-native';
+import {GlobalProvider} from '@/store';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <EventProvider>
-        <MainStackRouter />
-      </EventProvider>
+      <GlobalProvider>
+        <EventProvider>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <MainStackRouter />
+          </GestureHandlerRootView>
+        </EventProvider>
+      </GlobalProvider>
     </NavigationContainer>
   );
 }
 
-LogBox.ignoreLogs(['Invalid prop textStyle of type array supplied to Cell']);
-
+LogBox.ignoreAllLogs();
 export default App;

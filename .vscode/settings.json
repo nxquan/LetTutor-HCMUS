@@ -1,10 +1,13 @@
 {
-  "cSpell.words": ["Ionicons", "Pressable"],
+  "cSpell.words": ["Ionicons", "Jitsi", "Pressable"],
   "editor.formatOnSave": true,
   "editor.hover.enabled": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.endOfLine": "lf",
-  "[typescriptreact]": {
+  "[typescriptreact,typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
   }
 }

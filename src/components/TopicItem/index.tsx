@@ -1,24 +1,44 @@
 import {View, Text, TouchableHighlight} from 'react-native';
 import React from 'react';
 import styles from './styles';
-interface TopicProps {
+import {useColorScheme} from 'nativewind';
+type Props = {
   isActive: boolean;
   onSelect?: () => void;
-}
-const TopicItem = (props: TopicProps) => {
-  const {isActive, onSelect} = props;
+  data: any;
+};
+
+function TopicItem(props: Props) {
+  const {data, isActive, onSelect} = props;
+  const {colorScheme} = useColorScheme();
   return (
     <TouchableHighlight
       activeOpacity={0.6}
-      underlayColor="rgba(0, 0, 0, 0.08)"
+      underlayColor={
+        colorScheme == 'light'
+          ? 'rgba(0, 0, 0, 0.08)'
+          : 'rgba(255, 255, 255, 0.3)'
+      }
       onPress={onSelect}
-      style={[styles.touchContainer, isActive && styles.active]}>
+      style={[
+        styles.touchContainer,
+        isActive && {
+          backgroundColor:
+            colorScheme == 'light'
+              ? 'rgba(0, 0, 0, 0.08)'
+              : 'rgba(255, 255, 255, 0.3)',
+        },
+      ]}>
       <View style={styles.topicItem}>
-        <Text style={styles.topicNo}>1.</Text>
-        <Text style={styles.topicName}>The Internet</Text>
+        <Text className="text-black dark:text-white" style={styles.topicNo}>
+          {data?.orderCourse + 1}
+        </Text>
+        <Text className="text-black dark:text-white" style={styles.topicName}>
+          {data?.name}
+        </Text>
       </View>
     </TouchableHighlight>
   );
-};
+}
 
 export default TopicItem;

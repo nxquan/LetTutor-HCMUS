@@ -1,11 +1,8 @@
 import {colors} from '@/constants';
 import {Dimensions, StyleSheet} from 'react-native';
+
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-  },
   inner: {
-    paddingHorizontal: 10,
     paddingTop: 20,
     paddingBottom: 35,
   },
@@ -18,20 +15,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 20,
   },
-  video: {
-    height: 240,
-    marginHorizontal: -12,
-    borderRadius: 10,
+  table: {},
+  header: {
+    flexDirection: 'row',
+  },
+  firstCell: {
+    backgroundColor: '#f9f9f9',
+    width: 100,
+  },
+  cell: {
+    width: 90,
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   actionBtn: {
     padding: 4,
     borderRadius: 4,
   },
-  head: {height: 40, backgroundColor: '#f1f8ff'},
-  wrapper: {flexDirection: 'row'},
-  title: {flex: 1, backgroundColor: '#f6f8fa'},
-  row: {
-    height: 40,
+  modalBody: {
+    position: 'relative',
+    width: '100%',
+    paddingTop: 12,
   },
 });
 

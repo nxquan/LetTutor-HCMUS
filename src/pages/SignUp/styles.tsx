@@ -2,10 +2,6 @@ import {StyleSheet} from 'react-native';
 import {colors} from '@/constants';
 
 export default StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    backgroundColor: colors.white,
-  },
   inner: {},
   banner: {
     width: 300,
@@ -13,13 +9,9 @@ export default StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 30,
   },
-  body: {
-    paddingHorizontal: 24,
-  },
   heading: {
     fontSize: 28,
     fontWeight: '500',
-    color: colors.primary,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -29,13 +21,6 @@ export default StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 10,
     lineHeight: 24,
-    color: colors.black,
-  },
-  forgetPassword: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.primary,
-    marginBottom: 12,
   },
   loginBtn: {
     backgroundColor: colors.primary,
@@ -43,11 +28,10 @@ export default StyleSheet.create({
     borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
-  loginBtnText: {
-    color: colors.white,
-    fontWeight: '500',
-    fontSize: 16,
+  disable: {
+    opacity: 0.7,
   },
   moreText: {
     textAlign: 'center',
@@ -72,7 +56,6 @@ export default StyleSheet.create({
   signupText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.grey500,
     marginTop: 24,
     marginBottom: 30,
     textAlign: 'center',
@@ -81,5 +64,18 @@ export default StyleSheet.create({
     color: colors.primary,
     fontSize: 14,
     fontWeight: '500',
+  },
+  notification: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 8,
+    marginTop: -4,
+    textAlign: 'center',
+  },
+  error: {
+    color: colors.error,
+  },
+  success: {
+    color: colors.success,
   },
 });
