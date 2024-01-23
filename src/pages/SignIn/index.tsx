@@ -217,9 +217,10 @@ const SignIn = () => {
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: Config.REACT_APP_API_URL,
+      webClientId: Config.REACT_APP_WEB_CLIENT_ID,
     });
   }, []);
+
   return (
     <View className="flex-1 bg-white dark:bg-black">
       <Header style={{zIndex: 50}} />

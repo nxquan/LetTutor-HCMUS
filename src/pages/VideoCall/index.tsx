@@ -1,17 +1,6 @@
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  SafeAreaView,
-  Dimensions,
-} from 'react-native';
+import {View, Text, Dimensions} from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Entypo from 'react-native-vector-icons/Entypo';
 import styles from './styles';
-import {colors} from '@/constants';
 
 import {JitsiMeeting} from '@jitsi/react-native-sdk/index';
 

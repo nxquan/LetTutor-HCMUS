@@ -91,8 +91,16 @@ export const padNumber = (number: number) => {
 
 export const getDateAgo = (date1: number, date2: number) => {
   const diff = date2 - date1;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days < 7) {
+  const days = Math.round(diff / (1000 * 60 * 60 * 24));
+  if (days == 0) {
+    const hours = diff / (1000 * 60 * 60);
+    if (hours >= 1) {
+      return Math.round(hours) + ' hours ago';
+    } else {
+      const minutes = diff / (1000 * 60);
+      return Math.round(minutes) + ' minutes ago';
+    }
+  } else if (days < 7) {
     return days + ' days ago';
   } else if (days >= 7 && days < 30) {
     return Math.floor(days / 7) + ' weeks ago';

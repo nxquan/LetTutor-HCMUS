@@ -39,6 +39,8 @@ import {useColorScheme} from 'nativewind';
 import {color} from '@rneui/base';
 import {StatusBar} from 'react-native';
 import CStatusBar from '@/components/CStatusBar';
+import ToastManager from 'toastify-react-native';
+import {toastConfig} from '@/config';
 
 const typesOfTutor = [
   {
@@ -253,14 +255,7 @@ const Tutor = () => {
 
   const fetchForSearchingTutors = useCallback(
     async (isLoadingPage = false) => {
-      let session: any;
-      try {
-        session = await EncryptedStorage.getItem('user_session');
-      } catch (error) {
-        throw error;
-      }
       const _filters: any = {
-        date: filters.date,
         specialties:
           filters.specialty.key == 'all' ? [] : [filters.specialty.key],
         nationality: {},
@@ -308,6 +303,16 @@ const Tutor = () => {
         }
       }
 
+      if (filters?.date) {
+        const date = new Date(filters.date);
+        date.setHours(0, 0, 0, 0);
+        _filters.date = `${date.toString()} (Indochina Time)`;
+        _filters.tutoringTimeAvailable = [
+          date.getTime(),
+          date.getTime() + (23 * 60 + 59) * 60 * 1000,
+        ];
+      }
+
       if (_filters.date != null) {
         if (!!filters.startTime && !!filters.endTime) {
           _filters.tutoringTimeAvailable = [
@@ -342,21 +347,19 @@ const Tutor = () => {
           ];
         }
       }
+      const params: any = {
+        filters: _filters,
+        perPage: 12,
+        page: page.currentPage,
+      };
+
+      if (filters.tutorName?.length > 0) {
+        params.search = filters.tutorName;
+      }
+
       try {
         isLoadingPage && setLoading(true);
-        const res = await tutorService.searchTutors(
-          {
-            search: filters.tutorName,
-            filters: _filters,
-            perPage: 12,
-            page: page.currentPage,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-            },
-          },
-        );
+        const res = await tutorService.searchTutors(params);
         if (res.success) {
           let rawData = res.data.rows;
           const favoriteTutors: any[] = rawData.filter(
@@ -702,6 +705,15 @@ const Tutor = () => {
       </ScrollView>
       <CStatusBar type={colorScheme} />
       <MessageIcon />
+      <ToastManager
+        {...toastConfig}
+        width={width - 24}
+        style={{
+          position: 'absolute',
+          top: 50,
+          zIndex: 1000,
+        }}
+      />
     </View>
   );
 };

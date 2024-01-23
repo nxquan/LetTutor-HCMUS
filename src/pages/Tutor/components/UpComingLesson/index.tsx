@@ -46,12 +46,9 @@ const UpComingLesson = (props: Props) => {
       const resNextBookings = await bookingService.getNextBookings();
       if (resNextBookings.success) {
         const {data} = resNextBookings.data;
+        let isHasIncomingLesson: boolean = false;
+
         if (data.length > 0) {
-          // let nearestLesson: any = data.find(
-          //   (item: any) =>
-          //     item.scheduleDetailInfo.startPeriodTimestamp >=
-          //     Date.now() - 25 * 60 * 1000,
-          // );
           let nearestLesson: any = {
             scheduleDetailInfo: {
               endPeriodTimestamp: 999999999999999,
@@ -67,37 +64,41 @@ const UpComingLesson = (props: Props) => {
                 Date.now() - 25 * 60 * 1000
             ) {
               nearestLesson = item;
+              isHasIncomingLesson = true;
             }
           });
 
-          if (
-            Date.now() >= nearestLesson.scheduleDetailInfo.startPeriodTimestamp
-          ) {
-            nearestLesson.status = 'TEACHING';
-            setRemainingTimeForUpcomingLesson(0);
-            setTeachingTime(
-              Math.floor(
-                (Date.now() -
-                  nearestLesson.scheduleDetailInfo.startPeriodTimestamp +
-                  2000) /
-                  1000,
-              ),
-            );
-          } else {
-            nearestLesson.status = 'INIT';
-            setRemainingTimeForUpcomingLesson(
-              Math.floor(
-                (nearestLesson.scheduleDetailInfo.startPeriodTimestamp -
-                  Date.now() -
-                  1000) /
-                  1000,
-              ),
-            );
-          }
+          if (isHasIncomingLesson) {
+            if (
+              Date.now() >=
+              nearestLesson.scheduleDetailInfo.startPeriodTimestamp
+            ) {
+              nearestLesson.status = 'TEACHING';
+              setRemainingTimeForUpcomingLesson(0);
+              setTeachingTime(
+                Math.floor(
+                  (Date.now() -
+                    nearestLesson.scheduleDetailInfo.startPeriodTimestamp +
+                    2000) /
+                    1000,
+                ),
+              );
+            } else {
+              nearestLesson.status = 'INIT';
+              setRemainingTimeForUpcomingLesson(
+                Math.floor(
+                  (nearestLesson.scheduleDetailInfo.startPeriodTimestamp -
+                    Date.now() -
+                    1000) /
+                    1000,
+                ),
+              );
+            }
 
-          setUpcomingLesson({
-            ...nearestLesson,
-          });
+            setUpcomingLesson({
+              ...nearestLesson,
+            });
+          }
         }
       }
       setLoading(false);

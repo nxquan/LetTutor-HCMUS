@@ -70,12 +70,7 @@ const EbookItem = (props: Props) => {
   };
 
   const handleOpenUrl = async () => {
-    const supported = await Linking.canOpenURL(data.fileUrl);
-    if (supported) {
-      await Linking.openURL(data.fileUrl);
-    } else {
-      Alert.alert(`Don't know how to open this URL: ${data.fileUrl}`);
-    }
+    await Linking.openURL(data.fileUrl);
   };
   return (
     <TouchableOpacity

@@ -2,7 +2,7 @@ import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import {Toast} from 'toastify-react-native';
 import styles from './styles';
 import {colors} from '@/constants';
 import {images, languageImages} from '@/assets';
@@ -104,20 +104,15 @@ const TutorItem = (props: Props) => {
   }, [data]);
 
   const handleAddFavorite = async () => {
-    const session: any = await EncryptedStorage.getItem('user_session');
-
-    const res = await tutorService.addFavoriteTutor(
-      {
-        tutorId: data?.id,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-        },
-      },
-    );
+    const res = await tutorService.addFavoriteTutor({
+      tutorId: data?.id,
+    });
     if (res.success) {
       onAddFavorite(data?.id);
+      if (res.data.result !== 1) {
+        //If unfavorite then data.result = 1
+        Toast.success('Add favorite tutor successfully!');
+      }
     }
   };
 

@@ -50,7 +50,7 @@ const CourseTopic = () => {
     setCourse(route.params?.course);
     if (route.params?.selectedTopic != undefined) {
       setSelectedTopic(route.params?.selectedTopic);
-      // setIsOpenModal(true);
+      setIsOpenModal(true);
     } else {
       const topic = route.params?.course?.topics.find(
         (item: any) => item.orderCourse === 0,

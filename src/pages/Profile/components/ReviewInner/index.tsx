@@ -93,13 +93,17 @@ const ReviewModal = (props: Props) => {
               Loading feedback...
             </Text>
           </View>
-        ) : (
+        ) : reviews ? (
           <ReviewList
             data={reviews}
             totalItems={page.totalItems}
             currentPage={page.currentPage}
             onChangePage={onChangePage}
           />
+        ) : (
+          <Text className="text-base text-center font-normal text-black dark:text-white">
+            There is no any review
+          </Text>
         )}
       </ScrollView>
     </View>
