@@ -23,14 +23,18 @@ const VideoCall = () => {
   const [remainingTimeForUpcomingLesson, setRemainingTimeForUpcomingLesson] =
     useState<number>(0);
   const [teachingTime, setTeachingTime] = useState<number>(0);
+  const [isShowTeachingTime, setIsShowTeachingTime] = useState<boolean>(false);
 
   const onReadyToClose = useCallback(() => {
     navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
   }, []);
 
+  const onConferenceFocused = () => {
+    setIsShowTeachingTime(true);
+  };
   const eventListeners = {
     onReadyToClose,
-    // onConferenceLeft,
+    onConferenceFocused,
   };
 
   useEffect(() => {
@@ -52,11 +56,10 @@ const VideoCall = () => {
       setRemainingTimeForUpcomingLesson(0);
       setTeachingTime(
         Math.floor(
-          -(
-            Date.now() -
-            route.params.data.scheduleDetailInfo.startPeriodTimestamp -
-            2000
-          ) / 1000,
+          (Date.now() -
+            route.params.data.scheduleDetailInfo.startPeriodTimestamp +
+            2000) /
+            1000,
         ),
       );
     }
@@ -132,7 +135,7 @@ const VideoCall = () => {
         </View>
       )}
 
-      {teachingTime > 0 && (
+      {teachingTime > 0 && isShowTeachingTime && (
         <View
           style={{
             position: 'absolute',
@@ -145,7 +148,7 @@ const VideoCall = () => {
             borderRadius: 9999,
             paddingHorizontal: 8,
           }}>
-          <Text className="text-white text-sm font-medium">
+          <Text className="text-green-600 text-sm font-medium">
             Teaching time: {convertSecondsToMinutes(teachingTime)}
           </Text>
         </View>

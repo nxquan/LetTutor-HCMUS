@@ -8,6 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useMemo, useState} from 'react';
 import Header from '@/components/Header';
@@ -295,7 +297,7 @@ const BecomeTutor = () => {
     });
 
     if (res.success) {
-      Toast.success(res.message);
+      Toast.success('Submit successfully!');
     } else {
       Toast.error(res.message, 'top');
     }
@@ -371,11 +373,6 @@ const BecomeTutor = () => {
       throw err;
     }
   };
-  useEffect(() => {
-    if (video) {
-      //onChangeProfile('avatar', video?.[0]?.fileCopyUri);
-    }
-  }, [video]);
 
   return (
     <View className="flex-1">

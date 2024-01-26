@@ -96,6 +96,7 @@ const SignIn = () => {
 
     if (res.success && res.data) {
       const payload = res.data;
+      payload.type = '';
       dispatch(login(payload));
       navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
       setUser({
@@ -148,6 +149,8 @@ const SignIn = () => {
         });
         if (res.success) {
           const payload = res.data;
+          payload.type = 'google';
+
           dispatch(login(payload));
           navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
 
@@ -184,7 +187,9 @@ const SignIn = () => {
         });
         if (res.success) {
           const payload = res.data;
+          payload.type = 'google';
           dispatch(login(payload));
+
           navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
 
           setUser({

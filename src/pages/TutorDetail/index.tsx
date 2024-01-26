@@ -78,6 +78,7 @@ const TutorDetail = () => {
     totalItems: 0,
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [initLoading, setInitLoading] = useState(false);
 
   const onChangePage = useCallback((page: number) => {
     setPage((prev: any) => ({
@@ -142,12 +143,14 @@ const TutorDetail = () => {
 
   useEffect(() => {
     const getTutorInfoById = async () => {
+      setInitLoading(true);
       const tutorId = route.params?.tutorId;
       const res = await tutorService.getTutorInfoById({
         params: {
           tutorId: tutorId,
         },
       });
+      setInitLoading(false);
 
       if (res.success) {
         setTutorDetail(res.data);
@@ -156,7 +159,7 @@ const TutorDetail = () => {
         );
         setCountry(_country);
       } else {
-        console.log(res.message);
+        console.error(res.message);
       }
     };
 
@@ -336,6 +339,7 @@ const TutorDetail = () => {
           <ReportForm tutorDetail={tutorDetail} toggleModal={setIsOpenReport} />
         </ModalPopper>
       </ScrollView>
+
       <CStatusBar type={colorScheme} hidden={isFullscreen} />
       <ToastManager
         {...toastConfig}

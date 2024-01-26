@@ -18,7 +18,7 @@ import {useColorScheme} from 'nativewind';
 
 type Props = {
   data: any;
-  onAddFavorite: (tutorId: string) => void;
+  onAddFavorite: (tutorId: string, isFavorite?: boolean) => void;
 };
 
 const TutorItem = (props: Props) => {
@@ -108,10 +108,10 @@ const TutorItem = (props: Props) => {
       tutorId: data?.id,
     });
     if (res.success) {
-      onAddFavorite(data?.id);
-      if (res.data.result !== 1) {
-        //If unfavorite then data.result = 1
-        Toast.success('Add favorite tutor successfully!');
+      if (res.data.result != 1) {
+        onAddFavorite(data?.id, true);
+      } else {
+        onAddFavorite(data?.id);
       }
     }
   };
