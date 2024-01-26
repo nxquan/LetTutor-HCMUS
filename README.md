@@ -16,6 +16,9 @@ Link: https://youtu.be/9VFV5svS4dk
 
 Link: https://youtu.be/P6DdZsus9Qk
 
+## Link youtube milestone 4:
+
+Link: https://youtu.be/fuQg558Bnec
 
 ## Link đánh giá tổng kết
 
