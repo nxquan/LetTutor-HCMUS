@@ -16,6 +16,11 @@ Link: https://youtu.be/9VFV5svS4dk
 
 Link: https://youtu.be/P6DdZsus9Qk
 
+
+## Link đánh giá tổng kết
+
+Link: https://docs.google.com/document/d/1NVWo2uiHBqnQ6ils9aSYVvjthjQUWipk/edit?usp=sharing&ouid=101574664533758192013&rtpof=true&sd=true
+
 ## Getting Started
 
 > **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
