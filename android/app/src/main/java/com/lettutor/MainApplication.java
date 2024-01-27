@@ -1,4 +1,4 @@
-package com.lettutor;
+package com.lettutor.us;
 
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.brentvatne.react.ReactVideoPackage;

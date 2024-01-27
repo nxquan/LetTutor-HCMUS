@@ -1,4 +1,4 @@
-package com.lettutor;
+package com.lettutor.us;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;

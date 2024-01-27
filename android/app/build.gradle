@@ -84,24 +84,24 @@ android {
     productFlavors {
         production {
             minSdkVersion rootProject.ext.minSdkVersion
-            applicationId "com.lettutor"
+            applicationId "com.lettutor.us"
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "com.lettutor"
+            resValue "string", "build_config_package", "com.lettutor.us"
         }
         development {
             minSdkVersion rootProject.ext.minSdkVersion
-            applicationId "com.lettutor"
+            applicationId "com.lettutor.us"
             targetSdkVersion rootProject.ext.targetSdkVersion
-            resValue "string", "build_config_package", "com.lettutor"
+            resValue "string", "build_config_package", "com.lettutor.us"
         }
     }
-    namespace "com.lettutor"
+    namespace "com.lettutor.us"
     defaultConfig {
-        applicationId "com.lettutor"
+        applicationId "com.lettutor.us"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
     signingConfigs {
         debug {
@@ -110,18 +110,27 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'android'
+            keyAlias 'releasekey'
+            keyPassword 'android'
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            matchingFallbacks = ['debug', 'release']
+            matchingFallbacks = ['debug']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // signingConfig signingConfigs.debug
+            
+            signingConfig signingConfigs.release
+            // minifyEnabled enableProguardInReleaseBuilds
+            // proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // matchingFallbacks = ['release']
         }
     }
 }
