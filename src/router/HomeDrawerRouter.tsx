@@ -189,7 +189,7 @@ const HomeDrawerRouter = () => {
           ),
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="MyCourse"
         component={MyCourse}
         options={{
@@ -200,7 +200,7 @@ const HomeDrawerRouter = () => {
             <MyCourseIcon style={{width: 24, height: 24, marginRight: -16}} />
           ),
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="CourseDetail"
         component={CourseDetail}

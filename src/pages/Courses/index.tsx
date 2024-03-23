@@ -20,7 +20,6 @@ import styles from './styles';
 import {images} from '@/assets';
 import {colors} from '@/constants';
 import DropdownMenu from '@/components/DropdownMenu';
-import CourseItem from './components/CourseItem';
 import EbookItem from './components/EbookItem';
 import DrawerButton from '@/components/DrawerButton';
 import {useTranslations} from '@/hooks';
@@ -30,6 +29,7 @@ import StackProps from '@/types/type';
 import MessageIcon from '@/components/MessageIcon';
 import {useColorScheme} from 'nativewind';
 import CStatusBar from '@/components/CStatusBar';
+import HorizontalView from './components/HorizontalView';
 
 const levels = [
   {
@@ -205,20 +205,7 @@ const Courses = () => {
 
         if (_courses.length > 0) {
           components.push(
-            <View style={styles.courseSection} key={category.id}>
-              <Text
-                style={styles.courseHeading}
-                className="text-black dark:text-white">
-                {category.title}
-              </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.courseList}>
-                  {_courses.map((item: any) => (
-                    <CourseItem key={item.id} data={item} />
-                  ))}
-                </View>
-              </ScrollView>
-            </View>,
+            <HorizontalView courses={_courses} category={category} />,
           );
         }
       });

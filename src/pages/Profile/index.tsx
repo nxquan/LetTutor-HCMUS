@@ -32,7 +32,7 @@ import {LEARN_TOPICS} from '@/store/mock-data';
 import Header from '@/components/Header';
 import Button from '@/components/Button';
 import {formatDate} from '@/utils';
-import {useTranslations} from '@/hooks';
+import {useGlobalContext, useTranslations} from '@/hooks';
 import ModalPopper from '@/components/ModalPopper';
 import DrawerButton from '@/components/DrawerButton';
 import ReviewModal from './components/ReviewInner';
@@ -109,6 +109,7 @@ const Profile = () => {
   const [refresh, setRefresh] = useState(false);
   const {colorScheme} = useColorScheme();
   const [loading, setLoading] = useState(false);
+  const [state, dispatch] = useGlobalContext();
 
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const {type} = event;
@@ -406,11 +407,13 @@ const Profile = () => {
                 {t('profile.othersReviewYou')}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsOpenPasswordModal(true)}>
-              <Text className="text-base text-blue-500 font-medium">
-                {t('signin.changePassword')}
-              </Text>
-            </TouchableOpacity>
+            {state.currentUser.type == '' && (
+              <TouchableOpacity onPress={() => setIsOpenPasswordModal(true)}>
+                <Text className="text-base text-blue-500 font-medium">
+                  {t('signin.changePassword')}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <Text className="text-base text-black dark:text-white font-medium p-3 bg-gray-200 dark:bg-gray-800">
             {t('profile.account')}
@@ -648,9 +651,11 @@ const Profile = () => {
           </View>
         </View>
 
-        <ModalPopper visible={isOpenPasswordModal} transparent={true}>
-          <ChangePasswordInner toggleModal={setIsOpenPasswordModal} />
-        </ModalPopper>
+        {state.currentUser.type == '' && (
+          <ModalPopper visible={isOpenPasswordModal} transparent={true}>
+            <ChangePasswordInner toggleModal={setIsOpenPasswordModal} />
+          </ModalPopper>
+        )}
 
         <ModalPopper visible={isOpenReviewModal} transparent={true}>
           <ReviewModal

@@ -50,6 +50,33 @@ const History = () => {
     setRefreshing(!refreshing);
   }, []);
 
+  const groupSchedules = useCallback((schedules: any[]) => {
+    const result: any = [];
+    for (let i = 0; i < schedules.length; i++) {
+      const peers = [schedules[i]];
+      for (let j = i + 1; j < schedules.length; j++) {
+        if (
+          peers[peers.length - 1].scheduleDetailInfo.startPeriodTimestamp -
+            5 * 60 * 1000 ===
+          schedules[j].scheduleDetailInfo.endPeriodTimestamp
+        ) {
+          peers.push(schedules[j]);
+        } else {
+          break;
+        }
+      }
+
+      if (peers.length > 1) {
+        i += peers.length - 1;
+        result.push(peers.reverse());
+      } else {
+        result.push(peers[0]);
+      }
+    }
+
+    return result;
+  }, []);
+
   const getHistory = useCallback(async () => {
     setLoading(true);
     const res = await bookingService.getHistoryOfBooking({
@@ -64,7 +91,8 @@ const History = () => {
 
     if (res.success) {
       const {data} = res.data;
-      setSchedules(data.rows);
+      const groupedSchedules = groupSchedules(data.rows);
+      setSchedules(groupedSchedules);
       setPage((prev: any) => ({...prev, total: data.count}));
     }
     setLoading(false);
@@ -129,9 +157,14 @@ const History = () => {
               </Text>
             </View>
           ) : schedules.length > 0 ? (
-            schedules.map((item, index) => {
+            schedules.map((item: any, index: number) => {
               return (
-                <HistoryItem data={item} key={index} onRefresh={onRefresh} />
+                <HistoryItem
+                  data={item}
+                  isSingle={!Array.isArray(item)}
+                  key={index}
+                  onRefresh={onRefresh}
+                />
               );
             })
           ) : (

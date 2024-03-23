@@ -38,7 +38,7 @@ const ChangePasswordInner = (props: Props) => {
       password: passwordState.currentPassword,
     });
     if (res.success) {
-      const {data} = res.data;
+      const {message} = res.data;
 
       setPasswordState({
         currentPassword: '',
@@ -46,7 +46,7 @@ const ChangePasswordInner = (props: Props) => {
         confirmPassword: '',
       });
       toggleModal(false);
-      Toast.success(data.message);
+      Toast.success(message);
     }
   };
 

@@ -35,7 +35,7 @@ const reducer = (
       return {
         ...state,
         tokens: action.payload?.tokens,
-        currentUser: action.payload.user,
+        currentUser: {...action.payload.user, type: payload.type},
       };
     }
     case ACTION_TYPE.LOG_OUT:

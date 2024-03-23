@@ -3,6 +3,7 @@ import React from 'react';
 import styles from './styles';
 import {images} from '@/assets';
 import RenderRating from '@/components/RenderRating';
+import {getDateAgo} from '@/utils';
 
 type Props = {
   data: any;
@@ -24,8 +25,9 @@ const ReviewItem = (props: Props) => {
         </Text>
         <View style={styles.stars}>
           <RenderRating rating={data?.rating} size={16} />
-          <Text style={{color: '#ccc', fontSize: 13, marginLeft: 12}}>
-            {new Date(data?.updatedAt).getMonth() + 1} months ago
+          <Text
+            style={{color: 'rgba(0,0,0,0.4)', fontSize: 13, marginLeft: 12}}>
+            {getDateAgo(new Date(data.createdAt).getTime(), Date.now())}
           </Text>
         </View>
         {data?.content && (

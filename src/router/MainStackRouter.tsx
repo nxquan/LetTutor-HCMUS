@@ -16,6 +16,18 @@ import Messages from '@/pages/Messages';
 
 const Stack = createNativeStackNavigator<RootParamList>();
 
+const config = {
+  animation: 'spring',
+  config: {
+    stiffness: 1000,
+    damping: 500,
+    mass: 3,
+    overshootClamping: true,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
+};
+
 const MainStackRouter = () => {
   return (
     <Stack.Navigator
@@ -24,8 +36,22 @@ const MainStackRouter = () => {
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="Tutor" component={Tutor} />
-      <Stack.Screen name="CourseDetail" component={CourseDetail} />
-      <Stack.Screen name="CourseTopic" component={CourseTopic} />
+      <Stack.Screen
+        name="CourseDetail"
+        component={CourseDetail}
+        options={{
+          animation: 'fade',
+          animationDuration: 5000,
+        }}
+      />
+      <Stack.Screen
+        name="CourseTopic"
+        component={CourseTopic}
+        options={{
+          animation: 'fade',
+          animationDuration: 5000,
+        }}
+      />
       <Stack.Screen name="VideoCall" component={VideoCall} />
       <Stack.Screen name="HomeDrawerRouter" component={HomeDrawerRouter} />
       <Stack.Screen name="Profile" component={Profile} />

@@ -1,17 +1,6 @@
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  SafeAreaView,
-  Dimensions,
-} from 'react-native';
+import {View, Text, Dimensions} from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Entypo from 'react-native-vector-icons/Entypo';
 import styles from './styles';
-import {colors} from '@/constants';
 
 import {JitsiMeeting} from '@jitsi/react-native-sdk/index';
 
@@ -34,14 +23,18 @@ const VideoCall = () => {
   const [remainingTimeForUpcomingLesson, setRemainingTimeForUpcomingLesson] =
     useState<number>(0);
   const [teachingTime, setTeachingTime] = useState<number>(0);
+  const [isShowTeachingTime, setIsShowTeachingTime] = useState<boolean>(false);
 
   const onReadyToClose = useCallback(() => {
     navigation.navigate('HomeDrawerRouter', {screen: 'Tutor'});
   }, []);
 
+  const onConferenceFocused = () => {
+    setIsShowTeachingTime(true);
+  };
   const eventListeners = {
     onReadyToClose,
-    // onConferenceLeft,
+    onConferenceFocused,
   };
 
   useEffect(() => {
@@ -63,11 +56,10 @@ const VideoCall = () => {
       setRemainingTimeForUpcomingLesson(0);
       setTeachingTime(
         Math.floor(
-          -(
-            Date.now() -
-            route.params.data.scheduleDetailInfo.startPeriodTimestamp -
-            2000
-          ) / 1000,
+          (Date.now() -
+            route.params.data.scheduleDetailInfo.startPeriodTimestamp +
+            2000) /
+            1000,
         ),
       );
     }
@@ -143,7 +135,7 @@ const VideoCall = () => {
         </View>
       )}
 
-      {teachingTime > 0 && (
+      {teachingTime > 0 && isShowTeachingTime && (
         <View
           style={{
             position: 'absolute',
@@ -156,7 +148,7 @@ const VideoCall = () => {
             borderRadius: 9999,
             paddingHorizontal: 8,
           }}>
-          <Text className="text-white text-sm font-medium">
+          <Text className="text-green-600 text-sm font-medium">
             Teaching time: {convertSecondsToMinutes(teachingTime)}
           </Text>
         </View>

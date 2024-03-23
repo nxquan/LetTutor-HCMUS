@@ -27,13 +27,12 @@ import {useColorScheme} from 'nativewind';
 
 type Props = {
   data: any;
+  isSingle: boolean;
   onRefresh: () => void;
 };
 
 const HistoryItem = (props: Props) => {
-  const {data, onRefresh} = props;
-  const {scheduleDetailInfo} = data;
-  const {scheduleInfo} = scheduleDetailInfo;
+  const {data, isSingle, onRefresh} = props;
   const {t} = useTranslations();
 
   const [reasons, setReasons] = useState<any>([]);
@@ -41,7 +40,7 @@ const HistoryItem = (props: Props) => {
   const [isOpenReview, setIsOpenReview] = useState(true);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState<null | string>(null);
-
+  const [feedbacks, setFeedbacks] = useState<any>([]);
   const [currentRating, setCurrentRating] = useState<any>({
     id: '',
     rating: 1,
@@ -74,39 +73,27 @@ const HistoryItem = (props: Props) => {
   };
 
   const handleChangeFeedback = async () => {
-    const session: any = await EncryptedStorage.getItem('user_session');
     if (currentRating.id === '') {
-      const res = await bookingService.addFeedback(
-        {
-          content: currentRating.content,
-          rating: currentRating.rating,
-          bookingId: data?.id,
-          userId: scheduleInfo.tutorInfo.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-          },
-        },
-      );
+      const res = await bookingService.addFeedback({
+        content: currentRating.content,
+        rating: currentRating.rating,
+        bookingId: data?.id,
+        userId: isSingle
+          ? data.scheduleDetailInfo.scheduleInfo.tutorInfo.id
+          : data[0].scheduleDetailInfo.scheduleInfo.tutorInfo.id,
+      });
+
       if (res.success) {
         Toast.success('Add feedback successfully');
       } else {
         Toast.success(res.message);
       }
     } else {
-      const res = await bookingService.editFeedback(
-        {
-          content: currentRating.content,
-          rating: currentRating.rating,
-          id: currentRating.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${JSON.parse(session).accessToken}`,
-          },
-        },
-      );
+      const res = await bookingService.editFeedback({
+        content: currentRating.content,
+        rating: currentRating.rating,
+        id: currentRating.id,
+      });
       if (res.success) {
         Toast.success('Edit feedback successfully');
       } else {
@@ -162,25 +149,53 @@ const HistoryItem = (props: Props) => {
     fetchReasons();
   }, []);
 
+  useEffect(() => {
+    if (isSingle) {
+      setFeedbacks(data?.feedbacks);
+    } else {
+      const _feedbacks: any = [];
+      data.forEach((item: any) => {
+        _feedbacks.push(...item.feedbacks);
+      });
+      setFeedbacks(_feedbacks);
+    }
+  }, [data]);
+
   return (
-    <Lesson data={data} history={true}>
+    <Lesson data={isSingle ? data : data[0]} history={true}>
       <View style={styles.requestHeader}>
         <Text className="text-base text-medium text-black dark:text-white">
           {t('history.lessonTime')}{' '}
           {padNumber(
-            new Date(scheduleDetailInfo.startPeriodTimestamp).getHours(),
+            new Date(
+              isSingle
+                ? data.scheduleDetailInfo.startPeriodTimestamp
+                : data[0].scheduleDetailInfo.startPeriodTimestamp,
+            ).getHours(),
           )}
           :
           {padNumber(
-            new Date(scheduleDetailInfo.startPeriodTimestamp).getMinutes(),
+            new Date(
+              isSingle
+                ? data.scheduleDetailInfo.startPeriodTimestamp
+                : data[0].scheduleDetailInfo.startPeriodTimestamp,
+            ).getMinutes(),
           )}{' '}
           -{' '}
           {padNumber(
-            new Date(scheduleDetailInfo.endPeriodTimestamp).getHours(),
+            new Date(
+              isSingle
+                ? data.scheduleDetailInfo.endPeriodTimestamp
+                : data[data.length - 1].scheduleDetailInfo.endPeriodTimestamp,
+            ).getHours(),
           )}
           :
           {padNumber(
-            new Date(scheduleDetailInfo.endPeriodTimestamp).getMinutes(),
+            new Date(
+              isSingle
+                ? data.scheduleDetailInfo.endPeriodTimestamp
+                : data[data.length - 1].scheduleDetailInfo.endPeriodTimestamp,
+            ).getMinutes(),
           )}
         </Text>
       </View>
@@ -266,9 +281,9 @@ const HistoryItem = (props: Props) => {
       </View>
 
       <View>
-        {data?.feedbacks.length > 0 ? (
+        {feedbacks.length > 0 ? (
           <View>
-            {data?.feedbacks.map((feedback: any, index: number) => {
+            {feedbacks.map((feedback: any, index: number) => {
               return (
                 <View
                   key={index}
@@ -349,21 +364,35 @@ const HistoryItem = (props: Props) => {
           <View style={styles.modalInfo}>
             <Image
               source={images.defaultAvatar}
-              src={scheduleInfo?.tutorInfo?.avatar}
+              src={
+                isSingle
+                  ? data.scheduleDetailInfo.scheduleInfo?.tutorInfo?.avatar
+                  : data[0].scheduleDetailInfo.scheduleInfo?.tutorInfo?.avatar
+              }
               style={styles.avatar}
             />
             <Text className="text-xl text-black dark:text-white font-semibold mx-1">
-              {data?.scheduleDetailInfo?.scheduleInfo?.tutorInfo?.name}
+              {isSingle
+                ? data.scheduleDetailInfo.scheduleInfo.tutorInfo.name
+                : data[0].scheduleDetailInfo.scheduleInfo.tutorInfo.name}
             </Text>
             <Text className="text-black dark:text-ellipsis text-sm mx-1">
               {t('history.lessonTime')}
             </Text>
-            <Text className="text-base text-medium text-black dark:text-white">
-              {new Date(scheduleDetailInfo.startPeriodTimestamp).toDateString()}
+            <Text className="text-base font-medium text-black dark:text-white">
+              {new Date(
+                isSingle
+                  ? data.scheduleDetailInfo.startPeriodTimestamp
+                  : data[0].scheduleDetailInfo.startPeriodTimestamp,
+              ).toDateString()}
               ,{' '}
               {renderStartAndEndHourOnLearning(
-                scheduleDetailInfo.startPeriodTimestamp,
-                scheduleDetailInfo.endPeriodTimestamp,
+                isSingle
+                  ? data.scheduleDetailInfo.startPeriodTimestamp
+                  : data[0].scheduleDetailInfo.startPeriodTimestamp,
+                isSingle
+                  ? data.scheduleDetailInfo.endPeriodTimestamp
+                  : data[data.length - 1].scheduleDetailInfo.endPeriodTimestamp,
               )}
             </Text>
           </View>
@@ -502,7 +531,10 @@ const HistoryItem = (props: Props) => {
                   }}>
                   *{' '}
                 </Text>
-                {t('history.ratingQuestion')} {scheduleInfo.tutorInfo.name}
+                {t('history.ratingQuestion')}{' '}
+                {isSingle
+                  ? data.scheduleDetailInfo.scheduleInfo.tutorInfo.name
+                  : data[0].scheduleDetailInfo.scheduleInfo.tutorInfo.name}
               </Text>
 
               <View
